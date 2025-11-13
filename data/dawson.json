@@ -10,6 +10,7 @@
   },
   "layout": [
     {
+      "autoPageBreak": true,
       "left": [
         "name",
         "personal_info",
@@ -18,14 +19,7 @@
       ],
       "right": [
         "Career Summary",
-        "Work Experience"
-      ]
-    },
-    {
-      "left": [
-        "personal_info"
-      ],
-      "right": [
+        "Work Experience",
         "Projects"
       ]
     }

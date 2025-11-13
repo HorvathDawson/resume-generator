@@ -634,13 +634,15 @@ $highlight-color: ${highlightColor};
       
       console.log('📊 Using measured heights for page layout');
       
-      // Calculate effective page height accounting for footer margin
-      let maxPageHeight = 25; // Base available height (29.7 - margins)
+      // Calculate effective page height: 29.7cm (A4) - 1cm top margin - 1cm bottom margin - 4.25cm footer = 23.45cm
+      let maxPageHeight = 23.45; // Actual available content height
       const footerMargin = pageLayout.footerMargin || resumeData.footerMargin;
       if (footerMargin) {
         const footerMarginValue = parseFloat(footerMargin.replace('cm', ''));
         maxPageHeight -= footerMarginValue;
         console.log(`📏 Footer margin: ${footerMarginValue}cm, Effective page height: ${maxPageHeight}cm`);
+      } else {
+        console.log(`📏 Using standard page height: ${maxPageHeight}cm (29.7cm A4 - 1cm margins - 4.25cm footer)`);
       }
       const pages = [];
       let currentPage = [];
@@ -661,15 +663,8 @@ $highlight-color: ${highlightColor};
         leftColumnHeight = columnMeasurements.left.reduce((sum, height) => sum + height, 0);
         rightColumnHeight = columnMeasurements.right.reduce((sum, height) => sum + height, 0);
         
-        // Use the largest column height and add margins
-        const maxColumnHeight = Math.max(leftColumnHeight, rightColumnHeight);
-        const marginHeight = 2.0; // Account for column margins and spacing
-        const totalColumnHeight = maxColumnHeight + marginHeight;
-        
-        currentHeight += totalColumnHeight;
         console.log(`📏 Left column: ${leftColumnHeight}cm, Right column: ${rightColumnHeight}cm`);
-        console.log(`📏 Using max column height: ${maxColumnHeight}cm + ${marginHeight}cm margin = ${totalColumnHeight}cm`);
-        console.log(`📏 Total used space: ${currentHeight}cm`);
+        console.log(`📏 Note: Using auto-break mode - sections will be placed individually`);
       }
 
       for (let i = 0; i < sectionTitles.length; i++) {
@@ -831,11 +826,17 @@ $highlight-color: ${highlightColor};
           currentChunkItems.push(item);
           console.log(`✅ Added item to chunk (${testChunkItems.length} items total)`);
         } else if (currentChunkItems.length === 0 && isFirstChunk) {
-          // First item doesn't fit on first page, but we need to put it somewhere
-          // Move entire section to next page instead of forcing a bad fit
+          // First item doesn't fit on first page, but we need to split anyway
+          // Put as many items as possible on first page, then continue on next
           console.log(`⚠️  First item (${combinedHeight}cm) too large for first page space (${remainingSpace}cm)`);
-          console.log(`📄 Moving entire section to next page for better fit`);
-          return [sectionData]; // Return unsplit section to move entirely to next page
+          console.log(`� Forcing split: moving to next page and continuing split`);
+          
+          // Start new chunk with this item on next page
+          currentChunkItems = [item];
+          const newChunkHeight = await measureChunk({...sectionData, items: [item]}, `${sectionData.title}_new_chunk`, templateVariant);
+          remainingSpace = fullPageSpace - newChunkHeight;
+          isFirstChunk = false;
+          console.log(`📄 Started chunk on new page with item (${remainingSpace}cm remaining on full page)`);
         } else if (currentChunkItems.length === 0) {
           // First item of a continuation chunk doesn't fit, force it anyway
           currentChunkItems.push(item);
@@ -1074,27 +1075,69 @@ $highlight-color: ${highlightColor};
           }
         } else {
           // Handle layouts with only columns (no whole page sections)
-          let pageHtml = '';
-          let pageClasses = ['has-columns'];
-          
-          const leftColumnHtml = pageLayout.left ? generateColumnHtml(pageLayout.left) : '';
-          const rightColumnHtml = pageLayout.right ? generateColumnHtml(pageLayout.right) : '';
-          
-          pageHtml += `
-            <div class="cv-body columns" style="padding-top: ${padding};">
-              <div class="left-column">${leftColumnHtml}</div>
-              <div class="right-column">${rightColumnHtml}</div>
-            </div>
-          `;
-          
-          const classAttr = pageClasses.length > 0 ? ` class="${pageClasses.join(' ')}"` : '';
-          
-          allPages.push(`
-            <page size="A4"${classAttr}>
-              ${pageHtml}
-              ${getFooterTemplate()({})}
-            </page>
-          `);
+          if (autoPageBreak && (pageLayout.left || pageLayout.right)) {
+            // Auto page break for column layouts - split each column independently
+            console.log('📋 Using column-based auto page break');
+            
+            const leftSections = pageLayout.left || [];
+            const rightSections = pageLayout.right || [];
+            
+            // Split each column independently
+            const leftPageGroups = leftSections.length > 0 ? 
+              await splitSectionsWithMeasurements(leftSections, pageLayout) : [[]];
+            const rightPageGroups = rightSections.length > 0 ? 
+              await splitSectionsWithMeasurements(rightSections, pageLayout) : [[]];
+            
+            // Create pages based on the maximum number of page groups needed
+            const maxPages = Math.max(leftPageGroups.length, rightPageGroups.length);
+            
+            for (let pageIndex = 0; pageIndex < maxPages; pageIndex++) {
+              const leftSectionsForPage = leftPageGroups[pageIndex] || [];
+              const rightSectionsForPage = rightPageGroups[pageIndex] || [];
+              
+              const leftColumnHtml = leftSectionsForPage.length > 0 ? 
+                generateColumnHtml(leftSectionsForPage) : '';
+              const rightColumnHtml = rightSectionsForPage.length > 0 ? 
+                generateColumnHtml(rightSectionsForPage) : '';
+              
+              const pageHtml = `
+                <div class="cv-body columns" style="padding-top: ${pageIndex === 0 ? padding : '0cm'};">
+                  <div class="left-column">${leftColumnHtml}</div>
+                  <div class="right-column">${rightColumnHtml}</div>
+                </div>
+              `;
+              
+              allPages.push(`
+                <page size="A4" class="has-columns">
+                  ${pageHtml}
+                  ${getFooterTemplate()({})}
+                </page>
+              `);
+            }
+          } else {
+            // Original single-page column logic
+            let pageHtml = '';
+            let pageClasses = ['has-columns'];
+            
+            const leftColumnHtml = pageLayout.left ? generateColumnHtml(pageLayout.left) : '';
+            const rightColumnHtml = pageLayout.right ? generateColumnHtml(pageLayout.right) : '';
+            
+            pageHtml += `
+              <div class="cv-body columns" style="padding-top: ${padding};">
+                <div class="left-column">${leftColumnHtml}</div>
+                <div class="right-column">${rightColumnHtml}</div>
+              </div>
+            `;
+            
+            const classAttr = pageClasses.length > 0 ? ` class="${pageClasses.join(' ')}"` : '';
+            
+            allPages.push(`
+              <page size="A4"${classAttr}>
+                ${pageHtml}
+                ${getFooterTemplate()({})}
+              </page>
+            `);
+          }
         }
         
         // Add all pages from this layout to the main array
