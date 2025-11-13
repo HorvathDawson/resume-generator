@@ -1,0 +1,16 @@
+<div class="section certifications-wide">
+    {{#if isContinuation}}
+    <h2>Professional Certifications <span class="continuation">(continued)</span></h2>
+    {{else}}
+    <h2>Professional Certifications</h2>
+    {{/if}}
+    <div class="certifications-list">
+        <div class="cert-line">
+            <div class="tags-inline">
+                {{#each items}}
+                <span class="cert-tag">{{name}}</span>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>

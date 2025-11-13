@@ -1,0 +1,201 @@
+{
+  "name": "Dawson Horvath",
+  "personal_info": {
+    "email": "horvath.dawson@gmail.com",
+    "phone": "1-250-306-0343",
+    "website": "http://dawsonhorvath.com",
+    "github": "https://github.com/HorvathDawson",
+    "linkedin": "https://www.linkedin.com/in/horvathdawson",
+    "location": "Vancouver, BC"
+  },
+  "layout": [
+    {
+      "left": [
+        "name",
+        "personal_info",
+        "Education",
+        "Skills"
+      ],
+      "right": [
+        "Career Summary",
+        "Work Experience"
+      ]
+    },
+    {
+      "left": [
+        "personal_info"
+      ],
+      "right": [
+        "Projects"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Education",
+      "items": [
+        {
+          "institution": "University of British Columbia",
+          "degree": "B.ASc., Engineering Physics",
+          "dates": "2018 — 2022",
+          "gpa": "3.7/4.0"
+        },
+        {
+          "institution": "Thompson Rivers University",
+          "degree": "Engineering Transfer Program",
+          "dates": "2017 — 2018",
+          "gpa": "4.0/4.0"
+        }
+      ]
+    },
+    {
+      "title": "Skills",
+      "items": [
+        {
+          "category": "Software Development",
+          "tags": [
+            "Python",
+            "LabVIEW",
+            "C++",
+            "Go",
+            "JavaScript",
+            "MATLAB",
+            "SQLite",
+            "Git",
+            "Linux",
+            "PyTorch",
+            "OpenCV",
+            "Machine Learning",
+            "Computer Vision",
+            "Data Analysis"
+          ]
+        },
+        {
+          "category": "Hardware & Prototyping",
+          "tags": [
+            "Circuit Design",
+            "Arduino",
+            "SolidWorks",
+            "Onshape",
+            "Prototyping",
+            "PCB Design",
+            "Sensor Integration",
+            "Embedded Systems"
+          ]
+        },
+        {
+          "category": "Fabrication & Hands-On",
+          "tags": [
+            "Machining",
+            "Soldering",
+            "Welding",
+            "3D Printing",
+            "Laser Cutting",
+            "Waterjet Cutting",
+            "CNC Operation",
+            "Mechanical Assembly"
+          ]
+        },
+        {
+          "category": "Design & Media",
+          "tags": [
+            "Web Development",
+            "HTML",
+            "CSS",
+            "Photoshop",
+            "LaTeX",
+            "UI/UX Design"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Career Summary",
+      "summary": "Innovative and adaptable Engineering Physicist with over three years of experience in robotics, mechatronics, and software engineering. Skilled in designing and building high-throughput automation systems, with expertise in real-time data acquisition, image processing, and instrument control. Proficient in Python, C++, LabVIEW, Front-end Langauges, and Go, with a proven track record of delivering impactful solutions in robotics and automation. Experienced in developing advanced imaging systems, control software, and scalable dashboards, driving efficiency and enhancing data accuracy across multidisciplinary teams. A passionate problem-solver who thrives in dynamic environments, blending technical precision with creativity."
+    },
+    {
+      "title": "Work Experience",
+      "items": [
+        {
+          "organization": "AbCellera Biologics Inc",
+          "title": "Mechatronics Engineer",
+          "dates": "May 2020 - Current",
+          "details": [
+            "Built a real-time fleet management dashboard using Go, SQLite, HTML, CSS, and JavaScript to monitor robot metrics, environmental data, and experiment progress. Integrated a unified data schema and visualized recovered cell locations to improve cross-team collaboration.",
+            "Increased cell transportation speed 3x by transitioning liquid handling from open-loop to calibrated closed-loop control, leveraging vision-based measurements to ensure accuracy and maintain high cell viability.",
+            "Designed and implemented image processing pipelines with Python, C++, and LabVIEW, featuring meniscus detection in micro-capillaries, multi-exposure HDR, flat-field correction, and more, enhancing screening performance.",
+            "Engineered a custom schlieren imaging system using a lenticular lens array, inspired by \"Hand-Held Schlieren Photography with Light Field Probes,\" to capture transparent media refractions with commodity hardware.",
+            "Delivered new single-cell recovery instrument control software in LabVIEW and Python, incorporating robot routines, state machine logic, operator UIs, and imaging pipelines. Completed the project three weeks ahead of a critical demo day.",
+            "Developed a monitoring tool to verify past recovery states, enable retries for failed recoveries, and reduce potential cell loss by up to 50%. Automated data consolidation into a single PDF report with machine learning summaries for troubleshooting and communication.",
+            "Manufactured PDMS microfluidic devices in a Class 1000 cleanroom, critical for high-throughput single-cell screening. Conducted photolithography, mold preparation, and device assembly to ensure precision and reliability in biological assays."
+          ]
+        },
+        {
+          "organization": "TRIUMF Particle Accelerator",
+          "title": "SRF Development Intern",
+          "dates": "January 2019 - May 2019",
+          "details": [
+            "Led the design and implementation of a UHV induction furnace, enabling doping of niobium superconductors with gas compounds and removal of hydrides. Achieved a 10x improvement in the SRF cavity quench limit.",
+            "Developed an advanced magnetic field controller that integrates a 3-axis fluxgate magnetometer to dynamically adjust electromagnet currents, effectively neutralizing the Earth's ambient magnetic field.",
+            "Contributed to the maintenance and reassembly of cryostats in ultra-clean environments (Class 1000, 100, and 10 cleanrooms), ensuring optimal performance for precision applications."
+          ]
+        },
+        {
+          "organization": "Streamline Transportation Technology",
+          "title": "Fullstack Developer",
+          "dates": "April 2018 - September 2018",
+          "details": [
+            "Designed and implemented a full-stack web application using Node.js and AngularJS, automating previously manual workflows and significantly improving operational efficiency.",
+            "Enhanced the QA automation framework by completing Protractor scripts and extending helper classes, leading to more robust and efficient automated testing processes.",
+            "Collaborated closely with team members to identify and resolve technical challenges in the company’s flagship product, ensuring smoother performance and higher reliability."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Projects",
+      "items": [
+        {
+          "title": "Open Sim2Real Project",
+          "organization": "Open Source",
+          "dates": "2022",
+          "details": [
+            "Developed an open-source platform for Sim2Real research with a low-cost single-leg robot and simulation, supporting training in both real and simulated environments using the gym framework. I handled embedded systems, drivers, backend development, and integration with the gym framework. The project was a team effort with four people: two focused on RL research, and one worked on mechanical design, with me providing design review. This platform made Sim2Real research more accessible for transitioning from simulation to real-world applications."
+          ]
+        },
+        {
+          "title": "1950 Austin A40 Restoration",
+          "organization": "Personal",
+          "dates": "2019 - Current",
+          "details": [
+            "I’m undertaking a frame-up restoration of the 1950 Austin A40, including installing an SR20DET engine and upgrading to a double wishbone suspension. The car will feature modern rack-and-pinion steering, upgraded brakes, and safety improvements like a collapsible steering column, seatbelts, and a roll cage. A custom dash will also be added, blending modern functionality with the car’s classic look."
+          ]
+        },
+        {
+          "title": "Simulated Gazebo Robot",
+          "organization": "School",
+          "dates": "2019",
+          "details": [
+            "Designed and simulated an autonomous robot in a Gazebo environment using ROS. Implemented machine learning and computer vision algorithms to enable the robot to read license plates from parked cars, avoid obstacles, and navigate the course as quickly as possible."
+          ]
+        },
+        {
+          "title": "Robot Design Competition",
+          "organization": "School",
+          "dates": "2019",
+          "details": [
+            "Collaborated with a small team to engineer a fully autonomous robot for the Engineering Physics Robot Competition, focusing on mechanical and electrical design. Led the design of a custom drivetrain, SPI communication, control loop, and mechanical systems. Followed a rigorous review process emphasizing engineering communication, reliability, and testing to ensure optimal performance and system integration."
+          ]
+        },
+        {
+          "title": "DIY Electric Skateboard",
+          "organization": "Personal",
+          "dates": "2017",
+          "details": [
+            "Designed and prototyped an electric skateboard capable of commuting 20+ km daily at speeds exceeding 30 km/h. Engineered a robust powertrain system with optimized battery efficiency to ensure extended reliability."
+          ]
+        }
+      ]
+    }
+  ]
+}

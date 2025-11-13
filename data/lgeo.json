@@ -1,0 +1,221 @@
+{
+  "_comment": "Resume Configuration Example - Advanced Multi-Page Layout",
+  "_configOptions": {
+    "footerType": "Available: 'default', 'modern', 'minimal', 'mountains', 'none'",
+    "footerMargin": "Bottom margin for footer in cm (e.g., '2.5cm') - reduces effective page height",
+    "pageMargins": "Page margins in cm (e.g., '1.0cm')",
+    "autoPageBreak": "Enable intelligent page splitting (boolean)",
+    "layout": "Array of page layout configurations",
+    "templateVariants": "Use :wide, :wide2 suffixes for different section styles"
+  },
+  "name": "Darcy Turin",
+  "pageMargins": "1.0cm",
+  "footerType": "mountains-random:9876",
+  "footerMargin": "-3.0cm",
+  "personal_info": {
+    "email": "darcy.turin@gmail.com",
+    "phone": "505-709-0453",
+    "website": "darcyturin.github.io",
+    "linkedin": "darcyturin",
+    "location": "Vancouver, BC"
+  },
+  "layout": [
+    {
+      "_layoutComment": "Multi-page layout with intelligent splitting",
+      "autoPageBreak": true,
+      "left": [
+        "name"
+      ],
+      "right": [
+        "Career Summary"
+      ],
+      "wholePage": [
+        "personal_info:wide",
+        "Education:wide",
+        "Skills:wide2",
+        "Projects",
+        "Relevant Experience",
+        "Additional Experience"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Career Summary",
+      "summary": "Master’s graduate in Geomatics, specializing in GIS, remote sensing, and spatial data analysis. Skilled in creating reproducible workflows in ArcGIS, R, and Python, to analyze environmental and planning data. Combines analytical, cross-cultural, and communication skills to support collaborative research and decision-making in regulatory and consulting contexts."
+    },
+    {
+      "title": "Education",
+      "items": [
+        {
+          "institution": "University of British Columbia",
+          "location": "Vancouver, BC",
+          "degree": "Master of Geomatics in Environmental Management (MGEM)",
+          "dates": "Aug. 2024 – May 2025",
+          "details": [
+            "Coursework in spatial statistics, data analysis, GIS modeling, and data visualization",
+            "Capstone project applying advanced geospatial analysis for long-term change detection"
+          ]
+        },
+        {
+          "institution": "University of British Columbia",
+          "location": "Vancouver, BC",
+          "degree": "B.A. International Relations, Minor in Russian",
+          "dates": "Sep. 2017 – May 2021"
+        },
+        {
+          "institution": "Druga Gimnazija",
+          "location": "Sarajevo, Bosnia and Herzegovina",
+          "degree": "Kennedy-Lugar YES Abroad Scholar",
+          "dates": "Aug. 2017 – June 2018"
+        }
+      ]
+    },
+    {
+      "title": "Projects",
+      "items": [
+        {
+          "title": "Applying Declassified Cold War Intelligence Imagery for Long-Term Forest Cover Change Analysis",
+          "organization": "UBC MGEM",
+          "dates": "Sep. 2024 - Apr. 2025",
+          "details": [
+            "Designed and implemented a hybrid remote sensing workflow to classify forest cover using historic panchromatic and modern multispectral imagery in the Pamir Mountains, Tajikistan",
+            "Collaborated with supervisors to conduct data requirement analysis, documentation, and model validation, ensuring accuracy and alignment with project goals",
+            "Created reproducible R, Google Earth Engine, and GIS workflows to apply segmentation and machine-learning classifiers to detect land cover types in challenging mixed terrain",
+            "Quantified forest cover change over 45 years, with implications for environmental monitoring and land use analysis in conflict-affected regions",
+            "Communicated results through visualizations, reports, and presentations for interdisciplinary audiences"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Relevant Experience",
+      "items": [
+        {
+          "title": "Legal Assistant",
+          "organization": "Stewart, Aulinger & Company",
+          "location": "Vancouver, BC",
+          "dates": "Aug. 2023 – Mar. 2024",
+          "details": [
+            "Supported land development and property transfer projects by preparing conveyancing and LTSA filings, verifying parcel and ownership data through BC Assessment and municipal systems, and coordinating with developers",
+            "Managed estate files, maintained relationships with beneficiaries, and ensured accuracy in trust accounting using LEAP legal software",
+            "Conducted legal research, filed annual reports, and maintained minute books for over 200 corporations"
+          ]
+        },
+        {
+          "title": "Geospatial Analysis Intern",
+          "organization": "United States Department of Defense",
+          "location": "Springfield, VA",
+          "dates": "Jun. – Aug. 2018, Jun. – Aug. 2019",
+          "details": [
+            "Analyzed satellite imagery and multi-source geospatial data to identify patterns and monitor change",
+            "Conducted open-source research to contextualize analytical results",
+            "Produced intelligence summaries, briefings, and visualizations in organization-standard formats to communicate results effectively to decision-makers"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Additional Experience",
+      "items": [
+        {
+          "title": "Philanthropy Volunteer",
+          "organization": "Vancouver Botanical Gardens Association",
+          "location": "Vancouver, BC",
+          "dates": "Mar. – Sep. 2023",
+          "details": [
+            "Supported fundraising campaigns by integrating internal tools for data synchronization",
+            "Managed Van Dusen's Adopt-A-Tree program by updating garden maps and donor records",
+            "Utilized Donor Perfect CRM software to track contributions and generate reports"
+          ]
+        },
+        {
+          "title": "Host and Server",
+          "organization": "Stanley Park Brewpub and Restaurant",
+          "location": "Vancouver, BC",
+          "dates": "Feb. – Aug. 2023",
+          "details": [
+            "Managed reservations and guest flow using OpenTable",
+            "Processed transactions and orders through Squirrel POS system",
+            "Coordinated with kitchen and bar staff to ensure smooth restaurant operations and excellent service"
+          ]
+        },
+        {
+          "title": "Guest Experience Representative",
+          "organization": "Mount Seymour Resort",
+          "location": "Vancouver, BC",
+          "dates": "Dec. 2021 – Apr. 2022",
+          "details": [
+            "Provided customer support via email, chat, and in person",
+            "Resolved inquiries related to ticketing, lessons, and resort information",
+            "Managed sensitive customer and sales data across multiple platforms"
+          ]
+        },
+        {
+          "title": "Outdoor Leadership Institute Guide",
+          "organization": "Ramah in the Rockies",
+          "location": "Sedalia, CO",
+          "dates": "May – Aug. 2021",
+          "details": [
+            "Led backpacking and backcountry trips for high school students",
+            "Developed and taught outdoor and Jewish education curricula focused on group dynamics and community building",
+            "Responded to medical, social, and emotional challenges effectively"
+          ]
+        },
+        {
+          "title": "Scholars in Prison Advocate & Conference Organizer",
+          "organization": "Scholars at Risk",
+          "location": "Remote",
+          "dates": "Jan. – Apr. 2021",
+          "details": [
+            "Led advocacy campaigns for imprisoned scholars",
+            "Coordinated an international academic freedom conference",
+            "Conducted media outreach, including a radio interview"
+          ]
+        },
+        {
+          "title": "Election Watch Team Member",
+          "organization": "Asia Pacific Foundation of Canada",
+          "location": "Vancouver, BC",
+          "dates": "Sep. – Nov. 2019",
+          "details": [
+            "Analyzed Sri Lanka's political landscape for campaign developments",
+            "Designed graphics and social media posts for APF's platforms"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Skills",
+      "items": [
+        {
+          "category": "GIS & Remote Sensing",
+          "tags": [
+            "ArcGIS Pro",
+            "QGIS",
+            "Google Earth Engine",
+            "ENVI",
+            "eCognition",
+            "StoryMaps"
+          ]
+        },
+        {
+          "category": "Programming & Data Analysis",
+          "tags": [
+            "R",
+            "Python",
+            "SQL",
+            "Excel"
+          ]
+        },
+        {
+          "category": "Certifications",
+          "tags": [
+            "Wilderness First Responder",
+            "CPR"
+           ]
+        }
+      ]
+    }
+  ]
+}

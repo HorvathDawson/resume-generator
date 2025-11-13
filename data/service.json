@@ -1,0 +1,174 @@
+{
+  "name": "Darcy Turin",
+  "personal_info": {
+    "email": "darcy.turin@gmail.com",
+    "phone": "505-709-0453",
+    "website": "darcyturin.github.io",
+    "linkedin": "darcyturin",
+    "location": "Vancouver, BC, Canada"
+  },
+  "layout": [
+    {
+      "left": [
+        "name",
+        "personal_info",
+        "Education",
+        "Skills",
+        "Certifications"
+      ],
+      "right": [
+        "Career Summary",
+        "Work Experience",
+        "Volunteer Experience"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Career Summary",
+      "summary": "Enthusiastic and reliable worker with experience in customer-facing and team-based operations. Physically capable, quick to learn, and committed to supporting sustainable food systems."
+    },
+    {
+      "title": "Education",
+      "items": [
+        {
+          "institution": "University of British Columbia",
+          "location": "Vancouver, BC",
+          "degree": "Master of Geomatics in Environmental Management (MGEM)",
+          "dates": "Aug. 2024 – May 2025",
+          "details": [
+            "Developed skills in GIS, remote sensing, and spatial data analysis through hands-on projects to support environmental management and decision-making"
+          ]
+        },
+        {
+          "institution": "University of British Columbia",
+          "location": "Vancouver, BC",
+          "degree": "B.A. International Relations, Minor in Russian",
+          "dates": "Sep. 2017 – May 2021"
+        }
+      ]
+    },
+    {
+      "title": "Work Experience",
+      "items": [
+        {
+          "title": "Legal Assistant",
+          "organization": "Stewart, Aulinger & Company",
+          "location": "Vancouver, BC",
+          "dates": "Aug. 2023 – Mar. 2024",
+          "details": [
+            "Managed estate files, maintained relationships with beneficiaries, and ensured accuracy in trust accounting using LEAP legal software",
+            "Drafted and reviewed contracts, agreements, and other legal documents for commercial transactions",
+            "Conducted legal research, filed annual reports, and maintained minute books for over 200 corporations"
+          ]
+        },
+        {
+          "title": "Host and Server",
+          "organization": "Stanley Park Brewpub and Restaurant",
+          "location": "Vancouver, BC",
+          "dates": "Feb. – Aug. 2023",
+          "details": [
+            "Managed reservations and guest flow using OpenTable",
+            "Processed transactions and orders through Squirrel POS system",
+            "Coordinated with kitchen and bar staff to ensure smooth restaurant operations and excellent service"
+          ]
+        },
+        {
+          "title": "Guest Experience Representative",
+          "organization": "Mount Seymour Resort",
+          "location": "Vancouver, BC",
+          "dates": "Dec. 2021 – Apr. 2022",
+          "details": [
+            "Provided customer support via email, chat, and in person",
+            "Resolved inquiries related to ticketing, lessons, and resort information",
+            "Managed sensitive customer and sales data across multiple platforms"
+          ]
+        },
+        {
+          "title": "Jewish Outdoor Leadership Institute Guide",
+          "organization": "Ramah in the Rockies",
+          "location": "Sedalia, CO",
+          "dates": "May – Aug. 2021",
+          "details": [
+            "Led backpacking and backcountry trips for high school students",
+            "Developed and taught outdoor and Jewish education curricula focused on group dynamics and community building",
+            "Responded to medical, social, and emotional challenges effectively"
+          ]
+        },
+        {
+          "title": "Geospatial Analysis Intern",
+          "organization": "United States Department of Defense",
+          "location": "Springfield, VA",
+          "dates": "Jun. – Aug. 2018, Jun. – Aug. 2019",
+          "details": [
+            "Prepared food safely and efficiently and practiced polite customer service",
+            "Operated Square point-of-sale system and made change for rapid customer interactions",
+            "Worked with a team to quickly solve customer problems and staff conflicts"
+          ]
+        },
+        {
+          "title": "Crew Member",
+          "organization": "Great Dane Coffee",
+          "location": "Vancouver, BC",
+          "dates": "Oct. 2018 – May 2021",
+          "details": [
+            "Prepared food safely and efficiently and practiced polite customer service",
+            "Operated Square point-of-sale system and made change for rapid customer interactions",
+            "Worked with a team to quickly solve customer problems and staff conflicts"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Volunteer Experience",
+      "items": [
+        {
+          "title": "Philanthropy Volunteer",
+          "organization": "Vancouver Botanical Gardens Association",
+          "location": "Vancouver, BC",
+          "dates": "Mar. – Sep. 2023",
+          "details": [
+            "Supported fundraising campaigns by integrating internal tools for data synchronization",
+            "Managed Van Dusen’s Adopt-A-Tree program by updating garden maps and donor records",
+            "Utilized Donor Perfect CRM software to track contributions and generate reports"
+          ]
+        },
+        {
+          "title": "Scholars in Prison Advocate & Conference Organizer",
+          "organization": "Scholars at Risk",
+          "location": "Remote",
+          "dates": "Jan. – Apr. 2021",
+          "details": [
+            "Organized advocacy campaigns and an academic freedom conference",
+            "Conducted media outreach, including a radio interview"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Skills",
+      "items": [
+        {
+          "tags": [
+            "Customer service & communication",
+            "Food handling",
+            "POS systems (Square, Squirrel, OpenTable)",
+            "Able to lift and stand as required"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Certifications",
+      "items": [
+        {
+          "tags": [
+            "Wilderness First Responder (including CPR/AED)",
+            "Class 5 Driver's Licence",
+            "Serving It Right BC"
+          ]
+        }
+      ]
+    }
+  ]
+}

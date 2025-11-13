@@ -1,0 +1,27 @@
+<div class="section experience">
+    {{#if isContinuation}}
+    <h2>Volunteer Experience <span class="continuation">(continued)</span></h2>
+    {{else}}
+    <h2>Volunteer Experience</h2>
+    {{/if}}
+    <ul>
+        {{#each items}}
+        <li>
+            <div class="experience-header">
+                <div class="first-row">
+                    <div class="fw-bold">{{organization}}</div>
+                    <span>{{title}}</span>
+                </div>
+                <div class="second-row"><i class="fa fa-calendar"></i> {{dates}}</div>
+            </div>
+            <div class="experience-body">
+                <ul>
+                    {{#each details}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+</div>

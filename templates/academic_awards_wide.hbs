@@ -1,0 +1,16 @@
+<div class="section awards-wide">
+    {{#if isContinuation}}
+    <h2>Academic Awards <span class="continuation">(continued)</span></h2>
+    {{else}}
+    <h2>Academic Awards</h2>
+    {{/if}}
+    <div class="awards-list">
+        <div class="awards-line">
+            <div class="tags-inline">
+                {{#each items}}
+                <span class="award-tag">{{name}}{{#if organization}} ({{organization}}){{/if}}{{#if dates}} - {{dates}}{{/if}}</span>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
