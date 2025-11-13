@@ -1,0 +1,1271 @@
+$font-size-h1: 1.3cm;
+$font-size-h2: 0.6cm;
+$font-size-h3: 0.4cm;
+$font-size-experience-body: 0.4cm;
+$font-size-small: 0.4cm;
+// Use dynamic page margin if available, otherwise default
+$margin: if(variable-exists(page-margin), $page-margin, 1.27cm);
+$margin-cols: 0.75cm;
+
+:root {
+    // Dynamic color variables from JSON
+    --right-column-color: #{$right-column-color};
+    --right-text-color: #{$right-text-color};
+    --left-column-color: #{$left-column-color};
+    --left-text-color: #{$left-text-color};
+    --highlight-color: #{$highlight-color};
+}
+
+body {
+    background: rgb(204, 204, 204);
+    width: 21cm;
+    height: 29.7cm;
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
+}
+
+page {
+    background: white; // Ensure page has white background
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+    position: relative;
+}
+
+page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+}
+
+@page {
+    size: 21cm 29.7cm;
+    margin: 0mm;
+}
+
+body,
+page {
+    font-family: 'Roboto', sans-serif;
+}
+
+.left-column {
+    background-color: var(--left-column-color);
+    color: var(--left-text-color);
+    height: calc(100% - #{$margin});
+    padding-right: calc($margin-cols / 2);
+    padding-left: $margin;
+    padding-top: $margin;
+    width: 30%;
+}
+
+.right-column {
+    background-color: var(--right-column-color);
+    color: var(--right-text-color);
+    height: calc(100% - #{$margin});
+    padding-top: $margin;
+    padding-left: calc($margin-cols / 2);
+    padding-right: $margin;
+    width: 70%;
+}
+
+.cv-body {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.section {
+    margin-bottom: 0.5cm;
+}
+
+.subsection {
+    margin-bottom: 0.25cm;
+    padding-left: 0.1cm;
+}
+
+h1 {
+    font-size: $font-size-h1;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    font-size: $font-size-h2;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+    
+    .continuation {
+        font-size: 0.4cm;
+        font-style: italic;
+        text-transform: none;
+        color: #666;
+        font-weight: normal;
+    }
+}
+
+h3 {
+    font-size: $font-size-h3;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+}
+
+.name {
+    padding-bottom: 0.25cm;
+    padding-top: 0.0cm;
+    font-size: $font-size-h1;
+    font-weight: 900;
+    color: var(--highlight-color);
+}
+
+.contact-info {
+    width: 100%;
+    background-color: transparent;
+    overflow: hidden;
+    padding-bottom: 0.5cm;
+}
+
+.contact-info ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.contact-info ul li .contact {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.contact-info ul li .icons {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 0.2cm;
+    width: 0.4cm;
+    overflow: hidden;
+    color: var(--left-text-color);
+    line-height: 0.4cm;
+}
+
+/* Ensure Font Awesome icons render at readable size */
+.contact-info ul li .icons i,
+.icons i,
+.icons .fa,
+.icons .fas,
+.icons .fab {
+    font-size: $font-size-experience-body;
+    line-height: 0.4cm;
+    display: inline-block;
+}
+
+.contact-info ul li .words {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: $font-size-experience-body;
+    line-height: calc(#{$font-size-experience-body} *1.15);
+    color: var(--left-text-color);
+    vertical-align: middle;
+}
+
+.summary {
+    font-size: $font-size-experience-body;
+    margin: 0;
+    margin-left: 0.1cm; // Reduced from 0.25cm
+    margin-bottom: 0.1cm; // Reduced from 0.25cm
+}
+
+.experience {
+    margin: 0;
+    padding: 0;
+}
+
+.experience > ul > li ul {
+    list-style-type: disc;
+}
+
+.experience > ul {
+    list-style-type: none;
+    padding-left: 0cm;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.25cm;
+}
+
+.experience > ul > li {
+    position: relative;
+    margin: 0;
+    padding-bottom: 0.25cm;
+    padding-left: 0.4cm;
+}
+
+.experience > ul > li:before {
+    background-color: var(--highlight-color);
+    width: 2px; // Make line thicker and more visible
+    content: '';
+    position: absolute;
+    top: 0.1cm; // Start from center of the dot, aligned with text
+    bottom: -0.2cm;
+    transform: translatex(-50%);
+    left: 0cm;
+    margin-left: 0.15cm;
+    opacity: 0.6; // Make line slightly transparent
+}
+
+.experience > ul > li::after {
+    content: '';
+    position: absolute;
+    background: var(--highlight-color);
+    border: 1px solid white; // Thinner border to prevent cutoff
+    box-shadow: 0 0 0 1px var(--highlight-color); // Thinner shadow
+    border-radius: 50%;
+    transform: translatex(-50%);
+    top: 0.05cm; // Move up slightly to align better with text
+    left: 0;
+    width: 6px;
+    height: 6px;
+    margin-left: 0.15cm;
+    z-index: 2;
+    // Ensure the element has enough space for borders and shadows
+    box-sizing: content-box;
+}
+
+// Make the last item's line shorter but still visible
+.experience > ul > li:last-child:before {
+    bottom: auto;
+    height: 1.2cm; // Slightly longer line extending down from the last dot
+}
+
+.experience > ul > li .experience-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.1cm;
+}
+
+.experience > ul > li .experience-header .first-row {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    line-height: 0.4cm;
+    font-size: $font-size-h3;
+    font-weight: 900;
+}
+.experience > ul > li .experience-header .first-row div{
+    max-width: 75%;
+}
+
+.experience > ul > li .experience-header .second-row {
+    font-size: $font-size-experience-body;
+    
+}
+
+.experience > ul > li .experience-body {
+    font-size: $font-size-experience-body;
+    line-height: 0.35cm;
+}
+
+.experience-body > ul {
+    padding-left: 0.375cm;
+}
+
+.experience-body > ul > li {
+    padding-bottom: 0.1cm;
+}
+
+.education-item {
+    margin: 0;
+    padding: 0;
+    margin-left: 0.1cm;
+    margin-bottom: 0.05cm; // Reduced spacing between education items
+}
+.education-item .education-item-header {
+    margin-bottom: 0.05cm; // Reduced from 0.1cm
+}
+.education-item .education-item-header > p{
+    margin: 0;
+    padding: 0;
+    line-height: 0.35cm; // Compress line height for institution/dates
+}
+
+.education-item .education-details {
+    font-size: $font-size-experience-body;
+    padding-bottom: 0.05cm; // Reduced from 0.1cm
+    margin-left: 0.1cm;
+}
+
+.education-details > ul {
+    list-style-type: none;
+    padding-left: 0cm;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.1cm; // Reduced from 0.25cm
+}
+
+.education-details > ul > li {
+    margin-bottom: 0.05cm; // Add tight spacing between bullet points
+    line-height: 0.35cm; // Compress line height for details
+}
+
+.education-details .small-text {
+    margin: 0;
+}
+
+.education-item h3 {
+    margin-bottom: 0.02cm; // Tighter spacing below degree title
+    line-height: 0.4cm; // Match the h3 font size for tight line height
+}
+
+.small-text {
+    font-size: $font-size-small;
+    opacity: 0.7;
+}
+
+.tags {
+    margin-top: 0.1cm !important;
+    margin-bottom: 0.1cm !important;
+    /* use flex so tags wrap cleanly across lines */
+    /* keep it a normal block so inline tags wrap naturally */
+    display: block;
+    max-width: 100%;
+    font-size: 0; /* remove inter-element inline whitespace gaps */
+    white-space: normal;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.cvtag {
+    /* inline tags: allow multi-word tags to wrap within the same inline flow
+       and prevent inter-tag gaps by restoring font-size on the tag itself */
+    display: inline;
+    padding: 0 0 0 0;
+    margin: 0;
+    font-size: $font-size-small; /* restore readable font-size (tags container has font-size:0) */
+    white-space: normal; /* allow multi-word tags to wrap */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 0.5cm;
+    text-align: left;
+}
+
+/* circular separator after each tag; hides on last child */
+.cvtag::after {
+    content: '';
+    display: inline-block;
+    width: 0.2cm; /* match line-height */
+    height: $font-size-small; /* match line-height */
+    margin: 0 0.1cm;
+    line-height: $font-size-small;
+    color: var(--right-text-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='currentColor'/%3E%3C/svg%3E");
+    background-size: 0.2cm 0.2cm; /* dot diameter */
+    background-repeat: no-repeat;
+    background-position: center;
+    vertical-align: middle;
+}
+
+.tags .cvtag:last-child::after {
+    display: none; /* no separator after last item */
+}
+ 
+footer {
+    width: 100%;
+    height: 4.25cm;
+    background-color: transparent;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    overflow: hidden;
+    z-index: 2;
+}
+
+footer .foot-front {
+    width: 100%;
+    height: 100%;
+}
+
+footer .foot-front .left {
+    width: 17cm;
+    height: 5cm;
+    z-index: 1;
+    transform: rotate(7deg);
+    background-color: var(--highlight-color);
+    box-shadow: 0 0 0.317 cm -0.105 cm #000;
+    position: absolute;
+    bottom: -2.90cm;
+    left: -2cm;
+}
+
+footer .foot-front .right {
+    width: 10cm;
+    height: 5cm;
+    z-index: 2;
+    transform: rotate(28deg);
+    background-color: var(--highlight-color);
+    position: absolute;
+    bottom: -6.01cm;
+    left: 13.48cm;
+}
+
+footer .foot-back {
+    width: 100%;
+    height: 5.385cm;
+    z-index: 1;
+    transform: rotate(-16deg);
+    background-color: var(--right-text-color);
+    position: absolute;
+    bottom: -6cm;
+    left: 1.452cm;
+}
+
+// Modern footer design
+footer.footer-modern {
+    height: 2cm;
+    background: transparent;
+    
+    .footer-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    
+    .footer-line {
+        width: 60%;
+        height: 0.05cm;
+        background: linear-gradient(90deg, transparent 0%, var(--highlight-color) 50%, transparent 100%);
+        margin-bottom: 0.3cm;
+    }
+    
+    .footer-text {
+        display: flex;
+        align-items: center;
+        gap: 0.4cm;
+        font-size: 0.25cm;
+        color: var(--right-text-color);
+        opacity: 0.7;
+        font-weight: 300;
+        letter-spacing: 0.08cm;
+    }
+    
+    .footer-accent {
+        color: var(--highlight-color);
+        font-size: 0.2cm;
+    }
+    
+    .footer-gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0.1cm;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            var(--highlight-color) 20%, 
+            var(--right-text-color) 50%, 
+            var(--highlight-color) 80%, 
+            transparent 100%);
+        opacity: 0.3;
+    }
+}
+
+// Minimal footer design
+footer.footer-minimal {
+    height: 1cm;
+    background: transparent;
+    
+    .footer-simple {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .footer-dot {
+        width: 0.3cm;
+        height: 0.3cm;
+        border-radius: 50%;
+        background: var(--highlight-color);
+        opacity: 0.6;
+        box-shadow: 0 0 0.2cm rgba(0,0,0,0.1);
+    }
+}
+
+// Mountain footer design
+footer.footer-mountains {
+    height: 2.5cm;
+    background: transparent;
+    overflow: hidden;
+    
+    .mountains-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+    
+    .mountain {
+        position: absolute;
+        bottom: 0;
+        opacity: 0.8;
+    }
+    
+    .mountain-1 {
+        left: 0;
+        width: 0;
+        height: 0;
+        border-left: 2cm solid transparent;
+        border-right: 2cm solid transparent;
+        border-bottom: 1.5cm solid var(--highlight-color);
+        opacity: 0.9;
+    }
+    
+    .mountain-2 {
+        left: 3cm;
+        width: 0;
+        height: 0;
+        border-left: 1.5cm solid transparent;
+        border-right: 1.5cm solid transparent;
+        border-bottom: 2cm solid var(--right-text-color);
+        opacity: 0.7;
+    }
+    
+    .mountain-3 {
+        left: 7cm;
+        width: 0;
+        height: 0;
+        border-left: 2.5cm solid transparent;
+        border-right: 2.5cm solid transparent;
+        border-bottom: 1.8cm solid var(--highlight-color);
+        opacity: 0.8;
+    }
+    
+    .mountain-4 {
+        left: 13cm;
+        width: 0;
+        height: 0;
+        border-left: 1.8cm solid transparent;
+        border-right: 1.8cm solid transparent;
+        border-bottom: 1.3cm solid var(--right-text-color);
+        opacity: 0.6;
+    }
+    
+    .mountain-5 {
+        right: 0;
+        width: 0;
+        height: 0;
+        border-left: 3cm solid transparent;
+        border-right: 3cm solid transparent;
+        border-bottom: 2.2cm solid var(--highlight-color);
+        opacity: 0.9;
+    }
+}
+
+// Random Mountains Footer
+footer.footer-mountains-random {
+    height: 2.5cm;
+    background: transparent;
+    overflow: hidden;
+    
+    .mountains-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+    
+    .mountain {
+        position: absolute;
+        bottom: 0;
+        transition: none; // No transitions for stable random positioning
+    }
+}
+
+// Fish Footer
+footer.footer-fish {
+    height: 4.25cm;
+    background: linear-gradient(180deg, #f0f8ff 0%, #e6f3ff 100%);
+    overflow: hidden;
+    position: relative;
+    
+    .footer-fish svg {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .fish {
+        transform-origin: center;
+    }
+    
+    .fish-1 {
+        animation: swimSlow 8s ease-in-out infinite;
+    }
+    
+    .fish-2 {
+        animation: swimFast 6s ease-in-out infinite reverse;
+    }
+    
+    .bubbles circle {
+        filter: blur(0.5px);
+    }
+}
+
+// Fish swimming animations
+@keyframes swimSlow {
+    0%, 100% { transform: translate(150px, 40px) rotate(0deg); }
+    50% { transform: translate(155px, 35px) rotate(2deg); }
+}
+
+@keyframes swimFast {
+    0%, 100% { transform: translate(450px, 60px) rotate(0deg); }
+    50% { transform: translate(445px, 65px) rotate(-1deg); }
+}
+
+// Whole page layout styles
+.cv-body.whole-page {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.whole-page-column {
+    background-color: var(--right-column-color);
+    color: var(--right-text-color);
+    height: calc(100% - #{$margin});
+    padding: $margin;
+    width: calc(100% - #{$margin * 2});
+    
+    .section {
+        margin-bottom: 0.75cm;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    
+    // Adjust spacing for name and personal info in whole page layout
+    .name {
+        text-align: center;
+        margin-bottom: 0.5cm;
+        
+        h1 {
+            font-size: $font-size-h1 * 1.2; // Slightly larger for full page
+        }
+    }
+    
+    .contact-info {
+        text-align: center;
+        margin-bottom: 1cm;
+        
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1cm;
+            
+            li {
+                margin: 0;
+            }
+        }
+    }
+    
+    // Multi-column layout for skills and other appropriate sections
+    .section.skills {
+        .skill-category {
+            display: inline-block;
+            width: 48%;
+            margin-right: 2%;
+            vertical-align: top;
+            
+            &:nth-child(even) {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+// Hybrid layout styles - for layouts that combine columns and whole page sections
+.cv-body.columns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto; // Allow variable height for hybrid layouts
+    margin: 0;
+    padding: 0;
+    
+    // Adjust column heights for hybrid layouts
+    .left-column, .right-column {
+        height: auto; // Let columns size to their content
+    }
+}
+
+// When whole page follows columns, adjust spacing and layout
+.cv-body.whole-page {
+    // If this comes after columns, don't repeat the name/contact styling
+    &:not(:first-child) .name,
+    &:not(:first-child) .contact-info {
+        display: none; // Hide duplicate name/contact info in whole page section
+    }
+    
+    // When used in hybrid mode (after columns), use layout padding instead
+    &:not(:first-child) .whole-page-column {
+        padding-top: 0; // Remove automatic padding - use layout padding instead
+    }
+}
+
+// For pages with whole page content, maintain strict A4 dimensions
+page.has-whole-page {
+    height: 29.7cm; // Keep exact A4 height
+    width: 21cm; // Keep exact A4 width
+    overflow: hidden; // Hide content that extends beyond page boundaries
+    position: relative; // Enable absolute positioning for footer
+}
+
+// Auto page break styling
+page.auto-page-break {
+    page-break-after: auto;
+    page-break-inside: avoid;
+    
+    // Ensure content flows naturally across pages
+    .cv-body.whole-page .whole-page-column {
+        height: auto; // Allow natural content height
+        overflow: visible; // Allow content to flow
+        page-break-inside: avoid; // Try to keep sections together
+    }
+    
+    // Break sections that are too long
+    .section {
+        page-break-inside: auto;
+        break-inside: auto;
+    }
+}
+
+// Multi-page layout adjustments
+page:not(:first-child) {
+    // Apply consistent top margin for continuation pages
+    .cv-body.whole-page .whole-page-column {
+        padding-top: $page-margin !important; // Force page margin on continuation pages
+    }
+    
+    // Hide name and contact info on subsequent pages to save space
+    .name, .contact-info, .contact-info-wide {
+        display: none;
+    }
+}
+
+// Ensure consistent page margins for all pages
+page {
+    .cv-body.whole-page .whole-page-column {
+        padding-top: $page-margin; // Default top margin
+        padding-bottom: $page-margin; // Bottom margin for all pages
+        padding-left: $page-margin;
+        padding-right: $page-margin;
+        
+        // Override any inline styles for continuation pages
+        &[style*="padding-top"] {
+            padding-top: $page-margin !important;
+        }
+    }
+    
+    // First page with columns should still respect layout padding for column section
+    &:first-child .cv-body.columns {
+        padding-top: 0.5cm; // Use layout padding for column sections
+    }
+}
+
+// Keep footer at exact bottom of A4 page
+page.has-whole-page footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4.25cm; // Maintain original footer height
+}
+
+// Ensure whole page content fits within page and doesn't overlap footer
+page.has-whole-page .cv-body.whole-page .whole-page-column {
+    // Restore background and basic layout
+    background-color: var(--right-column-color);
+    color: var(--right-text-color);
+    width: 100%; // Take full width, margins handled by padding
+    
+    // Use consistent page margins and account for footer
+    min-height: calc(29.7cm - #{$page-margin} - #{$page-margin} - 4.25cm); // Total height - top margin - bottom margin - footer
+    max-height: calc(29.7cm - #{$page-margin} - #{$page-margin} - 4.25cm);
+    overflow: visible; // Allow content to extend beyond container for auto page breaks
+    box-sizing: border-box; // Include padding in height calculation
+    
+    // Compact styling for whole page layouts to fit more content
+    .section {
+        margin-bottom: 0.4cm; // Reduced from 0.75cm
+        
+        .experience-item, .education-item {
+            margin-bottom: 0.3cm; // Reduced spacing between items
+        }
+        
+        ul li {
+            margin-bottom: 0.1cm; // Reduced list item spacing
+        }
+        
+        .experience-header, .education-item-header {
+            margin-bottom: 0.2cm; // Reduced header spacing
+        }
+    }
+}
+
+// Wide template styles for better space utilization
+.education-wide {
+    .education-item-wide {
+        margin-bottom: 0.3cm; // More compact spacing
+        
+        .education-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1cm; // Reduced gap
+        }
+        
+        .education-main {
+            h3 {
+                margin-bottom: 0.05cm; // Tighter spacing
+                font-size: $font-size-h3; // Restored original font size
+            }
+            
+            .education-institution-line {
+                display: flex;
+                align-items: center;
+                gap: 0.4cm;
+                font-size: $font-size-small; // Restored original font size
+                color: #666;
+                overflow: hidden;
+                
+                span {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.15cm; // Reduced gap
+                    white-space: nowrap;
+                    
+                    i {
+                        font-size: 0.8em; // Restored original icon size
+                    }
+                }
+                
+                // Institution takes priority
+                .institution {
+                    flex-shrink: 0;
+                    max-width: 45%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                // Location is optional and will be hidden when space is tight
+                .location.optional {
+                    flex-shrink: 1;
+                    min-width: 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    
+                    // Hide completely when there's not enough space
+                    @media print {
+                        display: none;
+                    }
+                }
+                
+                // Dates are essential, never hide
+                .dates {
+                    flex-shrink: 0;
+                    margin-left: auto; // Push to the right
+                }
+                
+                // GPA stays visible if present
+                .gpa {
+                    flex-shrink: 0;
+                }
+            }
+        }
+        
+        .education-details-wide {
+            margin-top: 0.15cm; // Slightly more space from the institution line
+            
+            ul {
+                margin: 0;
+                padding-left: 0; // Remove indentation for cleaner look
+                list-style: none; // Remove bullet points
+                
+                li {
+                    margin-bottom: 0.08cm; // Better spacing between items
+                    font-size: $font-size-small;
+                    position: relative;
+                    padding-left: 0.4cm; // Space for custom bullet
+                    
+                    // Custom bullet point
+                    &::before {
+                        content: "•";
+                        color: var(--highlight-color);
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        font-size: 0.8em;
+                    }
+                    
+                    // Ensure text wraps nicely
+                    line-height: 1.2;
+                    text-align: justify;
+                }
+            }
+        }
+    }
+}
+
+.skills-wide {
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(4.8cm, 1fr)); // Converted from 180px to cm
+        gap: 0.3cm; // Reduced gap significantly
+        margin-top: 0.1cm; // Minimal top margin
+    }
+    
+    .skill-category-wide {
+        h3 {
+            margin-bottom: 0.1cm; // Much reduced margin
+            font-size: $font-size-h3 * 0.95; // Slightly smaller heading
+            color: var(--highlight-color);
+            line-height: 1; // Tighter line height
+        }
+        
+        .tags-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.1cm; // Minimal spacing between tags
+        }
+        
+        .cvtag-wide {
+            display: inline-block;
+            padding: 0.03cm 0.15cm; // Much smaller padding
+            background-color: #f5f5f5;
+            border-radius: 0.08cm; // Smaller radius
+            font-size: $font-size-small * 0.9; // Slightly smaller font
+            border: 1px solid #e0e0e0;
+            margin: 0;
+            white-space: nowrap;
+            line-height: 1.1; // Tighter line height
+            
+            &:hover {
+                background-color: #e8e8e8;
+            }
+        }
+    }
+}
+
+// Skills wide2 template - single line per category
+.skills-wide2 {
+    h2 {
+        margin-bottom: 0.15cm;
+        font-size: $font-size-h2;
+        color: var(--right-text-color);
+        border-bottom: 1px solid var(--highlight-color);
+        padding-bottom: 0.05cm;
+    }
+    
+    .skills-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.08cm; // Slightly more gap between lines
+        background: #f8f9fa;
+        padding: 0.15cm 0.2cm;
+        border-radius: 0.1cm;
+        border-left: 3px solid var(--highlight-color);
+    }
+    
+    .skill-line {
+        display: flex;
+        align-items: baseline;
+        gap: 0.2cm;
+        margin: 0;
+        padding: 0.02cm 0;
+        
+        .category-label {
+            font-weight: 700;
+            font-size: $font-size-small * 1.05;
+            color: var(--right-text-color);
+            min-width: 3.5cm; // Fixed width for alignment
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.02cm;
+        }
+        
+        .tags-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.08cm;
+            flex: 1;
+            align-items: center;
+            
+            .skill-tag {
+                display: inline-block;
+                font-size: $font-size-small * 0.9;
+                font-weight: 500;
+                color: var(--right-text-color);
+                background: linear-gradient(135deg, 
+                    rgba(91, 59, 140, 0.1) 0%, 
+                    rgba(91, 59, 140, 0.05) 100%);
+                padding: 0.03cm 0.12cm;
+                border-radius: 0.08cm;
+                border: 1px solid rgba(91, 59, 140, 0.2);
+                white-space: nowrap;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background: linear-gradient(135deg, 
+                        rgba(91, 59, 140, 0.15) 0%, 
+                        rgba(91, 59, 140, 0.08) 100%);
+                    border-color: rgba(91, 59, 140, 0.3);
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// Professional Certifications wide template
+.certifications-wide {
+    h2 {
+        margin-bottom: 0.15cm;
+        font-size: $font-size-h2;
+        color: var(--right-text-color);
+        border-bottom: 1px solid var(--highlight-color);
+        padding-bottom: 0.05cm;
+    }
+    
+    .certifications-list {
+        background: #f8f9fa;
+        padding: 0.15cm 0.2cm;
+        border-radius: 0.1cm;
+        border-left: 3px solid var(--highlight-color);
+    }
+    
+    .cert-line {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0.02cm 0;
+        
+        .tags-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.08cm;
+            align-items: center;
+            
+            .cert-tag {
+                display: inline-block;
+                font-size: $font-size-small * 0.9;
+                font-weight: 500;
+                color: var(--right-text-color);
+                background: linear-gradient(135deg, 
+                    rgba(91, 59, 140, 0.1) 0%, 
+                    rgba(91, 59, 140, 0.05) 100%);
+                padding: 0.03cm 0.12cm;
+                border-radius: 0.08cm;
+                border: 1px solid rgba(91, 59, 140, 0.2);
+                white-space: nowrap;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background: linear-gradient(135deg, 
+                        rgba(91, 59, 140, 0.15) 0%, 
+                        rgba(91, 59, 140, 0.08) 100%);
+                    border-color: rgba(91, 59, 140, 0.3);
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// Academic Awards wide template
+.awards-wide {
+    h2 {
+        margin-bottom: 0.15cm;
+        font-size: $font-size-h2;
+        color: var(--right-text-color);
+        border-bottom: 1px solid var(--highlight-color);
+        padding-bottom: 0.05cm;
+    }
+    
+    .awards-list {
+        background: #f8f9fa;
+        padding: 0.15cm 0.2cm;
+        border-radius: 0.1cm;
+        border-left: 3px solid var(--highlight-color);
+    }
+    
+    .awards-line {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0.02cm 0;
+        
+        .tags-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.08cm;
+            align-items: center;
+            
+            .award-tag {
+                display: inline-block;
+                font-size: $font-size-small * 0.85;
+                font-weight: 500;
+                color: var(--right-text-color);
+                background: linear-gradient(135deg, 
+                    rgba(91, 59, 140, 0.1) 0%, 
+                    rgba(91, 59, 140, 0.05) 100%);
+                padding: 0.03cm 0.12cm;
+                border-radius: 0.08cm;
+                border: 1px solid rgba(91, 59, 140, 0.2);
+                white-space: nowrap;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background: linear-gradient(135deg, 
+                        rgba(91, 59, 140, 0.15) 0%, 
+                        rgba(91, 59, 140, 0.08) 100%);
+                    border-color: rgba(91, 59, 140, 0.3);
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// Combined Skills, Certifications, and Awards template
+.skills-combined {
+    h2 {
+        margin-bottom: 0.15cm;
+        font-size: $font-size-h2;
+        color: var(--right-text-color);
+        border-bottom: 1px solid var(--highlight-color);
+        padding-bottom: 0.05cm;
+    }
+    
+    .skills-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.08cm;
+        background: #f8f9fa;
+        padding: 0.15cm 0.2cm;
+        border-radius: 0.1cm;
+        border-left: 3px solid var(--highlight-color);
+    }
+    
+    .skill-line {
+        display: flex;
+        align-items: baseline;
+        gap: 0.2cm;
+        margin: 0;
+        padding: 0.02cm 0;
+        
+        .category-label {
+            font-weight: 700;
+            font-size: $font-size-small * 1.05;
+            color: var(--right-text-color);
+            min-width: 4.5cm; // Slightly wider to accommodate longer category names
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.02cm;
+        }
+        
+        .tags-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.08cm;
+            flex: 1;
+            align-items: center;
+            
+            .skill-tag {
+                display: inline-block;
+                font-size: $font-size-small * 0.9;
+                font-weight: 500;
+                color: var(--right-text-color);
+                background: linear-gradient(135deg, 
+                    rgba(91, 59, 140, 0.1) 0%, 
+                    rgba(91, 59, 140, 0.05) 100%);
+                padding: 0.03cm 0.12cm;
+                border-radius: 0.08cm;
+                border: 1px solid rgba(91, 59, 140, 0.2);
+                white-space: nowrap;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background: linear-gradient(135deg, 
+                        rgba(91, 59, 140, 0.15) 0%, 
+                        rgba(91, 59, 140, 0.08) 100%);
+                    border-color: rgba(91, 59, 140, 0.3);
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// Wide personal info template
+.contact-info-wide {
+    .contact-line {
+        display: flex;
+        flex-wrap: nowrap; // Force single line
+        gap: 0.5cm; // Reduced gap
+        align-items: center;
+        justify-content: flex-start; // Left align instead of center
+        margin-bottom: 0.3cm; // Reduced margin
+        overflow: hidden; // Hide overflow instead of wrapping
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.15cm; // Reduced gap between icon and text
+            font-size: $font-size-small;
+            color: var(--left-text-color);
+            white-space: nowrap;
+            flex-shrink: 1; // Allow items to shrink if needed
+            
+            i {
+                font-size: 0.9em;
+                color: var(--highlight-color);
+                width: 0.8em; // Smaller consistent icon width
+                text-align: center;
+                flex-shrink: 0; // Icons don't shrink
+            }
+            
+            .contact-text {
+                font-weight: normal;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        // Responsive behavior for when space gets tight
+        @media print {
+            gap: 0.4cm; // Even tighter spacing for print
+            
+            .contact-item {
+                gap: 0.1cm; // Minimal gap for print
+            }
+        }
+    }
+}

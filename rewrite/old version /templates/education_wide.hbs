@@ -1,0 +1,27 @@
+<div class="section education-wide">
+    <h2>Education</h2>
+    {{#each items}}
+    <div class="education-item-wide">
+        <div class="education-row">
+            <div class="education-main">
+                <h3>{{degree}}</h3>
+                <div class="education-institution-line">
+                    <span class="institution"><i class="fa fa-university"></i> {{institution}}</span>
+                    {{#if location}}<span class="location optional"><i class="fa fa-map-marker"></i> {{location}}</span>{{/if}}
+                    <span class="dates"><i class="fa fa-calendar"></i> {{dates}}</span>
+                    {{#if gpa}}<span class="gpa">GPA: {{gpa}}</span>{{/if}}
+                </div>
+            </div>
+            {{#if details}}
+            <div class="education-details-wide">
+                <ul>
+                    {{#each details}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+    {{/each}}
+</div>

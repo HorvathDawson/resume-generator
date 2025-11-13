@@ -1,0 +1,15 @@
+<div class="section skills-wide2">
+    <h2>Skills</h2>
+    <div class="skills-list">
+        {{#each items}}
+        <div class="skill-line">
+            <span class="category-label">{{category}}:</span>
+            <div class="tags-inline">
+                {{#each tags}}
+                <span class="skill-tag">{{this}}</span>
+                {{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>

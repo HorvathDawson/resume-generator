@@ -1,0 +1,16 @@
+<div class="section">
+    <h2>Academic Awards</h2>
+    <ul>
+        {{#each items}}
+        <li>
+            <div class="award-item">
+                <div class="award-name">{{name}}</div>
+                <div class="award-details">
+                    {{#if organization}}<span class="organization">{{organization}}</span>{{/if}}
+                    {{#if dates}}<span class="dates">{{dates}}</span>{{/if}}
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+</div>
