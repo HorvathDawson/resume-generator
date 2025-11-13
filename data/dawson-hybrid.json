@@ -1,0 +1,242 @@
+{
+  "_comment": "Resume Configuration Example - Advanced Multi-Page Layout",
+  "_configOptions": {
+    "footerType": "Available: 'default', 'modern', 'minimal', 'mountains', 'mountains-random', 'none'",
+    "footerMargin": "Bottom margin for footer in cm (e.g., '2.5cm') - reduces effective page height",
+    "pageMargins": "Page margins in cm (e.g., '1.0cm')",
+    "autoPageBreak": "Enable intelligent page splitting (boolean)",
+    "layout": "Array of page layout configurations",
+    "templateVariants": "Use :wide, :wide2 suffixes for different section styles"
+  },
+  "name": "Dawson Horvath",
+  "pageMargins": "1.0cm",
+  "footerType": "mountains-random:1337",
+  "footerMargin": "0.0cm",
+  "personal_info": {
+    "email": "horvath.dawson@gmail.com",
+    "phone": "1-250-306-0343",
+    "website": "dawsonhorvath.com",
+    "github": "HorvathDawson",
+    "linkedin": "horvathdawson",
+    "location": "Vancouver, BC, Canada"
+  },
+  "layout": [
+    {
+      "_layoutComment": "Multi-page layout with intelligent splitting",
+      "autoPageBreak": true,
+      "left": [
+        "name"
+      ],
+      "right": [
+        "Career Summary"
+      ],
+      "wholePage": [
+        "personal_info:wide",
+        "Education:wide",
+        "Skills:wide2",
+        "Work Experience",
+        "Projects",
+        "Professional Certifications:wide"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Career Summary",
+      "summary": "Innovative and adaptable Engineering Physicist with over three years of experience in robotics, mechatronics, and software engineering. Skilled in designing and building high-throughput automation systems, with expertise in real-time data acquisition, image processing, and instrument control. Proficient in Python, C++, LabVIEW, front-end languages, and Go, with a proven track record of delivering impactful solutions in robotics and automation. Experienced in developing advanced imaging systems, control software, and scalable dashboards, driving efficiency and enhancing data accuracy across multidisciplinary teams. A passionate problem-solver who thrives in dynamic environments, blending technical precision with creativity."
+    },
+    {
+      "title": "Education",
+      "items": [
+        {
+          "institution": "University of British Columbia",
+          "location": "Vancouver, BC",
+          "degree": "B.ASc., Engineering Physics",
+          "dates": "2018 – 2022",
+          "details": [
+            "GPA: 3.7/4.0"
+          ]
+        },
+        {
+          "institution": "Thompson Rivers University",
+          "location": "Kamloops, BC",
+          "degree": "Engineering Transfer Program",
+          "dates": "2017 – 2018",
+          "details": [
+            "GPA: 4.0/4.0"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Work Experience",
+      "items": [
+        {
+          "title": "Mechatronics Engineer",
+          "organization": "AbCellera Biologics Inc",
+          "location": "Vancouver, BC",
+          "dates": "May 2020 – Current",
+          "details": [
+            "Built a real-time fleet management dashboard using Go, SQLite, HTML, CSS, and JavaScript to monitor robot metrics, environmental data, and experiment progress. Integrated a unified data schema and visualized recovered cell locations to improve cross-team collaboration.",
+            "Increased cell transportation speed 3x by transitioning liquid handling from open-loop to calibrated closed-loop control, leveraging vision-based measurements to ensure accuracy and maintain high cell viability.",
+            "Designed and implemented image processing pipelines with Python, C++, and LabVIEW, featuring meniscus detection in micro-capillaries, multi-exposure HDR, flat-field correction, and more, enhancing screening performance.",
+            "Engineered a custom schlieren imaging system using a lenticular lens array, inspired by \"Hand-Held Schlieren Photography with Light Field Probes,\" to capture transparent media refractions with commodity hardware.",
+            "Delivered new single-cell recovery instrument control software in LabVIEW and Python, incorporating robot routines, state machine logic, operator UIs, and imaging pipelines. Completed the project three weeks ahead of a critical demo day.",
+            "Developed a monitoring tool to verify past recovery states, enable retries for failed recoveries, and reduce potential cell loss by up to 50%. Automated data consolidation into a single PDF report with machine learning summaries for troubleshooting and communication.",
+            "Manufactured PDMS microfluidic devices in a Class 1000 cleanroom, critical for high-throughput single-cell screening. Conducted photolithography, mold preparation, and device assembly to ensure precision and reliability in biological assays."
+          ]
+        },
+        {
+          "title": "SRF Development Intern",
+          "organization": "TRIUMF Particle Accelerator",
+          "location": "Vancouver, BC",
+          "dates": "Jan. 2019 – May 2019",
+          "details": [
+            "Led the design and implementation of a UHV induction furnace, enabling doping of niobium superconductors with gas compounds and removal of hydrides. Achieved a 10x improvement in the SRF cavity quench limit.",
+            "Developed an advanced magnetic field controller that integrates a 3-axis fluxgate magnetometer to dynamically adjust electromagnet currents, effectively neutralizing the Earth's ambient magnetic field.",
+            "Contributed to the maintenance and reassembly of cryostats in ultra-clean environments (Class 1000, 100, and 10 cleanrooms), ensuring optimal performance for precision applications."
+          ]
+        },
+        {
+          "title": "Fullstack Developer",
+          "organization": "Streamline Transportation Technology",
+          "location": "Vancouver, BC",
+          "dates": "Apr. 2018 – Sep. 2018",
+          "details": [
+            "Designed and implemented a full-stack web application using Node.js and AngularJS, automating previously manual workflows and significantly improving operational efficiency.",
+            "Enhanced the QA automation framework by completing Protractor scripts and extending helper classes, leading to more robust and efficient automated testing processes.",
+            "Collaborated closely with team members to identify and resolve technical challenges in the company's flagship product, ensuring smoother performance and higher reliability."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Projects",
+      "items": [
+        {
+          "title": "Open Sim2Real Project",
+          "organization": "Open Source",
+          "dates": "2022",
+          "details": [
+            "Developed an open-source platform for Sim2Real research with a low-cost single-leg robot and simulation, supporting training in both real and simulated environments using the gym framework.",
+            "Handled embedded systems, drivers, backend development, and integration with the gym framework as part of a four-person team.",
+            "Made Sim2Real research more accessible for transitioning from simulation to real-world applications."
+          ]
+        },
+        {
+          "title": "1950 Austin A40 Restoration",
+          "organization": "Personal Project",
+          "dates": "2019 – Current",
+          "details": [
+            "Undertaking a frame-up restoration including SR20DET engine installation and upgrading to double wishbone suspension.",
+            "Features modern rack-and-pinion steering, upgraded brakes, and safety improvements like collapsible steering column, seatbelts, and roll cage.",
+            "Custom dash design blending modern functionality with classic aesthetic."
+          ]
+        },
+        {
+          "title": "Simulated Gazebo Robot",
+          "organization": "UBC Engineering Physics",
+          "dates": "2019",
+          "details": [
+            "Designed and simulated an autonomous robot in a Gazebo environment using ROS.",
+            "Implemented machine learning and computer vision algorithms to enable license plate reading, obstacle avoidance, and optimized navigation."
+          ]
+        },
+        {
+          "title": "Robot Design Competition",
+          "organization": "UBC Engineering Physics",
+          "dates": "2019",
+          "details": [
+            "Collaborated with a small team to engineer a fully autonomous robot for the Engineering Physics Robot Competition.",
+            "Led the design of custom drivetrain, SPI communication, control loop, and mechanical systems.",
+            "Followed rigorous review process emphasizing engineering communication, reliability, and testing."
+          ]
+        },
+        {
+          "title": "DIY Electric Skateboard",
+          "organization": "Personal Project",
+          "dates": "2017",
+          "details": [
+            "Designed and prototyped an electric skateboard capable of commuting 20+ km daily at speeds exceeding 30 km/h.",
+            "Engineered a robust powertrain system with optimized battery efficiency for extended reliability."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Skills",
+      "items": [
+        {
+          "category": "Software Development",
+          "tags": [
+            "Python",
+            "LabVIEW",
+            "C++",
+            "Go",
+            "JavaScript",
+            "MATLAB",
+            "SQLite",
+            "Git",
+            "Linux",
+            "PyTorch",
+            "OpenCV",
+            "Machine Learning",
+            "Computer Vision",
+            "Data Analysis"
+          ]
+        },
+        {
+          "category": "Hardware & Prototyping",
+          "tags": [
+            "Circuit Design",
+            "Arduino",
+            "SolidWorks",
+            "Onshape",
+            "Prototyping",
+            "PCB Design",
+            "Sensor Integration",
+            "Embedded Systems"
+          ]
+        },
+        {
+          "category": "Fabrication & Hands-On",
+          "tags": [
+            "Machining",
+            "Soldering",
+            "Welding",
+            "3D Printing",
+            "Laser Cutting",
+            "Waterjet Cutting",
+            "CNC Operation",
+            "Mechanical Assembly"
+          ]
+        },
+        {
+          "category": "Design & Media",
+          "tags": [
+            "Web Development",
+            "HTML",
+            "CSS",
+            "Photoshop",
+            "LaTeX",
+            "UI/UX Design"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Professional Certifications",
+      "items": [
+        {
+          "name": "Engineering Physics Degree"
+        },
+        {
+          "name": "Cleanroom Operations Certified"
+        },
+        {
+          "name": "Full-Stack Web Development"
+        }
+      ]
+    }
+  ]
+}
