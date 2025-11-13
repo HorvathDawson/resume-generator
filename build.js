@@ -132,6 +132,8 @@ $highlight-color: ${highlightColor};
           return compiledPartials['footer-minimal'] || compiledPartials.footer;
         case 'mountains':
           return compiledPartials['footer-mountains'] || compiledPartials.footer;
+        case 'fish':
+          return compiledPartials['footer-fish'] || compiledPartials.footer;
         case 'none':
           return compiledPartials['footer-none'] || (() => '</body>\n</html>');
         case 'default':
@@ -634,15 +636,18 @@ $highlight-color: ${highlightColor};
       
       console.log('📊 Using measured heights for page layout');
       
-      // Calculate effective page height: 29.7cm (A4) - 1cm top margin - 1cm bottom margin - 4.25cm footer = 23.45cm
-      let maxPageHeight = 23.45; // Actual available content height
+      // Calculate effective page height with conservative margin for whole page sections
+      // Base: 29.7cm (A4) - 1cm top margin - 1cm bottom margin - 4.25cm footer = 23.45cm
+      // Conservative reduction: -1.45cm safety margin for section spacing, measurement inaccuracies, and padding
+      // This prevents overflow that occurs when measurements don't account for all CSS spacing
+      let maxPageHeight = 22.0; // Conservative height to prevent page overflow
       const footerMargin = pageLayout.footerMargin || resumeData.footerMargin;
       if (footerMargin) {
         const footerMarginValue = parseFloat(footerMargin.replace('cm', ''));
         maxPageHeight -= footerMarginValue;
         console.log(`📏 Footer margin: ${footerMarginValue}cm, Effective page height: ${maxPageHeight}cm`);
       } else {
-        console.log(`📏 Using standard page height: ${maxPageHeight}cm (29.7cm A4 - 1cm margins - 4.25cm footer)`);
+        console.log(`📏 Using conservative page height: ${maxPageHeight}cm (23.45cm base - 1.45cm safety margin for section spacing)`);
       }
       const pages = [];
       let currentPage = [];
@@ -654,6 +659,7 @@ $highlight-color: ${highlightColor};
       
       // Account for column content on the first page with actual measurements
       let hasColumnContent = pageLayout.left || pageLayout.right;
+      let columnHeight = 0;
       if (hasColumnContent && currentPage.length === 0) {
         let leftColumnHeight = 0;
         let rightColumnHeight = 0;
@@ -663,7 +669,12 @@ $highlight-color: ${highlightColor};
         leftColumnHeight = columnMeasurements.left.reduce((sum, height) => sum + height, 0);
         rightColumnHeight = columnMeasurements.right.reduce((sum, height) => sum + height, 0);
         
+        // Use the height of the taller column as this determines space consumed on page
+        columnHeight = Math.max(leftColumnHeight, rightColumnHeight);
+        currentHeight += columnHeight; // Subtract column space from available whole page space
+        
         console.log(`📏 Left column: ${leftColumnHeight}cm, Right column: ${rightColumnHeight}cm`);
+        console.log(`📏 Column space used: ${columnHeight}cm, Remaining space for whole page: ${maxPageHeight - currentHeight}cm`);
         console.log(`📏 Note: Using auto-break mode - sections will be placed individually`);
       }
 

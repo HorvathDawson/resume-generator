@@ -1,7 +1,7 @@
 {
   "_comment": "Resume Configuration Example - Advanced Multi-Page Layout",
   "_configOptions": {
-    "footerType": "Available: 'default', 'modern', 'minimal', 'mountains', 'mountains-random', 'none'",
+    "footerType": "Available: 'default', 'modern', 'minimal', 'mountains', 'mountains-random', 'fish', 'none'",
     "footerMargin": "Bottom margin for footer in cm (e.g., '2.5cm') - reduces effective page height",
     "pageMargins": "Page margins in cm (e.g., '1.0cm')",
     "autoPageBreak": "Enable intelligent page splitting (boolean)",
@@ -10,7 +10,7 @@
   },
   "name": "Dawson Horvath",
   "pageMargins": "1.0cm",
-  "footerType": "mountains-random:1337",
+  "footerType": "fish",
   "footerMargin": "0.0cm",
   "personal_info": {
     "email": "horvath.dawson@gmail.com",
@@ -22,18 +22,17 @@
   },
   "layout": [
     {
-      "_layoutComment": "Multi-page layout with intelligent splitting",
       "autoPageBreak": true,
       "left": [
-        "name"
+        "name",
+        "personal_info",
+        "Education"
       ],
       "right": [
-        "Career Summary"
+        "Career Summary",
+        "Skills:wide2"
       ],
       "wholePage": [
-        "personal_info:wide",
-        "Education:wide",
-        "Skills:wide2",
         "Work Experience",
         "Projects",
         "Professional Certifications:wide"
