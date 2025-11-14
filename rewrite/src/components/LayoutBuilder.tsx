@@ -3,7 +3,10 @@ import type { ResumeData } from '../types';
 
 import { SectionSplittingManager } from './SectionSplittingManager';
 import { SectionTemplateSelector } from './SectionTemplateSelector';
+import { GlobalStylesPanel } from './GlobalStylesPanel';
+import type { FooterConfig } from './Footer';
 import './LayoutBuilder.css';
+import './GlobalStylesPanel.css';
 
 interface LayoutBuilderProps {
   resumeData: ResumeData;
@@ -15,6 +18,7 @@ interface PageLayout {
   id: string;
   pageNumber: number;
   rows: LayoutRow[];
+  footer?: FooterConfig;
 }
 
 interface LayoutRow {
@@ -437,6 +441,62 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     onLayoutChange({ pages: renumberedPages.map(p => ({ ...p, rows: p.rows })) });
   };
 
+  // Padding section creation function
+  const createPaddingSection = (height: string) => {
+    if (!onResumeDataChange) return;
+
+    // Generate unique ID for the padding section
+    const paddingId = `padding-${Date.now()}`;
+    
+    // Create the padding section
+    const paddingSection = {
+      id: paddingId,
+      title: `Spacing (${height})`,
+      type: 'padding' as const,
+      templateId: 'padding-custom',
+      isVisible: true,
+      items: [],
+      customFields: {
+        height: height
+      }
+    };
+
+    // Add to resume data
+    const newSections = [...(resumeData.sections || []), paddingSection];
+    const updatedResumeData = {
+      ...resumeData,
+      sections: newSections
+    };
+
+    onResumeDataChange(updatedResumeData);
+  };
+
+  // Update padding section height
+  const updatePaddingSectionHeight = (sectionId: string, newHeight: string) => {
+    if (!onResumeDataChange) return;
+
+    const updatedSections = resumeData.sections?.map(section => {
+      if (section.id === sectionId && section.type === 'padding') {
+        return {
+          ...section,
+          title: `Spacing (${newHeight})`,
+          customFields: {
+            ...section.customFields,
+            height: newHeight
+          }
+        };
+      }
+      return section;
+    }) || [];
+
+    const updatedResumeData = {
+      ...resumeData,
+      sections: updatedSections
+    };
+
+    onResumeDataChange(updatedResumeData);
+  };
+
   // Section splitting handlers - create actual separate sections
   const handleSplitSection = (originalSectionId: string, splitData: { sections: any[] }) => {
     if (!onResumeDataChange) return;
@@ -714,6 +774,199 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     }
   };
 
+  // Cycle column background between white, secondary, and primary colors
+  const toggleColumnBackground = (rowIndex: number, columnIndex: number) => {
+    const updatedPages = [...pages];
+    const row = updatedPages[currentPageIndex].rows[rowIndex];
+    
+    if (row.type === 'columns' && row.columns) {
+      const column = row.columns[columnIndex];
+      const primaryColor = resumeData.layout?.globalStyles?.colorScheme?.primary || '#2c5aa0';
+      const secondaryColor = resumeData.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa';
+      const textColor = resumeData.layout?.globalStyles?.colorScheme?.text || '#333333';
+      
+      // Cycle through: white -> secondary -> primary -> white
+      let newBackgroundColor = '#ffffff';
+      let newTextColor = textColor;
+      
+      if (column.backgroundColor === '#ffffff' || !column.backgroundColor) {
+        // White -> Secondary
+        newBackgroundColor = secondaryColor;
+        newTextColor = textColor;
+      } else if (column.backgroundColor === secondaryColor) {
+        // Secondary -> Primary
+        newBackgroundColor = primaryColor;
+        newTextColor = '#ffffff';
+      } else {
+        // Primary (or any other color) -> White
+        newBackgroundColor = '#ffffff';
+        newTextColor = textColor;
+      }
+      
+      row.columns[columnIndex] = {
+        ...column,
+        backgroundColor: newBackgroundColor,
+        textColor: newTextColor
+      };
+      
+      setPages(updatedPages);
+      
+      // Update the layout
+      const currentPage = pages[currentPageIndex];
+      const updatedCurrentPage = {
+        ...currentPage,
+        rows: [...updatedPages[currentPageIndex].rows]
+      };
+      
+      onLayoutChange({
+        pages: updatedPages.map((page, idx) => 
+          idx === currentPageIndex ? updatedCurrentPage : page
+        )
+      });
+    }
+  };
+
+  // Cycle whole page row background between white, secondary, and primary colors
+  const toggleWholePageBackground = (rowIndex: number) => {
+    const updatedPages = [...pages];
+    const row = updatedPages[currentPageIndex].rows[rowIndex];
+    
+    if (row.type === 'wholePage') {
+      const primaryColor = resumeData.layout?.globalStyles?.colorScheme?.primary || '#2c5aa0';
+      const secondaryColor = resumeData.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa';
+      const textColor = resumeData.layout?.globalStyles?.colorScheme?.text || '#333333';
+      
+      // Cycle through: white -> secondary -> primary -> white
+      let newBackgroundColor = '#ffffff';
+      let newTextColor = textColor;
+      
+      if (row.backgroundColor === '#ffffff' || !row.backgroundColor) {
+        // White -> Secondary
+        newBackgroundColor = secondaryColor;
+        newTextColor = textColor;
+      } else if (row.backgroundColor === secondaryColor) {
+        // Secondary -> Primary
+        newBackgroundColor = primaryColor;
+        newTextColor = '#ffffff';
+      } else {
+        // Primary (or any other color) -> White
+        newBackgroundColor = '#ffffff';
+        newTextColor = textColor;
+      }
+      
+      updatedPages[currentPageIndex].rows[rowIndex] = {
+        ...row,
+        backgroundColor: newBackgroundColor,
+        textColor: newTextColor
+      };
+      
+      setPages(updatedPages);
+      
+      // Update the layout
+      const currentPage = pages[currentPageIndex];
+      const updatedCurrentPage = {
+        ...currentPage,
+        rows: [...updatedPages[currentPageIndex].rows]
+      };
+      
+      onLayoutChange({
+        pages: updatedPages.map((page, idx) => 
+          idx === currentPageIndex ? updatedCurrentPage : page
+        )
+      });
+    }
+  };
+
+  // Set custom text color for column
+  const setColumnTextColor = (rowIndex: number, columnIndex: number, color: string) => {
+    const updatedPages = [...pages];
+    const row = updatedPages[currentPageIndex].rows[rowIndex];
+    
+    if (row.type === 'columns' && row.columns) {
+      row.columns[columnIndex] = {
+        ...row.columns[columnIndex],
+        textColor: color
+      };
+      
+      setPages(updatedPages);
+      
+      // Update the layout
+      const currentPage = pages[currentPageIndex];
+      const updatedCurrentPage = {
+        ...currentPage,
+        rows: [...updatedPages[currentPageIndex].rows]
+      };
+      
+      onLayoutChange({
+        pages: updatedPages.map((page, idx) => 
+          idx === currentPageIndex ? updatedCurrentPage : page
+        )
+      });
+    }
+  };
+
+  // Set custom text color for whole-page row
+  const setWholePageTextColor = (rowIndex: number, color: string) => {
+    const updatedPages = [...pages];
+    const row = updatedPages[currentPageIndex].rows[rowIndex];
+    
+    if (row.type === 'wholePage') {
+      updatedPages[currentPageIndex].rows[rowIndex] = {
+        ...row,
+        textColor: color
+      };
+      
+      setPages(updatedPages);
+      
+      // Update the layout
+      const currentPage = pages[currentPageIndex];
+      const updatedCurrentPage = {
+        ...currentPage,
+        rows: [...updatedPages[currentPageIndex].rows]
+      };
+      
+      onLayoutChange({
+        pages: updatedPages.map((page, idx) => 
+          idx === currentPageIndex ? updatedCurrentPage : page
+        )
+      });
+    }
+  };
+
+  // Update footer configuration for current page
+  const updatePageFooter = (footerType: 'none' | 'default' | 'mountains' | 'fish' | 'minimal' | 'modern') => {
+    const updatedPages = [...pages];
+    
+    // Set correct heights based on old implementation
+    const getFooterHeight = (type: string) => {
+      switch (type) {
+        case 'default': return '4.25cm';
+        case 'fish': return '4.25cm';
+        case 'mountains': return '2.5cm';
+        case 'modern': return '2cm';
+        case 'minimal': return '1cm';
+        default: return '2cm';
+      }
+    };
+    
+    updatedPages[currentPageIndex] = {
+      ...updatedPages[currentPageIndex],
+      footer: footerType === 'none' ? undefined : {
+        type: footerType,
+        height: getFooterHeight(footerType),
+        backgroundColor: 'transparent',
+        textColor: resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'
+      }
+    };
+    
+    setPages(updatedPages);
+    
+    // Update the layout
+    onLayoutChange({
+      pages: updatedPages
+    });
+  };
+
   // Helper function to update column width with percentage
   const updateColumnWidthSlider = (rowIndex: number, columnIndex: number, percentage: number) => {
     const updatedRows = [...currentPage.rows];
@@ -889,6 +1142,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       </div>
 
       <div className="layout-builder-content">
+        {/* Global Styles Panel */}
+        {onResumeDataChange && (
+          <GlobalStylesPanel 
+            resumeData={resumeData}
+            onResumeDataChange={onResumeDataChange}
+          />
+        )}
+
         {/* Page Management */}
         <div className="page-tabs">
           <div className="page-tab-list">
@@ -915,6 +1176,23 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             <button onClick={addNewPage} className="add-page-button">
               + Add Page
             </button>
+          </div>
+
+          {/* Footer Controls */}
+          <div className="footer-controls">
+            <label className="footer-label">Page Footer:</label>
+            <select
+              value={pages[currentPageIndex]?.footer?.type || 'none'}
+              onChange={(e) => updatePageFooter(e.target.value as any)}
+              className="footer-select"
+            >
+              <option value="none">No Footer</option>
+              <option value="default">Default Design</option>
+              <option value="minimal">Minimal Line</option>
+              <option value="modern">Modern Accent</option>
+              <option value="mountains">Mountains</option>
+              <option value="fish">Fish Design</option>
+            </select>
           </div>
         </div>
 
@@ -994,6 +1272,39 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                 </div>
               </>
             )}
+
+            {/* Padding Section Creator */}
+            <div className="padding-section-creator">
+              <h4 style={{ marginTop: '1.5rem', color: '#34d399' }}>Vertical Spacing</h4>
+              <div className="padding-templates">
+                {[
+                  { height: '0.25cm', label: 'Extra Small (0.25cm)' },
+                  { height: '0.5cm', label: 'Small (0.5cm)' },
+                  { height: '1cm', label: 'Medium (1cm)' },
+                  { height: '1.5cm', label: 'Large (1.5cm)' },
+                  { height: '2cm', label: 'Extra Large (2cm)' },
+                  { height: '3cm', label: 'XXL (3cm)' }
+                ].map((template) => (
+                  <div
+                    key={template.height}
+                    className="padding-template draggable"
+                    draggable
+                    onDragStart={(e) => {
+                      createPaddingSection(template.height);
+                      // Wait for state update, then find the new section and drag it
+                      setTimeout(() => {
+                        const newSection = availableSections.find(s => s.title.includes(`Spacing (${template.height})`));
+                        if (newSection) {
+                          handleDragStart(e, newSection.id);
+                        }
+                      }, 100);
+                    }}
+                  >
+                    📏 {template.label}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Layout rows for current page */}
@@ -1100,6 +1411,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, rowIndex, columnIndex)}
                     >
+                      {/* Column Header with Background Toggle */}
+                      <div className="column-header">
+                        <span className="column-title">Column {columnIndex + 1}</span>
+                        <div className="column-controls">
+                          <button
+                            className={`bg-toggle-btn ${column.backgroundColor !== '#ffffff' ? 'active' : ''}`}
+                            onClick={() => toggleColumnBackground(rowIndex, columnIndex)}
+                            title="Cycle background: White → Secondary → Primary"
+                          >
+                            🎨
+                          </button>
+                          <input
+                            type="color"
+                            value={column.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
+                            onChange={(e) => setColumnTextColor(rowIndex, columnIndex, e.target.value)}
+                            className="text-color-picker"
+                            title="Set text color"
+                          />
+                        </div>
+                      </div>
                       <div className="column-sections">
                         {column.sections.map((sectionId: string, sectionIndex: number) => {
                           const section = availableSections.find(s => s.id === sectionId);
@@ -1147,6 +1478,25 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 {section?.title || sectionId}
                               </span>
                               <div className="section-actions">
+                                {/* Special controls for padding sections */}
+                                {resumeData.sections?.find(s => s.id === sectionId)?.type === 'padding' && (
+                                  <select
+                                    className="padding-height-selector"
+                                    value={resumeData.sections?.find(s => s.id === sectionId)?.customFields?.height || '1cm'}
+                                    onChange={(e) => updatePaddingSectionHeight(sectionId, e.target.value)}
+                                    onClick={(e) => e.stopPropagation()}
+                                    title="Change padding height"
+                                  >
+                                    <option value="0.25cm">0.25cm</option>
+                                    <option value="0.5cm">0.5cm</option>
+                                    <option value="1cm">1cm</option>
+                                    <option value="1.5cm">1.5cm</option>
+                                    <option value="2cm">2cm</option>
+                                    <option value="3cm">3cm</option>
+                                    <option value="4cm">4cm</option>
+                                    <option value="5cm">5cm</option>
+                                  </select>
+                                )}
                                 <button
                                   className="remove-section-button"
                                   onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
@@ -1154,13 +1504,15 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 >
                                   ×
                                 </button>
-                                <button
-                                  className="template-button"
-                                  onClick={(e) => handleSectionRightClick(e, sectionId)}
-                                  title="Select template"
-                                >
-                                  🎨
-                                </button>
+                                {resumeData.sections?.find(s => s.id === sectionId)?.type !== 'padding' && (
+                                  <button
+                                    className="template-button"
+                                    onClick={(e) => handleSectionRightClick(e, sectionId)}
+                                    title="Select template"
+                                  >
+                                    ⚙
+                                  </button>
+                                )}
                               </div>
                             </div>
                             {/* Drop zone below each section */}
@@ -1206,6 +1558,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, rowIndex)}
                 >
+                  {/* Whole Page Header with Background Toggle */}
+                  <div className="whole-page-header">
+                    <span className="whole-page-title">Full Width Row</span>
+                    <div className="whole-page-controls">
+                      <button
+                        className={`bg-toggle-btn ${row.backgroundColor !== '#ffffff' ? 'active' : ''}`}
+                        onClick={() => toggleWholePageBackground(rowIndex)}
+                        title="Cycle background: White → Secondary → Primary"
+                      >
+                        🎨
+                      </button>
+                      <input
+                        type="color"
+                        value={row.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
+                        onChange={(e) => setWholePageTextColor(rowIndex, e.target.value)}
+                        className="text-color-picker"
+                        title="Set text color"
+                      />
+                    </div>
+                  </div>
                   <div className="whole-page-sections">
                         {row.sections?.map((sectionId: string, sectionIndex: number) => {
                       const section = availableSections.find(s => s.id === sectionId);                      
@@ -1251,6 +1623,25 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             {section?.title || sectionId}
                           </span>
                           <div className="section-actions">
+                            {/* Special controls for padding sections */}
+                            {resumeData.sections?.find(s => s.id === sectionId)?.type === 'padding' && (
+                              <select
+                                className="padding-height-selector"
+                                value={resumeData.sections?.find(s => s.id === sectionId)?.customFields?.height || '1cm'}
+                                onChange={(e) => updatePaddingSectionHeight(sectionId, e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                title="Change padding height"
+                              >
+                                <option value="0.25cm">0.25cm</option>
+                                <option value="0.5cm">0.5cm</option>
+                                <option value="1cm">1cm</option>
+                                <option value="1.5cm">1.5cm</option>
+                                <option value="2cm">2cm</option>
+                                <option value="3cm">3cm</option>
+                                <option value="4cm">4cm</option>
+                                <option value="5cm">5cm</option>
+                              </select>
+                            )}
                             <button
                               className="remove-section-button"
                               onClick={() => removeSectionFromRow(sectionId, rowIndex, undefined, sectionIndex)}
@@ -1258,13 +1649,15 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             >
                               ×
                             </button>
-                            <button
-                              className="template-button"
-                              onClick={(e) => handleSectionRightClick(e, sectionId)}
-                              title="Select template"
-                            >
-                              🎨
-                            </button>
+                            {resumeData.sections?.find(s => s.id === sectionId)?.type !== 'padding' && (
+                              <button
+                                className="template-button"
+                                onClick={(e) => handleSectionRightClick(e, sectionId)}
+                                title="Select template"
+                              >
+                                ⚙
+                              </button>
+                            )}
                           </div>
                         </div>
                         {/* Drop zone below each section */}

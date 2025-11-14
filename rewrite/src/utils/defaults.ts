@@ -213,6 +213,7 @@ export function createDefaultTemplateLibrary(): TemplateLibrary {
     'volunteer',
     'publications',
     'awards',
+    'padding',
     'custom',
   ];
 

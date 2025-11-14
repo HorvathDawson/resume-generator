@@ -54,6 +54,7 @@ export type SectionType =
   | 'volunteer'
   | 'publications'
   | 'awards'
+  | 'padding'
   | 'custom';
 
 // Page break definition for manual section splitting

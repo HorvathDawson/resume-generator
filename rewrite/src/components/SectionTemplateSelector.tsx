@@ -20,10 +20,46 @@ export const SectionTemplateSelector: React.FC<SectionTemplateSelectorProps> = (
   position
 }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [adjustedPosition, setAdjustedPosition] = useState(position);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Get available templates for this section type
   const availableTemplates = TEMPLATE_REGISTRY[sectionType] || [];
+
+  // Calculate optimal position to keep popup on screen
+  useEffect(() => {
+    if (dropdownRef.current) {
+      const popup = dropdownRef.current;
+      const rect = popup.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      let newX = position.x;
+      let newY = position.y;
+      
+      // Adjust horizontal position if popup would go off right edge
+      if (position.x + rect.width > viewportWidth - 20) {
+        newX = viewportWidth - rect.width - 20;
+      }
+      
+      // Adjust horizontal position if popup would go off left edge
+      if (newX < 20) {
+        newX = 20;
+      }
+      
+      // Adjust vertical position if popup would go off bottom edge
+      if (position.y + rect.height > viewportHeight - 20) {
+        newY = viewportHeight - rect.height - 20;
+      }
+      
+      // Adjust vertical position if popup would go off top edge
+      if (newY < 20) {
+        newY = 20;
+      }
+      
+      setAdjustedPosition({ x: newX, y: newY });
+    }
+  }, [position]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -66,8 +102,8 @@ export const SectionTemplateSelector: React.FC<SectionTemplateSelectorProps> = (
       ref={dropdownRef}
       className="section-template-selector"
       style={{
-        left: position.x,
-        top: position.y,
+        left: adjustedPosition.x,
+        top: adjustedPosition.y,
       }}
     >
       <div className="template-selector-header">
