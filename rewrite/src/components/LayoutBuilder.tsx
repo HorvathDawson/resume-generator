@@ -77,10 +77,21 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   });
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const currentPage = pages[currentPageIndex] || pages[0];
+  // Ensure currentPageIndex is within bounds
+  const safePageIndex = Math.min(currentPageIndex, pages.length - 1);
+  const currentPage = pages[safePageIndex] || pages[0];
   
   // Derive available sections from current resume data (updates when resume data changes)
-  const availableSections = resumeData.sections?.map(s => ({ id: s.id, title: s.title })) || [];
+  const regularSections = resumeData.sections?.map(s => ({ id: s.id, title: s.title })) || [];
+  
+  // Always include a padding section for creating vertical spacing
+  const paddingSection = resumeData.sections?.find(s => s.type === 'padding');
+  if (!paddingSection) {
+    // Create a padding section if one doesn't exist
+    regularSections.push({ id: 'create-padding', title: 'Vertical Spacing' });
+  }
+  
+  const availableSections = regularSections;
 
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [draggedRow, setDraggedRow] = useState<number | null>(null);
@@ -191,27 +202,34 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     if (draggedSection && !draggedSectionInRow) {
       const updatedRows = [...currentPage.rows];
       
+      let actualSectionId = draggedSection;
+      
+      // Handle special case for creating padding sections
+      if (draggedSection === 'create-padding') {
+        actualSectionId = createPaddingSection();
+      }
+      
       if (targetColumnIndex !== undefined) {
         // Add to column
         const targetCol = updatedRows[targetRowIndex].columns![targetColumnIndex];
         if (insertIndex !== undefined && insertIndex >= 0) {
-          targetCol.sections.splice(insertIndex, 0, draggedSection);
+          targetCol.sections.splice(insertIndex, 0, actualSectionId);
         } else {
-          targetCol.sections.push(draggedSection);
+          targetCol.sections.push(actualSectionId);
         }
       } else {
         // Add to whole page row
         const targetSections = updatedRows[targetRowIndex].sections!;
         if (insertIndex !== undefined && insertIndex >= 0) {
-          targetSections.splice(insertIndex, 0, draggedSection);
+          targetSections.splice(insertIndex, 0, actualSectionId);
         } else {
-          targetSections.push(draggedSection);
+          targetSections.push(actualSectionId);
         }
       }
       
       // Update state
       const newPages = [...pages];
-      newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
+      newPages[safePageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
       onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
       setDraggedSection(null);
@@ -441,9 +459,42 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     onLayoutChange({ pages: renumberedPages.map(p => ({ ...p, rows: p.rows })) });
   };
 
-  // Padding section creation function
-  const createPaddingSection = (height: string) => {
-    if (!onResumeDataChange) return;
+  // Store newly created sections temporarily until they're reflected in resumeData
+  const [tempSections, setTempSections] = useState<{[id: string]: any}>({});
+
+  // Helper function to find section from either resumeData or tempSections
+  const findSection = (sectionId: string) => {
+    const resumeSection = resumeData.sections?.find(s => s.id === sectionId);
+    if (resumeSection) {
+      // If found in resumeData, clean up temp version
+      if (tempSections[sectionId]) {
+        setTempSections(prev => {
+          const newTemp = { ...prev };
+          delete newTemp[sectionId];
+          return newTemp;
+        });
+      }
+      return resumeSection;
+    }
+    return tempSections[sectionId] || null;
+  };
+
+  // Update temp section when template changes
+  const updateTempSection = (sectionId: string, updates: any) => {
+    if (tempSections[sectionId]) {
+      setTempSections(prev => ({
+        ...prev,
+        [sectionId]: {
+          ...prev[sectionId],
+          ...updates
+        }
+      }));
+    }
+  };
+
+  // Create a new padding section
+  const createPaddingSection = (): string => {
+    if (!onResumeDataChange) return '';
 
     // Generate unique ID for the padding section
     const paddingId = `padding-${Date.now()}`;
@@ -451,51 +502,39 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     // Create the padding section
     const paddingSection = {
       id: paddingId,
-      title: `Spacing (${height})`,
+      title: 'Spacing (1cm)',
       type: 'padding' as const,
-      templateId: 'padding-custom',
+      templateId: 'padding-medium',
       isVisible: true,
       items: [],
       customFields: {
-        height: height
+        height: '1cm'
       }
     };
 
-    // Add to resume data
+    console.log('🟢 Creating padding section:', paddingSection);
+
+    // Store temporarily for immediate access
+    setTempSections(prev => ({
+      ...prev,
+      [paddingId]: paddingSection
+    }));
+
+    // Add to resume data SYNCHRONOUSLY and trigger re-render
     const newSections = [...(resumeData.sections || []), paddingSection];
     const updatedResumeData = {
       ...resumeData,
       sections: newSections
     };
 
+    console.log('🟢 Updated resume data sections:', updatedResumeData.sections);
     onResumeDataChange(updatedResumeData);
+    return paddingId;
   };
 
-  // Update padding section height
-  const updatePaddingSectionHeight = (sectionId: string, newHeight: string) => {
-    if (!onResumeDataChange) return;
 
-    const updatedSections = resumeData.sections?.map(section => {
-      if (section.id === sectionId && section.type === 'padding') {
-        return {
-          ...section,
-          title: `Spacing (${newHeight})`,
-          customFields: {
-            ...section.customFields,
-            height: newHeight
-          }
-        };
-      }
-      return section;
-    }) || [];
 
-    const updatedResumeData = {
-      ...resumeData,
-      sections: updatedSections
-    };
 
-    onResumeDataChange(updatedResumeData);
-  };
 
   // Section splitting handlers - create actual separate sections
   const handleSplitSection = (originalSectionId: string, splitData: { sections: any[] }) => {
@@ -569,90 +608,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     if (!splittingSection) return null;
     const section = resumeData.sections?.find(s => s.id === splittingSection);
     return section as any; // Type cast for now - will need proper type alignment later
-  };
-
-  // Section combining handlers - merge split sections back into one
-  const handleCombineSections = (sectionIds: string[], containerInfo: { rowIndex: number, columnIndex?: number, startIndex: number }) => {
-    if (!onResumeDataChange || sectionIds.length < 2) return;
-
-    // Find all the sections to combine
-    const sectionsToProcess = sectionIds.map(id => resumeData.sections?.find(s => s.id === id)).filter(Boolean) as any[];
-    if (sectionsToProcess.length !== sectionIds.length) return;
-
-    // Determine the original section ID (remove _split_X suffix)
-    const firstSection = sectionsToProcess[0];
-    if (!firstSection) return;
-    
-    const baseId = firstSection.id.replace(/_split_\d+$/, '');
-    
-    // Combine all items/categories from the split sections
-    const combinedItems: any[] = [];
-    const combinedCategories: any[] = [];
-    
-    sectionsToProcess.forEach((section: any) => {
-      if (section?.items) {
-        combinedItems.push(...section.items);
-      }
-      if (section?.categories) {
-        combinedCategories.push(...section.categories);
-      }
-    });
-
-    // Create the combined section
-    const combinedSection = {
-      ...firstSection,
-      id: baseId, // Use original ID
-      title: firstSection.title.replace(/ \((Part \d+|cont)\)$/, ''), // Remove "(Part X)" or "(cont)" from title
-      ...(firstSection.type === 'skills' && combinedCategories.length > 0 ? { categories: combinedCategories } : {}),
-      ...(firstSection.type !== 'skills' && combinedItems.length > 0 ? { items: combinedItems } : {})
-    } as any;
-
-    // Update resume data - remove split sections and add combined section
-    const updatedSections = (resumeData.sections || [])
-      .filter(s => !sectionIds.includes(s.id)) // Remove all split sections
-      .concat([combinedSection]); // Add combined section
-
-    const newResumeData = {
-      ...resumeData,
-      sections: updatedSections
-    };
-
-    // Update layout - replace all split section IDs with the combined section ID
-    const updatedPages = pages.map(page => ({
-      ...page,
-      rows: page.rows.map((row, rowIdx) => {
-        if (rowIdx !== containerInfo.rowIndex) return row;
-        
-        return {
-          ...row,
-          columns: row.columns?.map((col, colIdx) => {
-            if (containerInfo.columnIndex !== undefined && colIdx !== containerInfo.columnIndex) return col;
-            if (containerInfo.columnIndex === undefined) return col; // This is a whole page row
-            
-            // Replace consecutive split sections with single combined section
-            const newSections = [...col.sections];
-            newSections.splice(containerInfo.startIndex, sectionIds.length, baseId);
-            
-            return {
-              ...col,
-              sections: newSections
-            };
-          }),
-          sections: containerInfo.columnIndex === undefined ? (() => {
-            // Handle whole page row
-            const newSections = [...(row.sections || [])];
-            newSections.splice(containerInfo.startIndex, sectionIds.length, baseId);
-            return newSections;
-          })() : row.sections
-        };
-      })
-    }));
-
-    console.log('🔗 Sections combined:', sectionIds, '→', baseId);
-    onResumeDataChange(newResumeData);
-    
-    // Update local layout state
-    setPages(updatedPages);
   };
 
   // Sidebar-based combine function - automatically finds and removes split sections from layout
@@ -934,7 +889,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   };
 
   // Update footer configuration for current page
-  const updatePageFooter = (footerType: 'none' | 'default' | 'mountains' | 'fish' | 'minimal' | 'modern') => {
+  const updatePageFooter = (footerType: 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern') => {
     const updatedPages = [...pages];
     
     // Set correct heights based on old implementation
@@ -942,6 +897,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       switch (type) {
         case 'default': return '4.25cm';
         case 'fish': return '4.25cm';
+        case 'salmon': return '4.25cm';
         case 'mountains': return '2.5cm';
         case 'modern': return '2cm';
         case 'minimal': return '1cm';
@@ -1090,9 +1046,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   // Template selection handlers
   const handleSectionRightClick = (e: React.MouseEvent, sectionId: string) => {
     e.preventDefault();
-    const section = resumeData.sections?.find(s => s.id === sectionId);
-    if (!section) return;
+    
+    const section = findSection(sectionId);
+    if (!section) {
+      console.log('❌ Section not found for template selector:', sectionId);
+      return;
+    }
 
+    console.log('🔧 Opening template selector for section:', section);
     setTemplateSelector({
       sectionId,
       sectionType: section.type,
@@ -1108,12 +1069,71 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     
     setSectionTemplates(newSectionTemplates);
     
-    // Update the resume data with the new section templates
-    if (onResumeDataChange) {
-      onResumeDataChange({
-        ...resumeData,
-        sectionTemplates: newSectionTemplates
+    // For padding sections, update the height in customFields
+    const section = findSection(sectionId);
+    if (section?.type === 'padding') {
+      const heightMap: { [key: string]: string } = {
+        'padding-extra-small': '0.25cm',
+        'padding-small': '0.5cm',
+        'padding-medium': '1cm',
+        'padding-large': '1.5cm',
+        'padding-extra-large': '2cm',
+        'padding-xxl': '3cm'
+      };
+      
+      const newHeight = heightMap[templateId] || '1cm';
+      const templateDisplayNames: { [key: string]: string } = {
+        'padding-extra-small': 'Spacing (0.25cm)',
+        'padding-small': 'Spacing (0.5cm)',
+        'padding-medium': 'Spacing (1cm)',
+        'padding-large': 'Spacing (1.5cm)',
+        'padding-extra-large': 'Spacing (2cm)',
+        'padding-xxl': 'Spacing (3cm)'
+      };
+      
+      // Update the section data
+      const updatedSections = (resumeData.sections || []).map(s => 
+        s.id === sectionId 
+          ? {
+              ...s,
+              title: templateDisplayNames[templateId] || s.title,
+              templateId,
+              customFields: {
+                ...s.customFields,
+                height: newHeight
+              }
+            }
+          : s
+      );
+      
+      console.log('🔧 Updated padding section:', sectionId, 'to height:', newHeight);
+      
+      // Also update temp section if it exists
+      updateTempSection(sectionId, {
+        title: templateDisplayNames[templateId] || section.title,
+        templateId,
+        customFields: {
+          ...section.customFields,
+          height: newHeight
+        }
       });
+      
+      // Update resume data with both template change and section update
+      if (onResumeDataChange) {
+        onResumeDataChange({
+          ...resumeData,
+          sections: updatedSections,
+          sectionTemplates: newSectionTemplates
+        });
+      }
+    } else {
+      // For non-padding sections, just update template mapping
+      if (onResumeDataChange) {
+        onResumeDataChange({
+          ...resumeData,
+          sectionTemplates: newSectionTemplates
+        });
+      }
     }
   };
 
@@ -1192,6 +1212,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               <option value="modern">Modern Accent</option>
               <option value="mountains">Mountains</option>
               <option value="fish">Fish Design</option>
+              <option value="salmon">Salmon Design</option>
             </select>
           </div>
         </div>
@@ -1272,39 +1293,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                 </div>
               </>
             )}
-
-            {/* Padding Section Creator */}
-            <div className="padding-section-creator">
-              <h4 style={{ marginTop: '1.5rem', color: '#34d399' }}>Vertical Spacing</h4>
-              <div className="padding-templates">
-                {[
-                  { height: '0.25cm', label: 'Extra Small (0.25cm)' },
-                  { height: '0.5cm', label: 'Small (0.5cm)' },
-                  { height: '1cm', label: 'Medium (1cm)' },
-                  { height: '1.5cm', label: 'Large (1.5cm)' },
-                  { height: '2cm', label: 'Extra Large (2cm)' },
-                  { height: '3cm', label: 'XXL (3cm)' }
-                ].map((template) => (
-                  <div
-                    key={template.height}
-                    className="padding-template draggable"
-                    draggable
-                    onDragStart={(e) => {
-                      createPaddingSection(template.height);
-                      // Wait for state update, then find the new section and drag it
-                      setTimeout(() => {
-                        const newSection = availableSections.find(s => s.title.includes(`Spacing (${template.height})`));
-                        if (newSection) {
-                          handleDragStart(e, newSection.id);
-                        }
-                      }, 100);
-                    }}
-                  >
-                    📏 {template.label}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Layout rows for current page */}
@@ -1433,8 +1421,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                       </div>
                       <div className="column-sections">
                         {column.sections.map((sectionId: string, sectionIndex: number) => {
-                          const section = availableSections.find(s => s.id === sectionId);
-
+                          const section = findSection(sectionId);
+                          
+                          if (sectionId.startsWith('padding-')) {
+                            console.log('🔍 Rendering padding section:', sectionId, 'section found:', section);
+                          }
                           
                           return (
                             <React.Fragment key={`${rowIndex}-${columnIndex}-${sectionIndex}-${sectionId}`}>
@@ -1475,28 +1466,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
                               >
                               <span className="section-title">
-                                {section?.title || sectionId}
+                                {(() => {
+                                  const debugSection = findSection(sectionId);
+                                  if (sectionId.startsWith('padding-')) {
+                                    console.log('📝 Rendering section title for:', sectionId);
+                                    console.log('📝 Found section:', debugSection);
+                                    console.log('📝 Section title:', debugSection?.title);
+                                  }
+                                  return debugSection?.title || sectionId;
+                                })()}
                               </span>
                               <div className="section-actions">
-                                {/* Special controls for padding sections */}
-                                {resumeData.sections?.find(s => s.id === sectionId)?.type === 'padding' && (
-                                  <select
-                                    className="padding-height-selector"
-                                    value={resumeData.sections?.find(s => s.id === sectionId)?.customFields?.height || '1cm'}
-                                    onChange={(e) => updatePaddingSectionHeight(sectionId, e.target.value)}
-                                    onClick={(e) => e.stopPropagation()}
-                                    title="Change padding height"
-                                  >
-                                    <option value="0.25cm">0.25cm</option>
-                                    <option value="0.5cm">0.5cm</option>
-                                    <option value="1cm">1cm</option>
-                                    <option value="1.5cm">1.5cm</option>
-                                    <option value="2cm">2cm</option>
-                                    <option value="3cm">3cm</option>
-                                    <option value="4cm">4cm</option>
-                                    <option value="5cm">5cm</option>
-                                  </select>
-                                )}
                                 <button
                                   className="remove-section-button"
                                   onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
@@ -1504,15 +1484,13 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 >
                                   ×
                                 </button>
-                                {resumeData.sections?.find(s => s.id === sectionId)?.type !== 'padding' && (
-                                  <button
-                                    className="template-button"
-                                    onClick={(e) => handleSectionRightClick(e, sectionId)}
-                                    title="Select template"
-                                  >
-                                    ⚙
-                                  </button>
-                                )}
+                                <button
+                                  className="template-button"
+                                  onClick={(e) => handleSectionRightClick(e, sectionId)}
+                                  title="Select template"
+                                >
+                                  ⚙
+                                </button>
                               </div>
                             </div>
                             {/* Drop zone below each section */}
@@ -1580,7 +1558,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   </div>
                   <div className="whole-page-sections">
                         {row.sections?.map((sectionId: string, sectionIndex: number) => {
-                      const section = availableSections.find(s => s.id === sectionId);                      
                       return (
                         <React.Fragment key={`${rowIndex}-whole-${sectionIndex}-${sectionId}`}>
                           {/* Drop zone above each section */}
@@ -1620,28 +1597,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
                           >
                           <span className="section-title">
-                            {section?.title || sectionId}
+                            {(() => {
+                              const debugSection = findSection(sectionId);
+                              if (sectionId.startsWith('padding-')) {
+                                console.log('📝 Whole page rendering section title for:', sectionId);
+                                console.log('📝 Found section:', debugSection);
+                                console.log('📝 Section title:', debugSection?.title);
+                              }
+                              return debugSection?.title || sectionId;
+                            })()}
                           </span>
                           <div className="section-actions">
-                            {/* Special controls for padding sections */}
-                            {resumeData.sections?.find(s => s.id === sectionId)?.type === 'padding' && (
-                              <select
-                                className="padding-height-selector"
-                                value={resumeData.sections?.find(s => s.id === sectionId)?.customFields?.height || '1cm'}
-                                onChange={(e) => updatePaddingSectionHeight(sectionId, e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                                title="Change padding height"
-                              >
-                                <option value="0.25cm">0.25cm</option>
-                                <option value="0.5cm">0.5cm</option>
-                                <option value="1cm">1cm</option>
-                                <option value="1.5cm">1.5cm</option>
-                                <option value="2cm">2cm</option>
-                                <option value="3cm">3cm</option>
-                                <option value="4cm">4cm</option>
-                                <option value="5cm">5cm</option>
-                              </select>
-                            )}
                             <button
                               className="remove-section-button"
                               onClick={() => removeSectionFromRow(sectionId, rowIndex, undefined, sectionIndex)}
@@ -1649,15 +1615,13 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             >
                               ×
                             </button>
-                            {resumeData.sections?.find(s => s.id === sectionId)?.type !== 'padding' && (
-                              <button
-                                className="template-button"
-                                onClick={(e) => handleSectionRightClick(e, sectionId)}
-                                title="Select template"
-                              >
-                                ⚙
-                              </button>
-                            )}
+                            <button
+                              className="template-button"
+                              onClick={(e) => handleSectionRightClick(e, sectionId)}
+                              title="Select template"
+                            >
+                              ⚙
+                            </button>
                           </div>
                         </div>
                         {/* Drop zone below each section */}

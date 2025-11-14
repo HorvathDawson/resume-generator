@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Section } from '../../types/resume';
+import { ReferencesTemplate } from './ReferencesTemplate';
 
 // Template registry for different section types
 export interface TemplateOption {
@@ -1164,13 +1165,40 @@ export const AcademicAwardsTemplates = {
 };
 
 // Padding templates for vertical spacing
+// Helper function to get height for padding template
+const getPaddingHeight = (templateId: string): string => {
+  const heightMap: { [key: string]: string } = {
+    'padding-extra-small': '0.25cm',
+    'padding-small': '0.5cm',
+    'padding-medium': '1cm',
+    'padding-large': '1.5cm',
+    'padding-extra-large': '2cm',
+    'padding-xxl': '3cm'
+  };
+  return heightMap[templateId] || '1cm';
+};
+
 export const PaddingTemplates = {
+  extraSmall: {
+    id: 'padding-extra-small',
+    name: 'Extra Small (0.25cm)',
+    description: 'Extra small vertical space',
+    component: ({ section }: { section?: Section }) => {
+      const height = section?.customFields?.height || getPaddingHeight('padding-extra-small');
+      return (
+        <div className="section padding-section" style={{ height, minHeight: height }}>
+          {/* Empty spacer element */}
+        </div>
+      );
+    }
+  },
+  
   small: {
     id: 'padding-small',
-    name: 'Small Spacing',
-    description: 'Small vertical space (0.5cm)',
-    component: ({ section }: { section: Section }) => {
-      const height = section.customFields?.height || '0.5cm';
+    name: 'Small (0.5cm)',
+    description: 'Small vertical space',
+    component: ({ section }: { section?: Section }) => {
+      const height = section?.customFields?.height || getPaddingHeight('padding-small');
       return (
         <div className="section padding-section" style={{ height, minHeight: height }}>
           {/* Empty spacer element */}
@@ -1181,10 +1209,10 @@ export const PaddingTemplates = {
   
   medium: {
     id: 'padding-medium',
-    name: 'Medium Spacing',
-    description: 'Medium vertical space (1cm)',
-    component: ({ section }: { section: Section }) => {
-      const height = section.customFields?.height || '1cm';
+    name: 'Medium (1cm)',
+    description: 'Medium vertical space',
+    component: ({ section }: { section?: Section }) => {
+      const height = section?.customFields?.height || getPaddingHeight('padding-medium');
       return (
         <div className="section padding-section" style={{ height, minHeight: height }}>
           {/* Empty spacer element */}
@@ -1195,10 +1223,10 @@ export const PaddingTemplates = {
   
   large: {
     id: 'padding-large',
-    name: 'Large Spacing',
-    description: 'Large vertical space (2cm)',
-    component: ({ section }: { section: Section }) => {
-      const height = section.customFields?.height || '2cm';
+    name: 'Large (1.5cm)',
+    description: 'Large vertical space',
+    component: ({ section }: { section?: Section }) => {
+      const height = section?.customFields?.height || getPaddingHeight('padding-large');
       return (
         <div className="section padding-section" style={{ height, minHeight: height }}>
           {/* Empty spacer element */}
@@ -1207,18 +1235,41 @@ export const PaddingTemplates = {
     }
   },
   
-  custom: {
-    id: 'padding-custom',
-    name: 'Custom Spacing',
-    description: 'User-defined vertical space',
-    component: ({ section }: { section: Section }) => {
-      const height = section.customFields?.height || '1cm';
+  extraLarge: {
+    id: 'padding-extra-large',
+    name: 'Extra Large (2cm)',
+    description: 'Extra large vertical space',
+    component: ({ section }: { section?: Section }) => {
+      const height = section?.customFields?.height || getPaddingHeight('padding-extra-large');
       return (
         <div className="section padding-section" style={{ height, minHeight: height }}>
           {/* Empty spacer element */}
         </div>
       );
     }
+  },
+  
+  xxl: {
+    id: 'padding-xxl',
+    name: 'XXL (3cm)',
+    description: 'Very large vertical space',
+    component: ({ section }: { section?: Section }) => {
+      const height = section?.customFields?.height || getPaddingHeight('padding-xxl');
+      return (
+        <div className="section padding-section" style={{ height, minHeight: height }}>
+          {/* Empty spacer element */}
+        </div>
+      );
+    }
+  }
+};
+
+export const ReferencesTemplates = {
+  minimal: {
+    id: 'references-minimal',
+    name: 'Minimal References',
+    description: 'Simple, clean reference list',
+    component: ReferencesTemplate
   }
 };
 
@@ -1230,6 +1281,7 @@ export const TEMPLATE_REGISTRY: TemplateRegistry = {
   projects: Object.values(ExperienceTemplates), // Projects can use experience templates
   skills: Object.values(SkillsTemplates),
   certifications: Object.values(CertificationTemplates),
+  references: Object.values(ReferencesTemplates),
   academic_awards: Object.values(AcademicAwardsTemplates),
   list: Object.values(TextTemplates),
   personal_info: Object.values(PersonalInfoTemplates),

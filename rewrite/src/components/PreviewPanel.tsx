@@ -220,6 +220,33 @@ export function PreviewPanel({
                             
                             // Find and render regular section
                             const section = resumeData?.sections.find(s => s.id === sectionId);
+                            if (sectionId.startsWith('padding-')) {
+                              // If padding section not found, render a placeholder with template-based height
+                              if (!section) {
+                                // Try to get the height from template mappings
+                                const templateId = resumeData.sectionTemplates?.[sectionId] || 'padding-medium';
+                                const heightMap: { [key: string]: string } = {
+                                  'padding-extra-small': '0.25cm',
+                                  'padding-small': '0.5cm',
+                                  'padding-medium': '1cm',
+                                  'padding-large': '1.5cm',
+                                  'padding-extra-large': '2cm',
+                                  'padding-xxl': '3cm'
+                                };
+                                const height = heightMap[templateId] || '1cm';
+                                
+
+                                return (
+                                  <div 
+                                    key={`${colIndex}-${sectionIndex}-${sectionId}`} 
+                                    className="section padding-section" 
+                                    style={{ height, minHeight: height }}
+                                  >
+                                    {/* Placeholder for missing padding section */}
+                                  </div>
+                                );
+                              }
+                            }
                             if (!section) return null;
                             
                             const availableTemplates = TEMPLATE_REGISTRY[section.type] || [];
@@ -280,6 +307,33 @@ export function PreviewPanel({
                       >
                       {row.sections.map((sectionId: string, sectionIndex: number) => {
                         const section = resumeData?.sections.find(s => s.id === sectionId);
+                        if (sectionId.startsWith('padding-')) {
+                          // If padding section not found, render a placeholder with template-based height
+                          if (!section) {
+                            // Try to get the height from template mappings
+                            const templateId = resumeData.sectionTemplates?.[sectionId] || 'padding-medium';
+                            const heightMap: { [key: string]: string } = {
+                              'padding-extra-small': '0.25cm',
+                              'padding-small': '0.5cm',
+                              'padding-medium': '1cm',
+                              'padding-large': '1.5cm',
+                              'padding-extra-large': '2cm',
+                              'padding-xxl': '3cm'
+                            };
+                            const height = heightMap[templateId] || '1cm';
+                            
+
+                            return (
+                              <div 
+                                key={`${rowIndex}-${sectionIndex}-${sectionId}`} 
+                                className="section padding-section" 
+                                style={{ height, minHeight: height }}
+                              >
+                                {/* Placeholder for missing padding section */}
+                              </div>
+                            );
+                          }
+                        }
                         if (!section) return null;
                         
                         const availableTemplates = TEMPLATE_REGISTRY[section.type] || [];

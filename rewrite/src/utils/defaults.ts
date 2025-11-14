@@ -143,6 +143,17 @@ export function createDefaultResumeData(): ResumeData {
       templateId: 'skills-default',
       isVisible: true,
     },
+    {
+      id: crypto.randomUUID(),
+      title: 'Vertical Spacing',
+      type: 'padding',
+      items: [],
+      templateId: 'padding-medium',
+      isVisible: true,
+      customFields: {
+        height: '1cm'
+      }
+    },
   ];
 
   return {

@@ -200,6 +200,20 @@
         }
       ],
       "templateId": "list-simple"
+    },
+    {
+      "id": "references",
+      "type": "references",
+      "title": "References",
+      "items": [
+        {
+          "title": "Michael Humling",
+          "organization": "District Fisheries Biologist @ USDA",
+          "phone": "(509) 423-0533",
+          "email": "MICHAEL.HUMLING@USDA.GOV"
+        }
+      ],
+      "templateId": "references-minimal"
     }
   ],
   "layout": {

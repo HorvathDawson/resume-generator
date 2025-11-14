@@ -49,6 +49,7 @@ export type SectionType =
   | 'projects'
   | 'skills'
   | 'certifications'
+  | 'references'
   | 'text'
   | 'list'
   | 'volunteer'
