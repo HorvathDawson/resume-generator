@@ -89,5 +89,8 @@ export interface ResumeData {
   // New flexible layout configuration
   layout: FlexLayoutConfig;
   
+  // Section template overrides
+  sectionTemplates?: Record<string, string>;
+  
   metadata: ResumeMetadata;
 }

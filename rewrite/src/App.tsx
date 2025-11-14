@@ -10,6 +10,13 @@ import './App.css';
 function App() {
   // Main application state - everything derives from these data types
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
+  
+
+  
+  // Debug wrapper for setResumeData 
+  const handleResumeDataChange = (data: ResumeData) => {
+    setResumeData(data);
+  };
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
@@ -139,7 +146,7 @@ function App() {
             resumeData={resumeData}
             layoutState={layoutState}
             templateLibrary={templateLibrary}
-            onResumeDataChange={setResumeData}
+            onResumeDataChange={handleResumeDataChange}
             onLayoutStateChange={setLayoutState}
           />
         </div>

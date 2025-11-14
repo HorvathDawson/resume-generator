@@ -62,7 +62,7 @@ export function PreviewPanel({
                             padding: '0.5cm'
                           }}
                         >
-                          {column.sections.map((sectionId: string) => {
+                          {column.sections.map((sectionId: string, sectionIndex: number) => {
                             if (sectionId === 'personalInfo') {
                               // Render personal info using template registry
                               const personalInfo = resumeData?.personalInfo;
@@ -73,7 +73,7 @@ export function PreviewPanel({
                               
                               if (template) {
                                 const TemplateComponent = template.component;
-                                return <TemplateComponent key={sectionId} personalInfo={personalInfo} />;
+                                return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} personalInfo={personalInfo} />;
                               }
                               return null;
                             }
@@ -83,11 +83,13 @@ export function PreviewPanel({
                             if (!section) return null;
                             
                             const availableTemplates = TEMPLATE_REGISTRY[section.type] || [];
-                            const selectedTemplate = availableTemplates.find(t => t.id === section.templateId) || availableTemplates[0];
+                            // Check for template override first, then fallback to section.templateId
+                            const templateId = resumeData.sectionTemplates?.[sectionId] || section.templateId;
+                            const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
                             
                             if (selectedTemplate) {
                               const TemplateComponent = selectedTemplate.component;
-                              return <TemplateComponent key={section.id} section={section} />;
+                              return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={section} />;
                             }
                             return null;
                           })}
@@ -106,16 +108,18 @@ export function PreviewPanel({
                         padding: '0.5cm'
                       }}
                     >
-                      {row.sections.map((sectionId: string) => {
+                      {row.sections.map((sectionId: string, sectionIndex: number) => {
                         const section = resumeData?.sections.find(s => s.id === sectionId);
                         if (!section) return null;
                         
                         const availableTemplates = TEMPLATE_REGISTRY[section.type] || [];
-                        const selectedTemplate = availableTemplates.find(t => t.id === section.templateId) || availableTemplates[0];
+                        // Check for template override first, then fallback to section.templateId
+                        const templateId = resumeData.sectionTemplates?.[sectionId] || section.templateId;
+                        const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
                         
                         if (selectedTemplate) {
                           const TemplateComponent = selectedTemplate.component;
-                          return <TemplateComponent key={section.id} section={section} />;
+                          return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={section} />;
                         }
                         return null;
                       })}

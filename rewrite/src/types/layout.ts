@@ -55,7 +55,6 @@ export interface FlexPageLayout {
 export interface FlexLayoutConfig {
   pages: FlexPageLayout[];
   sectionInstances: SectionInstance[]; // Track all section splitting instances
-  sectionTemplates?: Record<string, string>; // Map of sectionId -> templateId
   globalStyles: {
     fontSizes: {
       h1: string;
