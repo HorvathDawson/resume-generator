@@ -1,0 +1,262 @@
+{
+  "version": "1.0",
+  "exportDate": "2025-11-15T12:00:00.000Z",
+  "resumeData": {
+    "id": "dawson-hybrid-resume",
+    "name": "Dawson Horvath Resume",
+    "personalInfo": {
+      "fullName": "Dawson Horvath",
+      "email": "horvath.dawson@gmail.com",
+      "phone": "1-250-306-0343",
+      "website": "dawsonhorvath.com",
+      "linkedin": "horvathdawson",
+      "github": "HorvathDawson",
+      "location": "Vancouver, BC, Canada"
+    },
+    "sections": [
+      {
+        "id": "name-001",
+        "type": "name",
+        "title": "Name",
+        "templateId": "name-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "name-item-001",
+            "title": "Dawson Horvath",
+            "content": {
+              "fullName": "Dawson Horvath"
+            }
+          }
+        ]
+      },
+      {
+        "id": "personal-info-001",
+        "type": "personal_info",
+        "title": "Personal Information",
+        "templateId": "contact-header",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "contact-001",
+            "title": "Contact Information",
+            "personalInfo": {
+              "fullName": "Dawson Horvath",
+              "email": "horvath.dawson@gmail.com",
+              "phone": "1-250-306-0343",
+              "website": "dawsonhorvath.com",
+              "linkedin": "horvathdawson",
+              "github": "HorvathDawson",
+              "location": "Vancouver, BC, Canada"
+            }
+          }
+        ]
+      },
+      {
+        "id": "career-summary-001",
+        "type": "text",
+        "title": "Career Summary",
+        "templateId": "text-basic",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "summary-001",
+            "title": "Career Summary",
+            "content": "Innovative and adaptable Engineering Physicist with over three years of experience in robotics, mechatronics, and software engineering. Skilled in designing and building high-throughput automation systems, with expertise in real-time data acquisition, image processing, and instrument control. Proficient in Python, C++, LabVIEW, front-end languages, and Go, with a proven track record of delivering impactful solutions in robotics and automation."
+          }
+        ]
+      },
+      {
+        "id": "education-001",
+        "type": "education",
+        "title": "Education",
+        "templateId": "education-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "edu-001",
+            "title": "Bachelor of Science",
+            "organization": "University of British Columbia",
+            "degree": "B.ASc., Engineering Physics",
+            "location": "Vancouver, BC",
+            "dates": "2018 – 2022",
+            "gpa": "3.7/4.0",
+            "details": []
+          },
+          {
+            "id": "edu-002",
+            "title": "Engineering Transfer",
+            "organization": "Thompson Rivers University",
+            "degree": "Engineering Transfer Program",
+            "location": "Kamloops, BC",
+            "dates": "2017 – 2018",
+            "gpa": "4.0/4.0",
+            "details": []
+          }
+        ]
+      },
+      {
+        "id": "skills-001",
+        "type": "skills",
+        "title": "Skills",
+        "templateId": "skills-categorized",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "skills-tech-001",
+            "title": "Technical Skills",
+            "categories": [
+              {
+                "name": "Programming Languages",
+                "skills": ["Python", "C++", "LabVIEW", "JavaScript", "Go", "HTML/CSS"]
+              },
+              {
+                "name": "Technologies & Tools",
+                "skills": ["Git", "SQLite", "Image Processing", "Real-time Systems", "Robotics"]
+              },
+              {
+                "name": "Engineering",
+                "skills": ["Mechatronics", "Automation", "Data Acquisition", "Control Systems"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "work-experience-001",
+        "type": "experience",
+        "title": "Work Experience",
+        "templateId": "experience-detailed",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "work-001",
+            "title": "Mechatronics Engineer",
+            "organization": "AbCellera Biologics Inc",
+            "location": "Vancouver, BC",
+            "dates": "May 2020 – Current",
+            "details": [
+              "Built a real-time fleet management dashboard using Go, SQLite, HTML, CSS, and JavaScript to monitor robot metrics, environmental data, and experiment progress.",
+              "Increased cell transportation speed 3x by transitioning liquid handling from open-loop to calibrated closed-loop control.",
+              "Designed and implemented image processing pipelines with Python, C++, and LabVIEW, featuring meniscus detection in micro-capillaries.",
+              "Engineered a custom schlieren imaging system using a lenticular lens array to capture transparent media refractions.",
+              "Delivered new single-cell recovery instrument control software in LabVIEW and Python, completed three weeks ahead of schedule."
+            ]
+          },
+          {
+            "id": "work-002",
+            "title": "SRF Development Intern",
+            "organization": "TRIUMF Particle Accelerator",
+            "location": "Vancouver, BC",
+            "dates": "Jan. 2019 – May 2019",
+            "details": [
+              "Led the design and implementation of a UHV induction furnace, achieving a 10x improvement in the SRF cavity quench limit.",
+              "Developed an advanced magnetic field controller that integrates a 3-axis fluxgate magnetometer.",
+              "Contributed to the maintenance and reassembly of cryostats in ultra-clean environments."
+            ]
+          }
+        ]
+      }
+    ],
+    "sectionTemplates": {
+      "name-001": "name-standard",
+      "personal-info-001": "contact-header",
+      "career-summary-001": "text-basic",
+      "education-001": "education-standard",
+      "skills-001": "skills-categorized",
+      "work-experience-001": "experience-detailed"
+    },
+    "metadata": {
+      "version": "1.0.0",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "author": "Dawson Horvath",
+      "description": "Professional resume for Dawson Horvath"
+    },
+    "layout": {
+      "pages": [
+        {
+          "id": "page-1",
+          "pageNumber": 1,
+          "rows": [
+            {
+              "id": "page-1-row-0",
+              "type": "wholePage",
+              "sections": ["name-001"],
+              "backgroundColor": "#ffffff",
+              "textColor": "#333333"
+            },
+            {
+              "id": "page-1-row-1",
+              "type": "columns",
+              "columns": [
+                {
+                  "width": "30%",
+                  "sections": ["personal-info-001", "education-001"],
+                  "backgroundColor": "#f8f9fa",
+                  "textColor": "#333333"
+                },
+                {
+                  "width": "70%",
+                  "sections": ["career-summary-001", "skills-001"],
+                  "backgroundColor": "#ffffff",
+                  "textColor": "#333333"
+                }
+              ]
+            },
+            {
+              "id": "page-1-row-2", 
+              "type": "wholePage",
+              "sections": ["work-experience-001"],
+              "backgroundColor": "#ffffff",
+              "textColor": "#333333"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "layoutState": {
+    "pages": [
+      {
+        "id": "page-1",
+        "pageNumber": 1,
+        "rows": [
+          {
+            "id": "page-1-row-0",
+            "type": "wholePage",
+            "sections": ["name-001"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          },
+          {
+            "id": "page-1-row-1",
+            "type": "columns",
+            "columns": [
+              {
+                "width": "30%",
+                "sections": ["personal-info-001", "education-001"],
+                "backgroundColor": "#f8f9fa",
+                "textColor": "#333333"
+              },
+              {
+                "width": "70%",
+                "sections": ["career-summary-001", "skills-001"],
+                "backgroundColor": "#ffffff",
+                "textColor": "#333333"
+              }
+            ]
+          },
+          {
+            "id": "page-1-row-2",
+            "type": "wholePage", 
+            "sections": ["work-experience-001"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          }
+        ]
+      }
+    ],
+    "zoom": 0.6
+  }
+}

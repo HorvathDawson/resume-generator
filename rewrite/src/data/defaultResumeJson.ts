@@ -1,5 +1,7 @@
-// Default resume data as JSON structure - same format as export/import
+// Default resume data as JSON structure - matches export format exactly
 export const DEFAULT_RESUME_JSON = {
+  "version": "1.0",
+  "exportDate": "2024-01-01T00:00:00.000Z",
   "resumeData": {
     "id": "default-resume-2024",
     "name": "Default Resume Template",
@@ -248,15 +250,48 @@ export const DEFAULT_RESUME_JSON = {
     }
   },
   "layoutState": {
-    "pages": [],
-    "selectedSection": null,
-    "selectedPageBreak": null,
-    "draggedItem": null,
-    "previewMode": false,
+    "pages": [
+      {
+        "id": "page-1",
+        "pageNumber": 1,
+        "rows": [
+          {
+            "id": "page-1-row-0",
+            "type": "wholePage",
+            "sections": ["personal-info-001"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          },
+          {
+            "id": "page-1-row-1",
+            "type": "columns",
+            "columns": [
+              {
+                "width": "40%",
+                "sections": ["education-001"],
+                "backgroundColor": "#ffffff",
+                "textColor": "#333333"
+              },
+              {
+                "width": "60%",
+                "sections": ["experience-001"],
+                "backgroundColor": "#ffffff",
+                "textColor": "#333333"
+              }
+            ]
+          },
+          {
+            "id": "page-1-row-2",
+            "type": "wholePage",
+            "sections": ["skills-001"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          }
+        ]
+      }
+    ],
     "zoom": 0.6
-  },
-  "exportDate": "2024-11-15T00:00:00.000Z",
-  "version": "1.0.0"
+  }
 };
 
 // Summary info for confirmation dialogs

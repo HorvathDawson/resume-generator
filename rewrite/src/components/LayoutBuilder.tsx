@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ResumeData } from '../types';
 import type { SectionType } from '../types/resume';
 import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
@@ -77,6 +77,40 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       })) || []
     }));
   });
+
+  // Update pages when resumeData.layout changes (e.g., after import)
+  useEffect(() => {
+    const layoutPages = resumeData.layout?.pages || [];
+    if (layoutPages.length > 0) {
+      console.log('=== LAYOUT BUILDER: Updating pages from resumeData.layout ===');
+      console.log('New layout pages:', layoutPages);
+      
+      const newPages = layoutPages.map((page: any, index: number) => ({
+        id: `page-${index + 1}`,
+        pageNumber: index + 1,
+        rows: page.rows?.map((row: any, rowIndex: number) => ({
+          id: `page-${index + 1}-row-${rowIndex}`,
+          type: row.type === 'columns' ? 'columns' : 'wholePage',
+          ...(row.type === 'columns' ? {
+            columns: row.columns?.map((col: any) => ({
+              width: col.width,
+              sections: col.sections || [],
+              backgroundColor: col.backgroundColor,
+              textColor: col.textColor
+            })) || []
+          } : {
+            sections: row.sections || [],
+            backgroundColor: row.backgroundColor,
+            textColor: row.textColor
+          })
+        })) || []
+      }));
+      
+      console.log('=== LAYOUT BUILDER: Setting new pages ===');
+      console.log('New processed pages:', newPages);
+      setPages(newPages);
+    }
+  }, [resumeData.layout]);
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   // Ensure currentPageIndex is within bounds
@@ -1009,6 +1043,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   // Update footer configuration for current page
   const updatePageFooter = (footerType: 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern') => {
+    console.log('=== updatePageFooter called ===');
+    console.log('Footer type:', footerType);
+    console.log('Current page index:', currentPageIndex);
+    console.log('Pages before update:', pages);
+    
     const updatedPages = [...pages];
     
     // Set correct heights based on old implementation
@@ -1034,12 +1073,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }
     };
     
+    console.log('Pages after update:', updatedPages);
+    console.log('Updated current page footer:', updatedPages[currentPageIndex]?.footer);
+    
     setPages(updatedPages);
     
     // Update the layout
     onLayoutChange({
       pages: updatedPages
     });
+    
+    console.log('Footer update completed');
   };
 
   // Helper function to update column width with percentage
@@ -1450,7 +1494,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               <label className="footer-label">Page Footer:</label>
               <select
                 value={pages[currentPageIndex]?.footer?.type || 'none'}
-                onChange={(e) => updatePageFooter(e.target.value as any)}
+                onChange={(e) => {
+                  console.log('Footer selector onChange:', e.target.value);
+                  console.log('Current page footer before:', pages[currentPageIndex]?.footer);
+                  updatePageFooter(e.target.value as any);
+                }}
                 className="footer-select"
               >
                   <option value="none">No Footer</option>

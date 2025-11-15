@@ -10,7 +10,7 @@
   },
   "sections": [
     {
-      "id": "name",
+      "id": "name-001",
       "type": "name",
       "title": "",
       "content": {
@@ -19,14 +19,36 @@
       "templateId": "name-standard"
     },
     {
-      "id": "career-summary",
+      "id": "personalInfo-001",
+      "type": "personal_info",
+      "title": "Personal Information",
+      "templateId": "contact-header",
+      "isVisible": true,
+      "items": [
+        {
+          "id": "contact-001",
+          "title": "Personal Information",
+          "personalInfo": {
+            "fullName": "Dawson Horvath",
+            "email": "horvath.dawson@gmail.com",
+            "phone": "1-250-306-0343",
+            "website": "dawsonhorvath.com",
+            "linkedin": "horvathdawson",
+            "github": "HorvathDawson",
+            "location": "Vancouver, BC, Canada"
+          }
+        }
+      ]
+    },
+    {
+      "id": "career-summary-001",
       "type": "text",
       "title": "Career Summary",
       "content": "Innovative and adaptable Engineering Physicist with over three years of experience in robotics, mechatronics, and software engineering. Skilled in designing and building high-throughput automation systems, with expertise in real-time data acquisition, image processing, and instrument control. Proficient in Python, C++, LabVIEW, front-end languages, and Go, with a proven track record of delivering impactful solutions in robotics and automation. Experienced in developing advanced imaging systems, control software, and scalable dashboards, driving efficiency and enhancing data accuracy across multidisciplinary teams. A passionate problem-solver who thrives in dynamic environments, blending technical precision with creativity.",
       "templateId": "text-basic"
     },
     {
-      "id": "education",
+      "id": "education-001",
       "type": "education",
       "title": "Education",
       "items": [
@@ -48,7 +70,7 @@
       "templateId": "education-standard"
     },
     {
-      "id": "work-experience",
+      "id": "work-experience-001",
       "type": "experience",
       "title": "Work Experience",
       "items": [
@@ -93,7 +115,7 @@
       "templateId": "experience-detailed"
     },
     {
-      "id": "projects",
+      "id": "projects-001",
       "type": "experience",
       "title": "Projects",
       "items": [
@@ -149,7 +171,7 @@
       "templateId": "experience-detailed"
     },
     {
-      "id": "skills",
+      "id": "skills-001",
       "type": "skills",
       "title": "Skills",
       "categories": [
@@ -185,7 +207,7 @@
       "templateId": "skills-categorized"
     },
     {
-      "id": "certifications",
+      "id": "certifications-001",
       "type": "list",
       "title": "Professional Certifications",
       "items": [
@@ -202,7 +224,7 @@
       "templateId": "list-simple"
     },
     {
-      "id": "references",
+      "id": "references-001",
       "type": "references",
       "title": "References",
       "items": [
@@ -229,7 +251,7 @@
         "rows": [
           {
             "type": "wholePage",
-            "sections": ["name"],
+            "sections": ["name-001"],
             "backgroundColor": "#ffffff",
             "textColor": "#333333"
           },
@@ -238,13 +260,13 @@
             "columns": [
               {
                 "width": "30%",
-                "sections": ["personalInfo", "education"],
+                "sections": ["personalInfo-001", "education-001"],
                 "backgroundColor": "#f8f9fa",
                 "textColor": "#333333"
               },
               {
                 "width": "70%",
-                "sections": ["career-summary", "skills"],
+                "sections": ["career-summary-001", "skills-001"],
                 "backgroundColor": "#ffffff",
                 "textColor": "#333333"
               }
@@ -252,7 +274,7 @@
           },
           {
             "type": "wholePage",
-            "sections": ["work-experience", "projects"],
+            "sections": ["work-experience-001", "projects-001"],
             "backgroundColor": "#ffffff",
             "textColor": "#333333"
           }

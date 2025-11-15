@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { ResumeData, LayoutBuilderState, TemplateLibrary } from './types';
 import { ResumeEditor } from './components/ResumeEditor';
 import { PreviewPanel } from './components/PreviewPanel';
@@ -47,6 +47,9 @@ function App() {
       lastModified?: string;
     };
   } | null>(null);
+  
+  // File input ref for JSON import
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Close menus when clicking elsewhere
   const handleAppClick = () => {
@@ -316,33 +319,106 @@ function App() {
   };
 
   const handleImportJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Import started - file selected');
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
 
+    console.log('File selected:', file.name, file.size);
     const reader = new FileReader();
     reader.onload = (e) => {
+      console.log('File read completed');
       try {
         const jsonContent = e.target?.result as string;
+        console.log('JSON content length:', jsonContent.length);
         const importedData = JSON.parse(jsonContent);
+        console.log('JSON parsed successfully, keys:', Object.keys(importedData));
 
-        // Validate imported data structure
+        // Validate imported data structure - handle multiple formats
         let resumeDataToImport: ResumeData;
         let layoutStateToImport;
         
-        if (importedData.resumeData) {
-          // Wrapped format (from export)
+        if (importedData.resumeData && importedData.layoutState) {
+          // Standard export format - this is what we should use
+          console.log('Importing standard export format');
           resumeDataToImport = importedData.resumeData;
           layoutStateToImport = importedData.layoutState;
-        } else if (importedData.personalInfo || importedData.sections) {
-          // Direct resume data format (from public/data files)
-          resumeDataToImport = importedData;
+        } else if (importedData.resumeData) {
+          // Has resumeData but no layoutState 
+          console.log('Importing resumeData without layoutState');
+          resumeDataToImport = importedData.resumeData;
+          layoutStateToImport = null;
+        } else if (importedData.personalInfo || importedData.sections || importedData.name) {
+          // Direct resume data format - legacy support
+          
+          // Ensure required properties exist for dawson-hybrid format
+          resumeDataToImport = {
+            id: importedData.id || `imported-${Date.now()}`,
+            name: importedData.name || importedData.personalInfo?.fullName || 'Imported Resume',
+            personalInfo: importedData.personalInfo || {},
+            sections: (importedData.sections || []).map((section: any) => ({
+              ...section,
+              isVisible: section.isVisible !== undefined ? section.isVisible : true,
+              items: section.items || []
+            })),
+            layout: importedData.layout ? {
+              ...importedData.layout,
+              pages: (importedData.layout.pages || []).map((page: any) => ({
+                ...page,
+                rows: (page.rows || []).map((row: any) => ({
+                  ...row,
+                  // Convert string section references to SectionReference objects
+                  ...(row.sections ? {
+                    sections: row.sections.map((sectionId: string) => ({
+                      sectionId,
+                      instanceId: `instance-${sectionId}-${Date.now()}`
+                    }))
+                  } : {}),
+                  ...(row.columns ? {
+                    columns: row.columns.map((column: any) => ({
+                      ...column,
+                      sections: (column.sections || []).map((sectionId: string) => ({
+                        sectionId,
+                        instanceId: `instance-${sectionId}-${Date.now()}`
+                      }))
+                    }))
+                  } : {})
+                }))
+              }))
+            } : { pages: [] },
+            sectionTemplates: importedData.sectionTemplates || {},
+            metadata: importedData.metadata || {
+              version: '1.0.0',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              author: 'Imported Resume',
+              description: 'Imported resume data'
+            }
+          };
           layoutStateToImport = null;
         } else {
-          alert('Invalid JSON file: Missing resume data structure');
-          event.target.value = '';
-          return;
+          // Try to detect if this might be a resume with different structure
+          const hasResumeFields = Object.keys(importedData).some(key => 
+            ['id', 'personalInfo', 'sections', 'layout', 'metadata', 'name'].includes(key)
+          );
+          
+          if (hasResumeFields) {
+            // Assume it's a direct resume format
+            resumeDataToImport = importedData;
+            layoutStateToImport = null;
+          } else {
+            alert('Invalid JSON file: Missing resume data structure. Expected resume data with properties like personalInfo, sections, or layout.');
+            event.target.value = '';
+            return;
+          }
         }
 
+        // Debug logging
+        console.log('Import process - resumeDataToImport:', resumeDataToImport);
+        console.log('Import process - original importedData keys:', Object.keys(importedData));
+        
         // Extract resume info for confirmation dialog
         const resumeInfo = extractResumeInfo(resumeDataToImport, importedData.exportDate);
 
@@ -357,13 +433,15 @@ function App() {
         // Clear the file input
         event.target.value = '';
       } catch (error) {
-        console.error('JSON import failed:', error);
+        console.error('JSON import failed at some point:', error);
+        console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
         alert(`JSON import failed: ${error instanceof Error ? error.message : 'Invalid JSON format'}`);
         event.target.value = '';
       }
     };
 
-    reader.onerror = () => {
+    reader.onerror = (error) => {
+      console.error('FileReader error:', error);
       alert('Failed to read file');
       event.target.value = '';
     };
@@ -377,24 +455,48 @@ function App() {
 
     const { resumeData: resumeDataToImport, layoutState: layoutStateToImport } = pendingImportData;
 
+    console.log('=== CONFIRMING IMPORT ===');
+    console.log('Resume data:', resumeDataToImport);
+    console.log('Layout state:', layoutStateToImport);
+
+    // Ensure layout is in resumeData.layout (not separate layoutState)
+    const finalResumeData = {
+      ...resumeDataToImport,
+      layout: layoutStateToImport && layoutStateToImport.pages ? {
+        pages: layoutStateToImport.pages,
+        sectionInstances: resumeDataToImport.layout?.sectionInstances || [],
+        globalStyles: resumeDataToImport.layout?.globalStyles || {
+          fontSizes: { h1: "1.2cm", h2: "0.5cm", h3: "0.4cm", body: "0.35cm", small: "0.3cm" },
+          fontFamily: "Arial, sans-serif",
+          colorScheme: { primary: "#2c5aa0", secondary: "#333333", text: "#333333", accent: "#666666" },
+          spacing: { sectionMargin: "0.5cm", itemMargin: "0.3cm", pageMargin: "1.27cm" }
+        }
+      } : resumeDataToImport.layout
+    };
+
+    console.log('Final resume data with layout:', finalResumeData);
+
     // Update resume data
-    setResumeData(resumeDataToImport);
+    setResumeData(finalResumeData);
     
     // Update layout state if available
-    if (layoutStateToImport) {
-      // From wrapped export format
+    if (layoutStateToImport && layoutStateToImport.pages) {
+      console.log('=== SETTING LAYOUT STATE ===');
+      console.log('Layout pages:', layoutStateToImport.pages);
+      console.log('First page rows:', layoutStateToImport.pages[0]?.rows);
+      console.log('Page structure:', JSON.stringify(layoutStateToImport.pages[0], null, 2));
+      
       setLayoutState(prev => ({
         ...prev,
-        pages: layoutStateToImport.pages || prev.pages,
-        zoom: layoutStateToImport.zoom || prev.zoom
+        pages: layoutStateToImport.pages,
+        zoom: layoutStateToImport.zoom || prev.zoom,
+        selectedSection: null,
+        selectedPageBreak: null,
+        draggedItem: null,
+        previewMode: false
       }));
-    } else if (resumeDataToImport.layout) {
-      // From direct resume data format (like public data files)
-      setLayoutState(prev => ({
-        ...prev,
-        pages: resumeDataToImport.layout.pages || prev.pages,
-        zoom: prev.zoom // Keep current zoom
-      }));
+    } else {
+      console.log('No layout state to import');
     }
 
     console.log('JSON import completed successfully');
@@ -487,6 +589,27 @@ function App() {
   // Split screen: Editor on left, Preview on right
   return (
     <div className="app" onClick={handleAppClick}>
+      {/* Hidden file input for JSON import - placed at top level so it doesn't get unmounted */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={(e) => {
+          console.log('=== FILE INPUT onChange FIRED ===');
+          console.log('Event target:', e.target);
+          console.log('Files:', e.target.files);
+          console.log('File count:', e.target.files?.length || 0);
+          
+          if (e.target.files && e.target.files.length > 0) {
+            console.log('File selected:', e.target.files[0].name);
+            handleImportJSON(e);
+          } else {
+            console.log('No files selected');
+          }
+        }}
+        style={{ display: 'none' }}
+      />
+      
       {/* Top Left Menu */}
       <div className="top-left-menu">
         <button 
@@ -501,16 +624,12 @@ function App() {
         </button>
         {showImportExportMenu && (
           <div className="dropdown-menu import-export-menu" onClick={(e) => e.stopPropagation()}>
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImportJSON}
-              style={{ display: 'none' }}
-              id="json-import-input"
-            />
             <button 
               onClick={() => {
-                document.getElementById('json-import-input')?.click();
+                console.log('=== IMPORT BUTTON CLICKED ===');
+                console.log('File input ref exists:', !!fileInputRef.current);
+                console.log('Triggering file input click...');
+                fileInputRef.current?.click();
                 setShowImportExportMenu(false);
               }}
               className="menu-item"

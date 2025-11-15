@@ -778,7 +778,7 @@ export const SkillsTemplates = {
     name: 'Categorized Skills',
     description: 'Skills organized by category',
     component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || [];
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
         <div className="section skills-section categorized">
           <h2>{section.title}</h2>
@@ -806,7 +806,7 @@ export const SkillsTemplates = {
     name: 'Grid Layout',
     description: 'Skills in a responsive grid layout',
     component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || [];
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
         <div className="section skills-wide">
           <h2>{section.title}</h2>
@@ -834,7 +834,7 @@ export const SkillsTemplates = {
     name: 'Inline Layout',
     description: 'Skills in horizontal lines by category',
     component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || [];
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
         <div className="section skills-wide2">
           <h2>{section.title}</h2>
@@ -862,7 +862,7 @@ export const SkillsTemplates = {
     name: 'Compact',
     description: 'Ultra-compact skills layout with minimal spacing',
     component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || [];
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
         <div className="section skills-compact" style={{ marginBottom: '0.3cm' }}>
           <h2 style={{ marginBottom: '0.2cm' }}>{section.title}</h2>
@@ -892,7 +892,7 @@ export const SkillsTemplates = {
     name: 'Minimal Dots',
     description: 'Skills with bullet-separated format',
     component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || [];
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
         <div className="section skills-minimal">
           <h2 style={{ marginBottom: '0.25cm' }}>{section.title}</h2>
@@ -990,22 +990,28 @@ export const NameTemplates = {
     id: 'name-standard',
     name: 'Standard Name',
     description: 'Standard name display',
-    component: ({ section }: { section: any }) => (
-      <div className="name">
-        <h1>{section.content?.fullName || section.content?.name || 'Name'}</h1>
-      </div>
-    )
+    component: ({ section }: { section: any }) => {
+      const fullName = section.content?.fullName || section.content?.name || section.items?.[0]?.content?.fullName || section.items?.[0]?.title || 'Name';
+      return (
+        <div className="name">
+          <h1>{fullName}</h1>
+        </div>
+      );
+    }
   },
   
   centered: {
     id: 'name-centered',
     name: 'Centered Name',
     description: 'Centered name display',
-    component: ({ section }: { section: any }) => (
-      <div className="name centered">
-        <h1>{section.content?.fullName || section.content?.name || 'Name'}</h1>
-      </div>
-    )
+    component: ({ section }: { section: any }) => {
+      const fullName = section.content?.fullName || section.content?.name || section.items?.[0]?.content?.fullName || section.items?.[0]?.title || 'Name';
+      return (
+        <div className="name centered">
+          <h1>{fullName}</h1>
+        </div>
+      );
+    }
   }
 };
 
