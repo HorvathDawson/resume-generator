@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import type { ResumeData } from '../types';
+import type { SectionType } from '../types/resume';
+import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
 
 import { SectionSplittingManager } from './SectionSplittingManager';
 import { SectionTemplateSelector } from './SectionTemplateSelector';
@@ -81,17 +83,59 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   const safePageIndex = Math.min(currentPageIndex, pages.length - 1);
   const currentPage = pages[safePageIndex] || pages[0];
   
-  // Derive available sections from current resume data (updates when resume data changes)
-  const regularSections = resumeData.sections?.map(s => ({ id: s.id, title: s.title })) || [];
+  // Get all possible section types from template registry
+  const allSectionTypes = Object.keys(TEMPLATE_REGISTRY) as SectionType[];
   
-  // Always include a padding section for creating vertical spacing
-  const paddingSection = resumeData.sections?.find(s => s.type === 'padding');
-  if (!paddingSection) {
-    // Create a padding section if one doesn't exist
-    regularSections.push({ id: 'create-padding', title: 'Vertical Spacing' });
-  }
+  // Get all used section IDs for styling purposes
+  const usedSectionIds = new Set<string>();
+  pages.forEach(page => {
+    page.rows.forEach(row => {
+      if (row.columns) {
+        row.columns.forEach(col => {
+          col.sections.forEach(sectionId => usedSectionIds.add(sectionId));
+        });
+      }
+      if (row.sections) {
+        row.sections.forEach(sectionId => usedSectionIds.add(sectionId));
+      }
+    });
+  });
   
-  const availableSections = regularSections;
+  // Show ALL sections from resume data, marking used ones
+  const availableResumeSection = resumeData.sections?.map(s => ({ 
+    id: s.id, 
+    title: s.title, 
+    type: s.type,
+    isAvailable: true,
+    isUsed: usedSectionIds.has(s.id)
+  })) || [];
+  
+  // Create comprehensive list showing all possible section types
+  const availableSections = [
+    // First show actual sections from resume data
+    ...availableResumeSection,
+    
+    // Then show all possible section types that don't exist in resume data
+    ...allSectionTypes
+      .filter(sectionType => 
+        // Don't show types that already exist in resume data
+        !resumeData.sections?.some(section => section.type === sectionType)
+      )
+      .map(sectionType => ({
+        id: `placeholder-${sectionType}-${Date.now()}`,
+        title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1).replace('_', ' '),
+        type: sectionType,
+        isAvailable: false // Mark as placeholder/unavailable
+      })),
+    
+    // Always add padding option if not already available
+    ...(!availableResumeSection.some(s => s.type === 'padding') ? [{
+      id: 'create-padding',
+      title: 'Add Spacing',
+      type: 'padding' as const,
+      isAvailable: true
+    }] : [])
+  ];
 
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [draggedRow, setDraggedRow] = useState<number | null>(null);
@@ -530,6 +574,43 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     console.log('🟢 Updated resume data sections:', updatedResumeData.sections);
     onResumeDataChange(updatedResumeData);
     return paddingId;
+  };
+
+  // Create a personalInfo section from personalInfo data
+  const createPersonalInfoSection = (): string => {
+    if (!onResumeDataChange) return '';
+
+    // Generate unique ID for the personalInfo section
+    const personalInfoId = `personalInfo-${Date.now()}`;
+
+    const personalInfoSection = {
+      id: personalInfoId,
+      title: 'Contact Information',
+      type: 'personal_info' as const,
+      templateId: 'personal-info-standard',
+      isVisible: true,
+      items: [],
+      personalInfo: resumeData.personalInfo || {}
+    };
+
+    console.log('🟢 Creating personalInfo section:', personalInfoSection);
+
+    // Store temporarily for immediate access
+    setTempSections(prev => ({
+      ...prev,
+      [personalInfoId]: personalInfoSection
+    }));
+
+    // Add to resume data SYNCHRONOUSLY and trigger re-render
+    const newSections = [...(resumeData.sections || []), personalInfoSection];
+    const updatedResumeData = {
+      ...resumeData,
+      sections: newSections
+    };
+
+    console.log('🟢 Updated resume data sections:', updatedResumeData.sections);
+    onResumeDataChange(updatedResumeData);
+    return personalInfoId;
   };
 
 
@@ -1246,13 +1327,30 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   <div key={section.id} className="section-item-wrapper">
                     <div className="section-item-with-controls">
                       <div
-                        className="section-item draggable"
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, section.id)}
+                        className={`section-item draggable ${
+                          (section as any).isAvailable === false ? 'unavailable' : ''
+                        } ${
+                          (section as any).isUsed ? 'used' : ''
+                        }`}
+                        draggable={(section as any).isAvailable !== false}
+                        onDragStart={(section as any).isAvailable !== false ? (e) => handleDragStart(e, section.id) : undefined}
+                        title={
+                          (section as any).isAvailable === false ? 
+                            `${section.title} section not available in current resume data` :
+                          (section as any).isUsed ?
+                            `${section.title} is already used in layout (drag to add another instance)` :
+                            undefined
+                        }
                       >
                         {section.title || section.id}
+                        {(section as any).isAvailable === false && (
+                          <span className="section-status"> (not available)</span>
+                        )}
+                        {(section as any).isUsed && (section as any).isAvailable !== false && (
+                          <span className="section-status"> (in use)</span>
+                        )}
                       </div>
-                      {canSplit && (
+                      {canSplit && (section as any).isAvailable !== false && (
                         <button
                           className="sidebar-split-button inline"
                           onClick={() => setSplittingSection(section.id)}

@@ -45,9 +45,9 @@ export function PreviewPanel({
               --font-size-body: ${resumeData?.layout?.globalStyles?.fontSizes?.body || '0.35cm'};
               --font-size-small: ${resumeData?.layout?.globalStyles?.fontSizes?.small || '0.3cm'};
               --primary-color: ${resumeData?.layout?.globalStyles?.colorScheme?.primary || '#2c5aa0'};
+              --accent-color: ${resumeData?.layout?.globalStyles?.colorScheme?.accent || '#4a90e2'};
               --secondary-color: ${resumeData?.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa'};
               --text-color: ${resumeData?.layout?.globalStyles?.colorScheme?.text || '#333333'};
-              --accent-color: ${resumeData?.layout?.globalStyles?.colorScheme?.accent || '#4a90e2'};
               --section-margin: ${resumeData?.layout?.globalStyles?.spacing?.sectionMargin || '0.5cm'};
               --item-margin: ${resumeData?.layout?.globalStyles?.spacing?.itemMargin || '0.3cm'};
               --page-margin: ${resumeData?.layout?.globalStyles?.spacing?.pageMargin || '1.27cm'};
@@ -96,7 +96,7 @@ export function PreviewPanel({
 
             .resume-preview h3 {
               font-size: var(--font-size-h3) !important;
-              color: var(--accent-color) !important;
+              color: var(--primary-color) !important;
               margin-bottom: var(--item-margin) !important;
             }
 
@@ -106,7 +106,8 @@ export function PreviewPanel({
               margin-bottom: var(--item-margin) !important;
             }
 
-            .resume-preview .section div, 
+            .resume-preview .section .text-content div,
+            .resume-preview .section .content div,
             .resume-preview .experience-body div,
             .resume-preview .education-details div,
             .resume-preview .skills-section div:not(.skill-progress):not(.skill-bar):not(.skill-cloud-tag) {
@@ -203,22 +204,7 @@ export function PreviewPanel({
                             }}
                           >
                           {column.sections.map((sectionId: string, sectionIndex: number) => {
-                            if (sectionId === 'personalInfo') {
-                              // Render personal info using template registry
-                              const personalInfo = resumeData?.personalInfo;
-                              if (!personalInfo) return null;
-                              
-                              const personalInfoTemplates = TEMPLATE_REGISTRY['personal_info'] || [];
-                              const template = personalInfoTemplates.find(t => t.id === 'personal-info-standard') || personalInfoTemplates[0];
-                              
-                              if (template) {
-                                const TemplateComponent = template.component;
-                                return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} personalInfo={personalInfo} />;
-                              }
-                              return null;
-                            }
-                            
-                            // Find and render regular section
+                            // Find and render regular section (including personal_info sections)
                             const section = resumeData?.sections.find(s => s.id === sectionId);
                             if (sectionId.startsWith('padding-')) {
                               // If padding section not found, render a placeholder with template-based height
@@ -256,6 +242,12 @@ export function PreviewPanel({
                             
                             if (selectedTemplate) {
                               const TemplateComponent = selectedTemplate.component;
+                              
+                              // Handle personal_info sections specially - they need access to external personalInfo
+                              if (section.type === 'personal_info') {
+                                return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={section} personalInfo={resumeData?.personalInfo} />;
+                              }
+                              
                               return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={section} />;
                             }
                             return null;
@@ -343,6 +335,12 @@ export function PreviewPanel({
                         
                         if (selectedTemplate) {
                           const TemplateComponent = selectedTemplate.component;
+                          
+                          // Handle personal_info sections specially - they need access to external personalInfo
+                          if (section.type === 'personal_info') {
+                            return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={section} personalInfo={resumeData?.personalInfo} />;
+                          }
+                          
                           return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={section} />;
                         }
                         return null;

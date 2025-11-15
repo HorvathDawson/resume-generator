@@ -90,7 +90,12 @@ export const EducationTemplates = {
             <li key={index} className="education-item">
               <div className="education-item-header">
                 <div className="institution fw-bold">{item.institution}</div>
-                <div className="degree">{item.degree}</div>
+                <div className="degree">
+                  {item.degree}
+                  {item.gpa && (
+                    <span className="gpa-inline"> • <strong>GPA:</strong> {item.gpa}</span>
+                  )}
+                </div>
                 <div className="location small-text">{item.location}</div>
                 <div className="dates small-text">
                   <i className="fa fa-calendar"></i> {item.dates}
@@ -166,6 +171,11 @@ export const EducationTemplates = {
           {section.items?.map((item, index) => (
             <div key={index} className="education-item-compact">
               <strong>{item.institution}</strong> - {item.degree} ({item.dates})
+              {item.gpa && (
+                <div className="education-gpa-compact">
+                  <strong>GPA:</strong> {item.gpa}
+                </div>
+              )}
               {item.details && item.details.length > 0 && (
                 <div className="education-details-compact">
                   {item.details.join(' • ')}
@@ -192,7 +202,12 @@ export const EducationTemplates = {
               <div className="timeline-content">
                 <div className="timeline-date">{item.dates}</div>
                 <div className="timeline-institution">{item.institution}</div>
-                <div className="timeline-degree">{item.degree}</div>
+                <div className="timeline-degree">
+                  {item.degree}
+                  {item.gpa && (
+                    <span className="timeline-gpa-inline"> • <strong>GPA:</strong> {item.gpa}</span>
+                  )}
+                </div>
                 {item.details && item.details.length > 0 && (
                   <ul className="timeline-details">
                     {item.details.map((detail, detailIndex) => (
@@ -221,6 +236,7 @@ export const EducationTemplates = {
               <div className="education-row-minimal">
                 <strong>{item.degree}</strong> • {item.institution} • {item.dates}
                 {item.location && <span className="location-inline"> • {item.location}</span>}
+                {item.gpa && <span className="gpa-inline"> • <strong>GPA:</strong> {item.gpa}</span>}
               </div>
               {item.details && item.details.length > 0 && (
                 <div className="education-details-minimal">
@@ -251,6 +267,11 @@ export const EducationTemplates = {
                 <div className="sidebar-degree">{item.degree}</div>
                 <div className="sidebar-institution">{item.institution}</div>
                 {item.location && <div className="sidebar-location">{item.location}</div>}
+                {item.gpa && (
+                  <div className="sidebar-gpa">
+                    <strong>GPA:</strong> {item.gpa}
+                  </div>
+                )}
                 {item.details && item.details.length > 0 && (
                   <ul className="sidebar-details">
                     {item.details.map((detail, detailIndex) => (
@@ -288,6 +309,11 @@ export const EducationTemplates = {
                   <i className="fa fa-map-marker"></i> {item.location}
                 </div>
               )}
+              {item.gpa && (
+                <div className="card-gpa">
+                  <i className="fa fa-star"></i> <strong>GPA:</strong> {item.gpa}
+                </div>
+              )}
               {item.details && item.details.length > 0 && (
                 <ul className="card-details">
                   {item.details.map((detail, detailIndex) => (
@@ -321,6 +347,7 @@ export const EducationTemplates = {
               <div className="col-institution">
                 {item.institution}
                 {item.location && <div className="table-location">{item.location}</div>}
+                {item.gpa && <div className="table-gpa"><strong>GPA:</strong> {item.gpa}</div>}
               </div>
               <div className="col-dates">{item.dates}</div>
               {item.details && item.details.length > 0 && (
@@ -357,6 +384,11 @@ export const EducationTemplates = {
               </div>
               {item.location && (
                 <div className="badge-location">{item.location}</div>
+              )}
+              {item.gpa && (
+                <div className="badge-gpa">
+                  <strong>GPA:</strong> {item.gpa}
+                </div>
               )}
               {item.details && item.details.length > 0 && (
                 <div className="badge-details">
@@ -680,7 +712,7 @@ export const ExperienceTemplates = {
             <div key={index} style={{ 
               marginBottom: '0.6cm',
               paddingLeft: '0.3cm',
-              borderLeft: '0.05cm solid var(--accent-color, #4a90e2)'
+              borderLeft: '0.05cm solid var(--primary-color, #4a90e2)'
             }}>
               <div style={{ 
                 display: 'grid',
@@ -697,7 +729,7 @@ export const ExperienceTemplates = {
                   {item.title}
                 </h3>
                 <div style={{ 
-                  backgroundColor: 'var(--accent-color, #4a90e2)',
+                  backgroundColor: 'var(--primary-color, #4a90e2)',
                   color: 'white',
                   padding: '0.05cm 0.2cm',
                   borderRadius: '0.3cm',
@@ -983,40 +1015,40 @@ export const PersonalInfoTemplates = {
     id: 'personal-info-standard',
     name: 'Standard Contact',
     description: 'Vertical contact information',
-    component: ({ personalInfo }: { personalInfo: any }) => (
+    component: ({ section, personalInfo }: { section: any; personalInfo: any }) => (
       <div className="contact-info">
         <ul>
-          {personalInfo.email && (
+          {personalInfo?.email && (
             <li className="contact">
               <div className="icons"><i className="fas fa-envelope"></i></div>
               <div className="words">{personalInfo.email}</div>
             </li>
           )}
-          {personalInfo.phone && (
+          {personalInfo?.phone && (
             <li className="contact">
               <div className="icons"><i className="fas fa-phone"></i></div>
               <div className="words">{personalInfo.phone}</div>
             </li>
           )}
-          {personalInfo.website && (
+          {personalInfo?.website && (
             <li className="contact">
               <div className="icons"><i className="fas fa-globe"></i></div>
               <div className="words">{personalInfo.website}</div>
             </li>
           )}
-          {personalInfo.github && (
+          {personalInfo?.github && (
             <li className="contact">
               <div className="icons"><i className="fab fa-github"></i></div>
               <div className="words">{personalInfo.github.replace(/^https?:\/\/(www\.)?github\.com\//, '')}</div>
             </li>
           )}
-          {personalInfo.linkedin && (
+          {personalInfo?.linkedin && (
             <li className="contact">
               <div className="icons"><i className="fab fa-linkedin"></i></div>
               <div className="words">{personalInfo.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}</div>
             </li>
           )}
-          {personalInfo.location && (
+          {personalInfo?.location && (
             <li className="contact">
               <div className="icons"><i className="fas fa-map-marker-alt"></i></div>
               <div className="words">{personalInfo.location}</div>
@@ -1031,40 +1063,40 @@ export const PersonalInfoTemplates = {
     id: 'personal-info-wide',
     name: 'Horizontal Contact',
     description: 'Horizontal contact information line',
-    component: ({ personalInfo }: { personalInfo: any }) => (
+    component: ({ section, personalInfo }: { section: any; personalInfo: any }) => (
       <div className="contact-info-wide">
         <div className="contact-line">
-          {personalInfo.email && (
+          {personalInfo?.email && (
             <span className="contact-item">
               <i className="fas fa-envelope"></i>
               <span className="contact-text">{personalInfo.email}</span>
             </span>
           )}
-          {personalInfo.phone && (
+          {personalInfo?.phone && (
             <span className="contact-item">
               <i className="fas fa-phone"></i>
               <span className="contact-text">{personalInfo.phone}</span>
             </span>
           )}
-          {personalInfo.website && (
+          {personalInfo?.website && (
             <span className="contact-item">
               <i className="fas fa-globe"></i>
               <span className="contact-text">{personalInfo.website}</span>
             </span>
           )}
-          {personalInfo.github && (
+          {personalInfo?.github && (
             <span className="contact-item">
               <i className="fab fa-github"></i>
               <span className="contact-text">{personalInfo.github}</span>
             </span>
           )}
-          {personalInfo.linkedin && (
+          {personalInfo?.linkedin && (
             <span className="contact-item">
               <i className="fab fa-linkedin"></i>
               <span className="contact-text">{personalInfo.linkedin}</span>
             </span>
           )}
-          {personalInfo.location && (
+          {personalInfo?.location && (
             <span className="contact-item">
               <i className="fas fa-map-marker-alt"></i>
               <span className="contact-text">{personalInfo.location}</span>
@@ -1270,6 +1302,90 @@ export const ReferencesTemplates = {
     name: 'Minimal References',
     description: 'Simple, clean reference list',
     component: ReferencesTemplate
+  },
+  
+  compact: {
+    id: 'references-compact',
+    name: 'Compact References',
+    description: 'Compact reference list with reduced spacing',
+    component: ({ section }: { section: Section }) => (
+      <div className="section references-section compact">
+        <h2>{section.title}</h2>
+        <div className="references-compact">
+          {section.items && section.items.length > 0 ? (
+            section.items.map((item, index) => (
+              <div key={index} className="reference-item-compact">
+                <div className="reference-name">{item.name}</div>
+                <div className="reference-details">
+                  {item.title && <span className="reference-title">{item.title}</span>}
+                  {item.company && <span className="reference-company"> • {item.company}</span>}
+                  {item.email && <span className="reference-contact"> • {item.email}</span>}
+                  {item.phone && <span className="reference-contact"> • {item.phone}</span>}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="references-note">References available upon request</p>
+          )}
+        </div>
+      </div>
+    )
+  }
+};
+
+// List templates for awards, achievements, etc.
+export const ListTemplates = {
+  simple: {
+    id: 'list-simple',
+    name: 'Simple List',
+    description: 'Basic bullet point list',
+    component: ({ section }: { section: Section }) => (
+      <div className="section list-section simple">
+        <h2>{section.title}</h2>
+        <ul className="simple-list">
+          {section.items?.map((item, index) => (
+            <li key={index}>{item.name || item.title || item.description}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  },
+  
+  compact: {
+    id: 'list-compact',
+    name: 'Compact List',
+    description: 'Compact list with minimal spacing',
+    component: ({ section }: { section: Section }) => (
+      <div className="section list-section compact">
+        <h2>{section.title}</h2>
+        <div className="compact-list">
+          {section.items?.map((item, index) => (
+            <div key={index} className="compact-list-item">
+              {item.name || item.title || item.description}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  },
+  
+  inline: {
+    id: 'list-inline',
+    name: 'Inline List',
+    description: 'Items separated by bullets on one line',
+    component: ({ section }: { section: Section }) => (
+      <div className="section list-section inline">
+        <h2>{section.title}</h2>
+        <div className="inline-list">
+          {section.items?.map((item, index) => (
+            <span key={index}>
+              {item.name || item.title || item.description}
+              {index < section.items!.length - 1 && <span className="separator"> • </span>}
+            </span>
+          ))}
+        </div>
+      </div>
+    )
   }
 };
 
@@ -1283,7 +1399,7 @@ export const TEMPLATE_REGISTRY: TemplateRegistry = {
   certifications: Object.values(CertificationTemplates),
   references: Object.values(ReferencesTemplates),
   academic_awards: Object.values(AcademicAwardsTemplates),
-  list: Object.values(TextTemplates),
+  list: Object.values(ListTemplates),
   personal_info: Object.values(PersonalInfoTemplates),
   name: Object.values(NameTemplates),
   padding: Object.values(PaddingTemplates)

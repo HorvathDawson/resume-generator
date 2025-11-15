@@ -60,6 +60,174 @@ function App() {
     }
   };
 
+  // Print Preview handler - opens resume in new window for printing
+  const handlePrintPreview = () => {
+    if (!resumeData) {
+      alert('No resume data to preview');
+      return;
+    }
+
+    // Create a new window for print preview
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Popup blocked. Please allow popups for this site.');
+      return;
+    }
+
+    // Get the current preview element
+    const previewElement = document.getElementById('resume-preview');
+    if (!previewElement) {
+      alert('Resume preview not found');
+      return;
+    }
+
+    // Get all stylesheets from the current document
+    const stylesheets = Array.from(document.styleSheets);
+    let cssRules = '';
+    
+    stylesheets.forEach(stylesheet => {
+      try {
+        const rules = Array.from(stylesheet.cssRules || []);
+        rules.forEach(rule => {
+          cssRules += rule.cssText + '\n';
+        });
+      } catch (e) {
+        // Cross-origin stylesheets might not be accessible
+        console.warn('Could not access stylesheet:', e);
+      }
+    });
+
+    // Create the print preview HTML - just copy the existing preview but optimize for printing
+    const printHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Resume - Print Preview</title>
+          <meta charset="utf-8">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+          <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+          <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+          
+          <style>
+            ${cssRules}
+            
+            /* Print-specific overrides */
+            body {
+              background: white !important;
+              margin: 0;
+              padding: 0;
+            }
+            
+            /* Remove the preview panel wrapper */
+            .preview-panel {
+              width: 100% !important;
+              height: 100% !important;
+              overflow: visible !important;
+              padding: 0 !important;
+            }
+            
+            /* Make resume preview take full window */
+            #resume-preview {
+              zoom: 1 !important;
+              transform: none !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              overflow: visible !important;
+            }
+            
+            /* Remove any wrapper margins that cause overflow */
+            #resume-preview * {
+              margin-bottom: 0 !important;
+            }
+            
+            /* Ensure pages stack vertically with no gaps */
+            .resume-page {
+              margin: 0 auto !important;
+              padding: 0 !important;
+              box-shadow: none !important;
+              border: none !important;
+              display: block !important;
+              width: 21cm !important;
+              box-sizing: border-box !important;
+            }
+            
+            /* Let browser handle all page breaks naturally - no forced breaks */
+            
+            /* Hide any empty elements that might be causing extra pages */
+            .resume-page:empty {
+              display: none !important;
+            }
+            
+            /* Ensure footers don't create overflow */
+            .page-footer,
+            footer {
+              position: absolute !important;
+              bottom: 0 !important;
+              overflow: hidden !important;
+            }
+            
+            /* Remove specific margins that cause page overflow */
+            .resume-preview-wrapper,
+            .page-wrapper,
+            .preview-container {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            
+            /* Print media queries */
+            @media print {
+              @page {
+                margin: 0;
+                padding: 0;
+                size: A4;
+              }
+              
+              body { 
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              
+              .resume-page { 
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                width: 21cm !important;
+              }
+              
+              /* Remove any gaps or spacing */
+              * {
+                box-sizing: border-box !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="preview-panel">
+            ${previewElement.outerHTML}
+          </div>
+          <script>
+            // Auto-focus the window
+            window.focus();
+            // Uncomment the next line if you want to automatically open print dialog
+            // setTimeout(() => window.print(), 1000);
+          </script>
+        </body>
+      </html>
+    `;
+
+    // Write the HTML to the new window
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
+  };
+
   // Export to JSON handler
   const handleExportJSON = () => {
     try {
@@ -68,13 +236,20 @@ function App() {
         return;
       }
 
-      // Create export data with timestamp
+      // Create export data with timestamp - use current layout from resumeData
       const exportData = {
         version: '1.0',
         exportDate: new Date().toISOString(),
-        resumeData: resumeData,
+        resumeData: {
+          ...resumeData,
+          layout: {
+            ...resumeData.layout,
+            // Ensure layout includes current state
+            pages: resumeData.layout?.pages || layoutState.pages
+          }
+        },
         layoutState: {
-          pages: layoutState.pages,
+          pages: resumeData.layout?.pages || layoutState.pages,
           zoom: layoutState.zoom
         }
       };
@@ -114,20 +289,40 @@ function App() {
         const importedData = JSON.parse(jsonContent);
 
         // Validate imported data structure
-        if (!importedData.resumeData) {
-          alert('Invalid JSON file: Missing resume data');
+        // Check if data is wrapped in resumeData property or is direct resume data
+        let resumeDataToImport;
+        let layoutStateToImport;
+        
+        if (importedData.resumeData) {
+          // Wrapped format (from export)
+          resumeDataToImport = importedData.resumeData;
+          layoutStateToImport = importedData.layoutState;
+        } else if (importedData.personalInfo || importedData.sections) {
+          // Direct resume data format (from public/data files)
+          resumeDataToImport = importedData;
+          layoutStateToImport = null;
+        } else {
+          alert('Invalid JSON file: Missing resume data structure');
           return;
         }
 
         // Update resume data
-        setResumeData(importedData.resumeData);
+        setResumeData(resumeDataToImport);
         
         // Update layout state if available
-        if (importedData.layoutState) {
+        if (layoutStateToImport) {
+          // From wrapped export format
           setLayoutState(prev => ({
             ...prev,
-            pages: importedData.layoutState.pages || prev.pages,
-            zoom: importedData.layoutState.zoom || prev.zoom
+            pages: layoutStateToImport.pages || prev.pages,
+            zoom: layoutStateToImport.zoom || prev.zoom
+          }));
+        } else if (resumeDataToImport.layout) {
+          // From direct resume data format (like public data files)
+          setLayoutState(prev => ({
+            ...prev,
+            pages: resumeDataToImport.layout.pages || prev.pages,
+            zoom: prev.zoom // Keep current zoom
           }));
         }
 
@@ -250,6 +445,13 @@ function App() {
             title="Download resume as JSON file"
           >
             Export JSON
+          </button>
+          <button 
+            onClick={handlePrintPreview}
+            className="btn btn-secondary"
+            title="Open resume in new window for printing"
+          >
+            Print Preview
           </button>
           <button 
             onClick={handlePDFExport}

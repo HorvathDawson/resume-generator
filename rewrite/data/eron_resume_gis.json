@@ -1,0 +1,270 @@
+{
+  "personalInfo": {
+    "fullName": "Eron Macartney",
+    "email": "eronmac08@gmail.com",
+    "phone": "(206) 445-4396",
+    "location": "Vancouver, BC V5N 4H6"
+  },
+  "sections": [
+    {
+      "id": "name",
+      "type": "name",
+      "title": "",
+      "content": {
+        "fullName": "Eron Macartney"
+      },
+      "templateId": "name-standard"
+    },
+    {
+      "id": "personalInfo",
+      "type": "personal_info",
+      "title": "Contact Information",
+      "items": [],
+      "templateId": "personal-info-standard"
+    },
+    {
+      "id": "education",
+      "type": "education",
+      "title": "Education",
+      "items": [
+        {
+          "institution": "University of British Columbia",
+          "location": "",
+          "degree": "Master of Geomatics for Environmental Management",
+          "dates": "April 2025",
+          "details": []
+        },
+        {
+          "institution": "Western Washington University",
+          "location": "",
+          "degree": "Bachelor of Science in Marine Ecology",
+          "dates": "December 2018",
+          "gpa": "3.81/4.0",
+          "details": []
+        }
+      ],
+      "templateId": "education-standard"
+    },
+    {
+      "id": "projects",
+      "type": "experience",
+      "title": "Projects",
+      "items": [
+        {
+          "title": "Predictive Modeling of Pacific Herring Spawning",
+          "organization": "UBC, Faculty of Forestry",
+          "dates": "Academic Project",
+          "details": [
+            "Applied GIS and statistical analysis to predict spawning sites and timing, aiding in conservation efforts in the Howe Sound, BC."
+          ]
+        },
+        {
+          "title": "Coral Reef Health Assessment",
+          "organization": "Academic Project",
+          "dates": "Academic Project",
+          "details": [
+            "Conducted spatial analysis of coral reef data to evaluate ecosystem health and inform marine conservation strategies in the Indo-Pacific."
+          ]
+        }
+      ],
+      "templateId": "experience-detailed"
+    },
+    {
+      "id": "work-experience",
+      "type": "experience",
+      "title": "Experience",
+      "items": [
+        {
+          "title": "Biological Science Technician 2",
+          "organization": "Washington Department of Fish and Wildlife",
+          "location": "Bellingham, WA",
+          "dates": "March 2023 – August 2024",
+          "details": [
+            "Utilized ArcGIS Pro to create potential salmon spawning maps for non-surveyed areas",
+            "Mapped over 2,500 fish redds using ArcGIS Pro, R, and Excel, providing critical spatial data for seven fish species.",
+            "Analyzed maps and graphs created with R and ArcGIS to determine current and future salmon/steelhead runs to set local recreational fishing seasons and regulations.",
+            "Collected and analyzed biological samples, including species identification, DNA, scales, lengths, weights, sex, otoliths, and coded wire tags (CWTs)."
+          ]
+        },
+        {
+          "title": "Biological Science Technician 2",
+          "organization": "Washington Department of Fish and Wildlife",
+          "location": "La Conner, WA",
+          "dates": "March 2022 – February 2023",
+          "details": [
+            "Utilized GIS tools to assess biodiversity and create heat maps of white crappie.",
+            "Operated and maintained boats for creel surveys on local lakes.",
+            "Managed and analyzed spatial data to support fisheries management decisions.",
+            "Produced detailed maps and reports for stakeholders and regulatory agencies."
+          ]
+        },
+        {
+          "title": "Biological Science Technician 2",
+          "organization": "Washington Department of Fish and Wildlife",
+          "location": "Twisp, WA",
+          "dates": "August 2021 – December 2021",
+          "details": [
+            "Monitored and operated screw traps to assess juvenile salmonid outmigration, utilizing GIS and R for data analysis.",
+            "Managed juvenile PIT tagging files, conducting queries in PTAGIS and Access databases.",
+            "Performed quality assurance and control on collected data."
+          ]
+        }
+      ],
+      "templateId": "experience-detailed"
+    },
+    {
+      "id": "skills",
+      "type": "skills",
+      "title": "Skills",
+      "categories": [
+        {
+          "name": "GIS Software",
+          "skills": [
+            "ArcGIS Pro", "QGIS", "GIS Platforms"
+          ]
+        },
+        {
+          "name": "Programming & Data Analysis",
+          "skills": [
+            "Python", "R (for spatial data analysis and automation)", "SQL Databases", 
+            "Microsoft Access", "Excel"
+          ]
+        },
+        {
+          "name": "Remote Sensing & Cartography",
+          "skills": [
+            "Acquiring and processing Remote Sensing Data (including LiDAR)", 
+            "Analyzing Remote Sensing Data", "Cartography (Creating detailed and accurate maps)"
+          ]
+        }
+      ],
+      "templateId": "skills-categorized"
+    },
+    {
+      "id": "awards",
+      "type": "list",
+      "title": "Awards",
+      "items": [
+        {
+          "name": "Benjamin A. Gilman International Scholarship"
+        },
+        {
+          "name": "IIE Generation Study Abroad Scholarship"
+        },
+        {
+          "name": "Dean's Honors List"
+        }
+      ],
+      "templateId": "list-simple"
+    },
+    {
+      "id": "references",
+      "type": "references",
+      "title": "References",
+      "items": [
+        {
+          "id": "ref-1",
+          "title": "Available upon request.",
+          "organization": "",
+          "phone": "",
+          "email": ""
+        }
+      ],
+      "templateId": "references-minimal"
+    }
+  ],
+  "layout": {
+    "pages": [
+      {
+        "id": "page-1",
+        "margins": {
+          "top": "1.0cm",
+          "bottom": "1.0cm",
+          "left": "1.0cm",
+          "right": "1.0cm"
+        },
+        "rows": [
+          {
+            "type": "wholePage",
+            "sections": ["name"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          },
+          {
+            "type": "columns",
+            "columns": [
+              {
+                "width": "30%",
+                "sections": ["personalInfo", "awards"],
+                "backgroundColor": "#f8f9fa",
+                "textColor": "#333333"
+              },
+              {
+                "width": "70%",
+                "sections": ["education", "projects", "skills"],
+                "backgroundColor": "#ffffff",
+                "textColor": "#333333"
+              }
+            ]
+          },
+          {
+            "type": "wholePage",
+            "sections": ["work-experience"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          }
+        ],
+        "footer": {
+          "type": "mountains",
+          "height": "1.5cm",
+          "backgroundColor": "#ffffff",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "id": "page-2",
+        "margins": {
+          "top": "1.0cm",
+          "bottom": "1.0cm",
+          "left": "1.0cm",
+          "right": "1.0cm"
+        },
+        "rows": [
+          {
+            "type": "wholePage",
+            "sections": ["references"],
+            "backgroundColor": "#ffffff",
+            "textColor": "#333333"
+          }
+        ],
+        "footer": {
+          "type": "minimal",
+          "height": "1.0cm",
+          "backgroundColor": "#ffffff",
+          "textColor": "#333333"
+        }
+      }
+    ]
+  },
+  "globalStyles": {
+    "fontSizes": {
+      "h1": "1.3cm",
+      "h2": "0.6cm",
+      "h3": "0.4cm",
+      "body": "0.4cm",
+      "small": "0.4cm"
+    },
+    "fontFamily": "Roboto, sans-serif",
+    "colorScheme": {
+      "primary": "#2c5aa0",
+      "secondary": "#333333",
+      "text": "#333333",
+      "accent": "#666666"
+    },
+    "spacing": {
+      "sectionMargin": "0.6cm",
+      "itemMargin": "0.4cm",
+      "pageMargin": "1.27cm"
+    }
+  }
+}

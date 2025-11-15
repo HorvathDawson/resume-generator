@@ -19,6 +19,13 @@
       "templateId": "name-standard"
     },
     {
+      "id": "personalInfo",
+      "type": "personal_info",
+      "title": "Contact Information",
+      "items": [],
+      "templateId": "personal-info-standard"
+    },
+    {
       "id": "career-summary",
       "type": "text",
       "title": "Career Summary",
@@ -35,14 +42,16 @@
           "location": "Vancouver, BC",
           "degree": "B.ASc., Engineering Physics",
           "dates": "2018 – 2022",
-          "details": ["GPA: 3.7/4.0"]
+          "gpa": "3.7/4.0",
+          "details": []
         },
         {
           "institution": "Thompson Rivers University",
           "location": "Kamloops, BC",
           "degree": "Engineering Transfer Program",
           "dates": "2017 – 2018",
-          "details": ["GPA: 4.0/4.0"]
+          "gpa": "4.0/4.0",
+          "details": []
         }
       ],
       "templateId": "education-standard"
@@ -256,13 +265,7 @@
             "backgroundColor": "#ffffff",
             "textColor": "#333333"
           }
-        ],
-        "footer": {
-          "type": "mountains",
-          "height": "1.5cm",
-          "backgroundColor": "#ffffff",
-          "textColor": "#333333"
-        }
+        ]
       },
       {
         "id": "page-2",
@@ -279,13 +282,7 @@
             "backgroundColor": "#ffffff",
             "textColor": "#333333"
           }
-        ],
-        "footer": {
-          "type": "minimal",
-          "height": "1.0cm",
-          "backgroundColor": "#ffffff",
-          "textColor": "#333333"
-        }
+        ]
       }
     ]
   },
