@@ -1,5 +1,72 @@
 
+import { useState, useRef, useEffect } from 'react';
 import type { ResumeData } from '../types';
+import './GlobalStylesPanel.css';
+
+interface FontOption {
+  name: string;
+  value: string;
+}
+
+interface FontDropdownProps {
+  currentFont: string;
+  fonts: FontOption[];
+  onChange: (fontValue: string) => void;
+}
+
+function FontDropdown({ currentFont, fonts, onChange }: FontDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const currentFontName = fonts.find(f => f.value === currentFont)?.name || 'Custom Font';
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="font-dropdown" ref={dropdownRef}>
+      <button
+        type="button"
+        className="font-dropdown-trigger"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{ fontFamily: currentFont }}
+      >
+        <span className="font-name">{currentFontName}</span>
+        <span className="font-preview">Aa</span>
+        <span className="dropdown-arrow">{isOpen ? '▲' : '▼'}</span>
+      </button>
+      
+      {isOpen && (
+        <div className="font-dropdown-menu">
+          {fonts.map(font => (
+            <button
+              key={font.value}
+              type="button"
+              className={`font-option ${font.value === currentFont ? 'selected' : ''}`}
+              onClick={() => {
+                onChange(font.value);
+                setIsOpen(false);
+              }}
+              style={{ fontFamily: font.value }}
+            >
+              <span className="font-name">{font.name}</span>
+              <span className="font-preview">Aa</span>
+              {font.value === currentFont && <span className="check-mark">✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface GlobalStylesPanelProps {
   resumeData: ResumeData;
@@ -9,7 +76,7 @@ interface GlobalStylesPanelProps {
 export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStylesPanelProps) {
   // Provide default values if globalStyles is undefined
   const defaultGlobalStyles = {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     fontSizes: {
       h1: '1.2cm',
       h2: '0.6cm',
@@ -80,14 +147,27 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
   };
 
   const commonFonts = [
+    // Modern Google Fonts - Professional Resume Fonts
+    { name: 'Roboto', value: 'Roboto, sans-serif' },
+    { name: 'Inter', value: 'Inter, sans-serif' },
+    { name: 'Open Sans', value: 'Open Sans, sans-serif' },
+    { name: 'Source Sans Pro', value: 'Source Sans Pro, sans-serif' },
+    { name: 'Lato', value: 'Lato, sans-serif' },
+    { name: 'Nunito Sans', value: 'Nunito Sans, sans-serif' },
+    { name: 'Work Sans', value: 'Work Sans, sans-serif' },
+    { name: 'Poppins', value: 'Poppins, sans-serif' },
+    
+    // Professional Serif Options
+    { name: 'Merriweather', value: 'Merriweather, serif' },
+    { name: 'Source Serif Pro', value: 'Source Serif Pro, serif' },
+    { name: 'Crimson Text', value: 'Crimson Text, serif' },
+    
+    // System Fonts (fallbacks)
     { name: 'Arial', value: 'Arial, sans-serif' },
     { name: 'Helvetica', value: 'Helvetica, sans-serif' },
     { name: 'Times New Roman', value: 'Times New Roman, serif' },
     { name: 'Georgia', value: 'Georgia, serif' },
-    { name: 'Calibri', value: 'Calibri, sans-serif' },
-    { name: 'Verdana', value: 'Verdana, sans-serif' },
-    { name: 'Trebuchet MS', value: 'Trebuchet MS, sans-serif' },
-    { name: 'Palatino', value: 'Palatino, serif' }
+    { name: 'Calibri', value: 'Calibri, sans-serif' }
   ];
 
   return (
@@ -99,15 +179,11 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
         <div className="compact-row">
           <div className="compact-group">
             <label>Font</label>
-            <select 
-              value={globalStyles.fontFamily}
-              onChange={(e) => updateGlobalStyles({ fontFamily: e.target.value })}
-              className="compact-select"
-            >
-              {commonFonts.map(font => (
-                <option key={font.value} value={font.value}>{font.name}</option>
-              ))}
-            </select>
+            <FontDropdown 
+              currentFont={globalStyles.fontFamily}
+              fonts={commonFonts}
+              onChange={(fontValue) => updateGlobalStyles({ fontFamily: fontValue })}
+            />
           </div>
           
           <div className="compact-group">

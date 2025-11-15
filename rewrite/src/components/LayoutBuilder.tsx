@@ -165,6 +165,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   const [sectionTemplates, setSectionTemplates] = useState<Record<string, string>>(
     resumeData.sectionTemplates || {}
   );
+  const [draggedLayoutButton, setDraggedLayoutButton] = useState<'columns' | 'wholePage' | null>(null);
+  
+  // Global styles popup state
+  const [showGlobalStyles, setShowGlobalStyles] = useState(false);
+
+  // Handle layout button drag start
+  const handleLayoutButtonDragStart = (e: React.DragEvent, layoutType: 'columns' | 'wholePage') => {
+    setDraggedLayoutButton(layoutType);
+    e.dataTransfer.setData('text/plain', `layout-${layoutType}`);
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
+  // Handle layout button drop
+  const handleLayoutDrop = (e: React.DragEvent, insertIndex: number) => {
+    e.preventDefault();
+    if (draggedLayoutButton) {
+      addNewRow(draggedLayoutButton, insertIndex);
+      setDraggedLayoutButton(null);
+    }
+  };
 
   const handleDragStart = (e: React.DragEvent, sectionId: string) => {
     setDraggedSection(sectionId);
@@ -431,7 +451,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
   };
 
-  const addNewRow = (type: 'columns' | 'wholePage') => {
+  const addNewRow = (type: 'columns' | 'wholePage', insertIndex?: number) => {
     const rowId = `page-${currentPage.pageNumber}-row-${currentPage.rows.length}`;
     const newRow: LayoutRow = {
       id: rowId,
@@ -448,7 +468,12 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       })
     };
 
-    const newRows = [...currentPage.rows, newRow];
+    const newRows = [...currentPage.rows];
+    if (insertIndex !== undefined && insertIndex >= 0 && insertIndex <= newRows.length) {
+      newRows.splice(insertIndex, 0, newRow);
+    } else {
+      newRows.push(newRow);
+    }
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
     setPages(newPages);
@@ -1223,86 +1248,18 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   };
 
   return (
-    <div className={`layout-builder ${(draggedSectionInRow || draggedSection) ? 'has-dragging-section' : ''}`}>
-      <div className="layout-builder-header">
-        <h3>Layout Builder</h3>
-        <div className="layout-controls">
-          <button 
-            className="btn btn-small"
-            onClick={() => addNewRow('columns')}
-          >
-            Add Column Row
-          </button>
-          <button 
-            className="btn btn-small"
-            onClick={() => addNewRow('wholePage')}
-          >
-            Add Full Width Row
-          </button>
-        </div>
-      </div>
+    <div className={`layout-builder-viewport ${(draggedSectionInRow || draggedSection) ? 'has-dragging-section' : ''}`}>
 
-      <div className="layout-builder-content">
-        {/* Global Styles Panel */}
-        {onResumeDataChange && (
-          <GlobalStylesPanel 
-            resumeData={resumeData}
-            onResumeDataChange={onResumeDataChange}
-          />
-        )}
 
-        {/* Page Management */}
-        <div className="page-tabs">
-          <div className="page-tab-list">
-            {pages.map((page, index) => (
-              <button
-                key={page.id}
-                className={`page-tab ${index === currentPageIndex ? 'active' : ''}`}
-                onClick={() => setCurrentPageIndex(index)}
-              >
-                Page {page.pageNumber}
-                {pages.length > 1 && (
-                  <span
-                    className="remove-page"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removePage(index);
-                    }}
-                  >
-                    ×
-                  </span>
-                )}
-              </button>
-            ))}
-            <button onClick={addNewPage} className="add-page-button">
-              + Add Page
-            </button>
-          </div>
-
-          {/* Footer Controls */}
-          <div className="footer-controls">
-            <label className="footer-label">Page Footer:</label>
-            <select
-              value={pages[currentPageIndex]?.footer?.type || 'none'}
-              onChange={(e) => updatePageFooter(e.target.value as any)}
-              className="footer-select"
-            >
-              <option value="none">No Footer</option>
-              <option value="default">Default Design</option>
-              <option value="minimal">Minimal Line</option>
-              <option value="modern">Modern Accent</option>
-              <option value="mountains">Mountains</option>
-              <option value="fish">Fish Design</option>
-              <option value="salmon">Salmon Design</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Layout Content */}
-        <div className="layout-content-wrapper">
+      {/* Main Layout Area */}
+      <div className="layout-main-area">
+        {/* Sticky Left Sidebar */}
+        <div className="layout-sidebar">
           {/* Available sections */}
           <div className="available-sections">
-            <h4>Available Sections</h4>
+            <div className="sections-header">
+              <h4>Available Sections</h4>
+            </div>
             <div className="sections-list">
               {availableSections.map((section) => {
                 const resumeSection = resumeData.sections?.find(s => s.id === section.id);
@@ -1392,19 +1349,135 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               </>
             )}
           </div>
+        </div>
 
-          {/* Layout rows for current page */}
-          <div className="layout-rows">
+        {/* Main Viewport */}
+        <div className="layout-viewport">
+          {/* Fixed Top Controls - Always Visible */}
+          <div className="layout-top-fixed-controls">
+            {/* Layout Buttons */}
+            <div className="layout-buttons-panel">
+              <div className="layout-button-header">
+                <div className="layout-button-info">
+                  <p>Drag these layout elements into your resume:</p>
+                </div>
+                {onResumeDataChange && (
+                  <button 
+                    className="global-styles-button"
+                    onClick={() => setShowGlobalStyles(!showGlobalStyles)}
+                    title="Global Styles"
+                  >
+                    🎨
+                  </button>
+                )}
+              </div>
+              <div className="draggable-layout-buttons">
+                <div
+                  className="layout-button-item"
+                  draggable={true}
+                  onDragStart={(e) => handleLayoutButtonDragStart(e, 'columns')}
+                >
+                  <div className="layout-button-preview">
+                    <div className="layout-preview-columns">
+                      <div className="preview-column"></div>
+                      <div className="preview-column"></div>
+                    </div>
+                  </div>
+                  <span className="layout-button-label">Column Row</span>
+                </div>
+                
+                <div
+                  className="layout-button-item"
+                  draggable={true}
+                  onDragStart={(e) => handleLayoutButtonDragStart(e, 'wholePage')}
+                >
+                  <div className="layout-button-preview">
+                    <div className="layout-preview-whole">
+                      <div className="preview-whole-page"></div>
+                    </div>
+                  </div>
+                  <span className="layout-button-label">Full Width Row</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Page Tabs */}
+            <div className="page-tabs-viewport">
+              <div className="page-tab-list">
+                {pages.map((page, index) => (
+                  <button
+                    key={page.id}
+                    className={`page-tab ${index === currentPageIndex ? 'active' : ''}`}
+                    onClick={() => setCurrentPageIndex(index)}
+                  >
+                    Page {page.pageNumber}
+                    {pages.length > 1 && (
+                      <span
+                        className="remove-page"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removePage(index);
+                        }}
+                      >
+                        ×
+                      </span>
+                    )}
+                  </button>
+                ))}
+                <button onClick={addNewPage} className="add-page-button">
+                  + Add Page
+                </button>
+              </div>
+            </div>
+
+            {/* Footer Controls */}
+            <div className="footer-controls">
+              <label className="footer-label">Page Footer:</label>
+              <select
+                value={pages[currentPageIndex]?.footer?.type || 'none'}
+                onChange={(e) => updatePageFooter(e.target.value as any)}
+                className="footer-select"
+              >
+                  <option value="none">No Footer</option>
+                  <option value="default">Default Design</option>
+                  <option value="minimal">Minimal Line</option>
+                  <option value="modern">Modern Accent</option>
+                  <option value="mountains">Mountains</option>
+                  <option value="fish">Fish Design</option>
+                  <option value="salmon">Salmon Design</option>
+                </select>
+              </div>
+          </div>
+          
+          {/* Scrollable Layout Content */}
+          <div className="layout-content-scrollable">
+            <div className="layout-rows">
             <h4>Page {currentPage.pageNumber} Layout</h4>
-            {currentPage.rows.map((row: LayoutRow, rowIndex: number) => (
+            
+            {/* Drop zone at the top */}
             <div
-              key={row.id}
-              className="layout-row-builder"
-              draggable
-              onDragStart={(e) => handleRowDragStart(e, rowIndex)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, rowIndex)}
+              className="layout-drop-zone"
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (draggedLayoutButton) {
+                  e.dataTransfer.dropEffect = 'copy';
+                }
+              }}
+              onDrop={(e) => handleLayoutDrop(e, 0)}
             >
+              Drop layout here
+            </div>
+            
+            {currentPage.rows.map((row: LayoutRow, rowIndex: number) => (
+              <React.Fragment key={row.id}>
+                <div
+                  className="layout-row-builder"
+                  draggable
+                  onDragStart={(e) => handleRowDragStart(e, rowIndex)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, rowIndex)}
+                >
+                  {/* Row content will continue here */}
               <div className="row-header">
                 <span className="row-type">{row.type}</span>
                 <button 
@@ -1758,10 +1831,47 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                 </div>
               )}
             </div>
+            
+            {/* Drop zone after each row */}
+            <div
+              className="layout-drop-zone"
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (draggedLayoutButton) {
+                  e.dataTransfer.dropEffect = 'copy';
+                }
+              }}
+              onDrop={(e) => handleLayoutDrop(e, rowIndex + 1)}
+            >
+              Drop layout here
+            </div>
+          </React.Fragment>
           ))}
+            </div>
+          </div>
         </div>
       </div>
-      </div>
+      
+      {/* Global Styles Popup */}
+      {showGlobalStyles && onResumeDataChange && (
+        <div className="global-styles-popup-overlay" onClick={() => setShowGlobalStyles(false)}>
+          <div className="global-styles-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="global-styles-popup-header">
+              <h3>Global Styles</h3>
+              <button 
+                className="close-popup-button"
+                onClick={() => setShowGlobalStyles(false)}
+              >
+                ×
+              </button>
+            </div>
+            <GlobalStylesPanel 
+              resumeData={resumeData}
+              onResumeDataChange={onResumeDataChange}
+            />
+          </div>
+        </div>
+      )}
       
       {/* Section Splitting Modal */}
       {splittingSection && (

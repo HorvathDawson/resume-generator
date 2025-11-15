@@ -26,8 +26,18 @@ function App() {
     selectedPageBreak: null,
     draggedItem: null,
     previewMode: false,
-    zoom: 0.6, // Optimized for larger preview area
+    zoom: 0.6, // Optimized for larger preview area,
   });
+  
+  // Popup states
+  const [showImportExportMenu, setShowImportExportMenu] = useState(false);
+  const [showPreviewActions, setShowPreviewActions] = useState(false);
+  
+  // Close menus when clicking elsewhere
+  const handleAppClick = () => {
+    setShowImportExportMenu(false);
+    setShowPreviewActions(false);
+  };
   const [templateLibrary] = useState<TemplateLibrary>(createDefaultTemplateLibrary());
   
   // PDF export handler
@@ -106,7 +116,7 @@ function App() {
           <meta charset="utf-8">
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-          <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Lato:wght@300;400;700&family=Nunito+Sans:wght@300;400;600;700&family=Work+Sans:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&family=Source+Serif+Pro:wght@300;400;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
           <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
           
@@ -421,48 +431,50 @@ function App() {
 
   // Split screen: Editor on left, Preview on right
   return (
-    <div className="app">
-      <div className="app-header">
-        <h1>Resume Builder</h1>
-        <div className="app-actions">
-          <input
-            type="file"
-            accept=".json"
-            onChange={handleImportJSON}
-            style={{ display: 'none' }}
-            id="json-import-input"
-          />
-          <button 
-            onClick={() => document.getElementById('json-import-input')?.click()}
-            className="btn btn-secondary"
-            title="Import resume from JSON file"
-          >
-            Import JSON
-          </button>
-          <button 
-            onClick={handleExportJSON}
-            className="btn btn-secondary"
-            title="Download resume as JSON file"
-          >
-            Export JSON
-          </button>
-          <button 
-            onClick={handlePrintPreview}
-            className="btn btn-secondary"
-            title="Open resume in new window for printing"
-          >
-            Print Preview
-          </button>
-          <button 
-            onClick={handlePDFExport}
-            disabled={isExportingPDF}
-            className="btn btn-primary"
-          >
-            {isExportingPDF ? 'Generating PDF...' : 'Export PDF'}
-          </button>
-        </div>
+    <div className="app" onClick={handleAppClick}>
+      {/* Top Left Menu */}
+      <div className="top-left-menu">
+        <button 
+          className="menu-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowImportExportMenu(!showImportExportMenu);
+          }}
+          title="Import/Export Menu"
+        >
+          ☰
+        </button>
+        {showImportExportMenu && (
+          <div className="dropdown-menu import-export-menu" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportJSON}
+              style={{ display: 'none' }}
+              id="json-import-input"
+            />
+            <button 
+              onClick={() => {
+                document.getElementById('json-import-input')?.click();
+                setShowImportExportMenu(false);
+              }}
+              className="menu-item"
+            >
+              Import JSON
+            </button>
+            <button 
+              onClick={() => {
+                handleExportJSON();
+                setShowImportExportMenu(false);
+              }}
+              className="menu-item"
+            >
+              Export JSON
+            </button>
+          </div>
+        )}
       </div>
-      
+
       <div className="app-main">
         {/* Left Panel: Resume Editor */}
         <div className="editor-panel">
@@ -477,6 +489,43 @@ function App() {
         
         {/* Right Panel: Live Preview */}
         <div className="preview-panel">
+          {/* Top Right Preview Actions */}
+          <div className="top-right-actions">
+            <button 
+              className="preview-actions-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPreviewActions(!showPreviewActions);
+              }}
+              title="Preview Actions"
+            >
+              ⋮
+            </button>
+            {showPreviewActions && (
+              <div className="dropdown-menu preview-actions-menu" onClick={(e) => e.stopPropagation()}>
+                <button 
+                  onClick={() => {
+                    handlePrintPreview();
+                    setShowPreviewActions(false);
+                  }}
+                  className="menu-item"
+                >
+                  Print Preview
+                </button>
+                <button 
+                  onClick={() => {
+                    handlePDFExport();
+                    setShowPreviewActions(false);
+                  }}
+                  disabled={isExportingPDF}
+                  className="menu-item"
+                >
+                  {isExportingPDF ? 'Generating PDF...' : 'Export PDF'}
+                </button>
+              </div>
+            )}
+          </div>
+          
           <PreviewPanel
             resumeData={resumeData}
             layoutState={layoutState}

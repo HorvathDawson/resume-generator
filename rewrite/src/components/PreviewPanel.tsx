@@ -38,7 +38,7 @@ export function PreviewPanel({
         <style>
           {`
             .resume-preview {
-              --font-family: ${resumeData?.layout?.globalStyles?.fontFamily || 'Arial, sans-serif'};
+              --font-family: ${resumeData?.layout?.globalStyles?.fontFamily || 'Roboto, sans-serif'};
               --font-size-h1: ${resumeData?.layout?.globalStyles?.fontSizes?.h1 || '1.2cm'};
               --font-size-h2: ${resumeData?.layout?.globalStyles?.fontSizes?.h2 || '0.6cm'};
               --font-size-h3: ${resumeData?.layout?.globalStyles?.fontSizes?.h3 || '0.4cm'};
