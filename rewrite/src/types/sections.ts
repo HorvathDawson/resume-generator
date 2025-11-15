@@ -74,6 +74,16 @@ export interface WorkExperience extends BaseSection {
 }
 
 /**
+ * Generic experience section (can be reused for various types of experience)
+ */
+export interface Experience extends BaseSection {
+  type: 'experience';
+  data: {
+    items: ResumeItem[];
+  };
+}
+
+/**
  * Education section
  */
 export interface Education extends BaseSection {
@@ -147,6 +157,7 @@ export interface Certifications extends BaseSection {
 export type ResumeSection = 
   | ContactInfo
   | WorkExperience
+  | Experience
   | Education
   | Projects
   | Skills

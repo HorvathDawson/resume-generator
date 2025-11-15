@@ -89,7 +89,7 @@ export const EducationTemplates = {
           {section.items?.map((item, index) => (
             <li key={index} className="education-item">
               <div className="education-item-header">
-                <div className="institution fw-bold">{item.institution}</div>
+                <div className="institution fw-bold">{item.institution || item.organization}</div>
                 <div className="degree">
                   {item.degree}
                   {item.gpa && (
@@ -131,7 +131,7 @@ export const EducationTemplates = {
                 <h3>{item.degree}</h3>
                 <div className="education-institution-line">
                   <span className="institution">
-                    <i className="fa fa-university"></i> {item.institution}
+                    <i className="fa fa-university"></i> {item.institution || item.organization}
                   </span>
                   {item.location && (
                     <span className="location optional">
@@ -170,7 +170,7 @@ export const EducationTemplates = {
         <div className="education-compact-list">
           {section.items?.map((item, index) => (
             <div key={index} className="education-item-compact">
-              <strong>{item.institution}</strong> - {item.degree} ({item.dates})
+              <strong>{item.institution || item.organization}</strong> - {item.degree} ({item.dates})
               {item.gpa && (
                 <div className="education-gpa-compact">
                   <strong>GPA:</strong> {item.gpa}
@@ -201,7 +201,7 @@ export const EducationTemplates = {
               <div className="timeline-marker"></div>
               <div className="timeline-content">
                 <div className="timeline-date">{item.dates}</div>
-                <div className="timeline-institution">{item.institution}</div>
+                <div className="timeline-institution">{item.institution || item.organization}</div>
                 <div className="timeline-degree">
                   {item.degree}
                   {item.gpa && (
@@ -234,7 +234,7 @@ export const EducationTemplates = {
           {section.items?.map((item, index) => (
             <div key={index} className="education-item-minimal">
               <div className="education-row-minimal">
-                <strong>{item.degree}</strong> • {item.institution} • {item.dates}
+                <strong>{item.degree}</strong> • {item.institution || item.organization} • {item.dates}
                 {item.location && <span className="location-inline"> • {item.location}</span>}
                 {item.gpa && <span className="gpa-inline"> • <strong>GPA:</strong> {item.gpa}</span>}
               </div>
@@ -265,7 +265,7 @@ export const EducationTemplates = {
               </div>
               <div className="education-content-column">
                 <div className="sidebar-degree">{item.degree}</div>
-                <div className="sidebar-institution">{item.institution}</div>
+                <div className="sidebar-institution">{item.institution || item.organization}</div>
                 {item.location && <div className="sidebar-location">{item.location}</div>}
                 {item.gpa && (
                   <div className="sidebar-gpa">
@@ -302,7 +302,7 @@ export const EducationTemplates = {
                 <div className="card-dates">{item.dates}</div>
               </div>
               <div className="card-institution">
-                <i className="fa fa-university"></i> {item.institution}
+                <i className="fa fa-university"></i> {item.institution || item.organization}
               </div>
               {item.location && (
                 <div className="card-location">
@@ -345,7 +345,7 @@ export const EducationTemplates = {
             <div key={index} className="table-row">
               <div className="col-degree">{item.degree}</div>
               <div className="col-institution">
-                {item.institution}
+                {item.institution || item.organization}
                 {item.location && <div className="table-location">{item.location}</div>}
                 {item.gpa && <div className="table-gpa"><strong>GPA:</strong> {item.gpa}</div>}
               </div>
@@ -379,7 +379,7 @@ export const EducationTemplates = {
               <div className="badge-main">
                 <span className="badge-degree">{item.degree}</span>
                 <span className="badge-separator">@</span>
-                <span className="badge-institution">{item.institution}</span>
+                <span className="badge-institution">{item.institution || item.organization}</span>
                 <span className="badge-dates">({item.dates})</span>
               </div>
               {item.location && (
