@@ -23,8 +23,6 @@ This is a user-friendly TypeScript React application for building resumes with a
 - **All measurements in cm** (margins, spacing, font sizes, etc.)
 - **Screen-optimized preview** - each page should fit entirely on screen for easy viewing
 
-**Note**: The A4 page format and screen optimization requirements are specifically for the page preview component. The visual layout builder interface can be positioned outside or alongside the preview area - the layout builder builds the resume pages while the preview shows the final result.
-
 ### Styling Architecture
 1. **Page-Level Styles**: Each page in layout should have:
    - Individual margin settings (top, bottom, left, right)

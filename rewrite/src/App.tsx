@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ResumeData, LayoutBuilderState, TemplateLibrary } from './types';
 import { ResumeEditor } from './components/ResumeEditor';
 import { PreviewPanel } from './components/PreviewPanel';
+import { ImportConfirmationDialog } from './components/ImportConfirmationDialog';
 import { createDefaultTemplateLibrary } from './utils/defaults';
 import { loadResumeData } from './utils/dataLoaderNew';
 import { generatePDF } from './utils/pdfGenerator';
@@ -33,10 +34,25 @@ function App() {
   const [showImportExportMenu, setShowImportExportMenu] = useState(false);
   const [showPreviewActions, setShowPreviewActions] = useState(false);
   
+  // Import confirmation dialog state
+  const [showImportConfirmation, setShowImportConfirmation] = useState(false);
+  const [pendingImportData, setPendingImportData] = useState<{
+    resumeData: ResumeData;
+    layoutState?: any;
+    info: {
+      name: string;
+      description: string;
+      sections: string[];
+      pages: number;
+      lastModified?: string;
+    };
+  } | null>(null);
+  
   // Close menus when clicking elsewhere
   const handleAppClick = () => {
     setShowImportExportMenu(false);
     setShowPreviewActions(false);
+    setShowImportConfirmation(false);
   };
   const [templateLibrary] = useState<TemplateLibrary>(createDefaultTemplateLibrary());
   
@@ -288,6 +304,17 @@ function App() {
   };
 
   // Import from JSON handler
+  // Helper function to extract resume info for confirmation dialog
+  const extractResumeInfo = (resumeData: ResumeData, exportDate?: string) => {
+    return {
+      name: resumeData.name || resumeData.personalInfo?.fullName || 'Untitled Resume',
+      description: resumeData.metadata?.description || 'Imported resume data',
+      sections: resumeData.sections?.map(s => s.title) || [],
+      pages: resumeData.layout?.pages?.length || 1,
+      lastModified: exportDate || resumeData.metadata?.updatedAt || undefined
+    };
+  };
+
   const handleImportJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -299,8 +326,7 @@ function App() {
         const importedData = JSON.parse(jsonContent);
 
         // Validate imported data structure
-        // Check if data is wrapped in resumeData property or is direct resume data
-        let resumeDataToImport;
+        let resumeDataToImport: ResumeData;
         let layoutStateToImport;
         
         if (importedData.resumeData) {
@@ -313,31 +339,20 @@ function App() {
           layoutStateToImport = null;
         } else {
           alert('Invalid JSON file: Missing resume data structure');
+          event.target.value = '';
           return;
         }
 
-        // Update resume data
-        setResumeData(resumeDataToImport);
-        
-        // Update layout state if available
-        if (layoutStateToImport) {
-          // From wrapped export format
-          setLayoutState(prev => ({
-            ...prev,
-            pages: layoutStateToImport.pages || prev.pages,
-            zoom: layoutStateToImport.zoom || prev.zoom
-          }));
-        } else if (resumeDataToImport.layout) {
-          // From direct resume data format (like public data files)
-          setLayoutState(prev => ({
-            ...prev,
-            pages: resumeDataToImport.layout.pages || prev.pages,
-            zoom: prev.zoom // Keep current zoom
-          }));
-        }
+        // Extract resume info for confirmation dialog
+        const resumeInfo = extractResumeInfo(resumeDataToImport, importedData.exportDate);
 
-        console.log('JSON import completed successfully');
-        alert('Resume data imported successfully!');
+        // Set pending import data and show confirmation dialog
+        setPendingImportData({
+          resumeData: resumeDataToImport,
+          layoutState: layoutStateToImport,
+          info: resumeInfo
+        });
+        setShowImportConfirmation(true);
         
         // Clear the file input
         event.target.value = '';
@@ -354,6 +369,46 @@ function App() {
     };
 
     reader.readAsText(file);
+  };
+
+  // Handle confirmed import
+  const handleConfirmImport = () => {
+    if (!pendingImportData) return;
+
+    const { resumeData: resumeDataToImport, layoutState: layoutStateToImport } = pendingImportData;
+
+    // Update resume data
+    setResumeData(resumeDataToImport);
+    
+    // Update layout state if available
+    if (layoutStateToImport) {
+      // From wrapped export format
+      setLayoutState(prev => ({
+        ...prev,
+        pages: layoutStateToImport.pages || prev.pages,
+        zoom: layoutStateToImport.zoom || prev.zoom
+      }));
+    } else if (resumeDataToImport.layout) {
+      // From direct resume data format (like public data files)
+      setLayoutState(prev => ({
+        ...prev,
+        pages: resumeDataToImport.layout.pages || prev.pages,
+        zoom: prev.zoom // Keep current zoom
+      }));
+    }
+
+    console.log('JSON import completed successfully');
+    
+    // Reset confirmation dialog
+    setShowImportConfirmation(false);
+    setPendingImportData(null);
+    setShowImportExportMenu(false);
+  };
+
+  // Handle cancelled import
+  const handleCancelImport = () => {
+    setShowImportConfirmation(false);
+    setPendingImportData(null);
   };
   
   // Load resume data on mount
@@ -533,6 +588,19 @@ function App() {
           />
         </div>
       </div>
+
+      {/* Import Confirmation Dialog */}
+      <ImportConfirmationDialog
+        isOpen={showImportConfirmation}
+        resumeInfo={pendingImportData?.info || {
+          name: '',
+          description: '',
+          sections: [],
+          pages: 0
+        }}
+        onConfirm={handleConfirmImport}
+        onCancel={handleCancelImport}
+      />
     </div>
   );
 }

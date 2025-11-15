@@ -82,6 +82,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   // Ensure currentPageIndex is within bounds
   const safePageIndex = Math.min(currentPageIndex, pages.length - 1);
   const currentPage = pages[safePageIndex] || pages[0];
+
   
   // Get all possible section types from template registry
   const allSectionTypes = Object.keys(TEMPLATE_REGISTRY) as SectionType[];
@@ -92,11 +93,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     page.rows.forEach(row => {
       if (row.columns) {
         row.columns.forEach(col => {
-          col.sections.forEach(sectionId => usedSectionIds.add(sectionId));
+          col.sections.forEach((sectionRef: any) => {
+            const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+            usedSectionIds.add(sectionId);
+          });
         });
       }
       if (row.sections) {
-        row.sections.forEach(sectionId => usedSectionIds.add(sectionId));
+        row.sections.forEach((sectionRef: any) => {
+          const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+          usedSectionIds.add(sectionId);
+        });
       }
     });
   });
@@ -424,7 +431,10 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         column.sections.splice(sectionIndex, 1);
       } else {
         // Fallback: remove first occurrence
-        const index = column.sections.indexOf(sectionId);
+        const index = column.sections.findIndex((sectionRef: any) => {
+          const refSectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+          return refSectionId === sectionId;
+        });
         if (index > -1) {
           column.sections.splice(index, 1);
         }
@@ -437,7 +447,10 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         sections.splice(sectionIndex, 1);
       } else {
         // Fallback: remove first occurrence
-        const index = sections.indexOf(sectionId);
+        const index = sections.findIndex((sectionRef: any) => {
+          const refSectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+          return refSectionId === sectionId;
+        });
         if (index > -1) {
           sections.splice(index, 1);
         }
@@ -1054,13 +1067,15 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const allSectionIds: string[] = [];
     pages.forEach(page => {
       page.rows.forEach(row => {
-        if (row.columns) {
-          row.columns.forEach(col => {
-            allSectionIds.push(...col.sections);
-          });
-        }
-        if (row.sections) {
-          allSectionIds.push(...row.sections);
+        if ('left' in row && 'right' in row) {
+          // ColumnPair
+          const columnPair = row as any;
+          allSectionIds.push(...columnPair.left.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
+          allSectionIds.push(...columnPair.right.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
+        } else if ('sections' in row) {
+          // WholePageRow
+          const wholePageRow = row as any;
+          allSectionIds.push(...wholePageRow.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
         }
       });
     });
@@ -1358,45 +1373,45 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             {/* Layout Buttons */}
             <div className="layout-buttons-panel">
               <div className="layout-button-header">
-                <div className="layout-button-info">
-                  <p>Drag these layout elements into your resume:</p>
-                </div>
-                {onResumeDataChange && (
-                  <button 
-                    className="global-styles-button"
-                    onClick={() => setShowGlobalStyles(!showGlobalStyles)}
-                    title="Global Styles"
+                <div className="draggable-layout-buttons">
+                  <div
+                    className="layout-button-item"
+                    draggable={true}
+                    onDragStart={(e) => handleLayoutButtonDragStart(e, 'columns')}
                   >
-                    🎨
-                  </button>
-                )}
-              </div>
-              <div className="draggable-layout-buttons">
-                <div
-                  className="layout-button-item"
-                  draggable={true}
-                  onDragStart={(e) => handleLayoutButtonDragStart(e, 'columns')}
-                >
-                  <div className="layout-button-preview">
-                    <div className="layout-preview-columns">
-                      <div className="preview-column"></div>
-                      <div className="preview-column"></div>
+                    <div className="layout-button-preview">
+                      <div className="layout-preview-columns">
+                        <div className="preview-column"></div>
+                        <div className="preview-column"></div>
+                      </div>
                     </div>
+                    <span className="layout-button-label">Column Row</span>
                   </div>
-                  <span className="layout-button-label">Column Row</span>
+                  
+                  <div
+                    className="layout-button-item"
+                    draggable={true}
+                    onDragStart={(e) => handleLayoutButtonDragStart(e, 'wholePage')}
+                  >
+                    <div className="layout-button-preview">
+                      <div className="layout-preview-whole">
+                        <div className="preview-whole-page"></div>
+                      </div>
+                    </div>
+                    <span className="layout-button-label">Full Width Row</span>
+                  </div>
                 </div>
-                
-                <div
-                  className="layout-button-item"
-                  draggable={true}
-                  onDragStart={(e) => handleLayoutButtonDragStart(e, 'wholePage')}
-                >
-                  <div className="layout-button-preview">
-                    <div className="layout-preview-whole">
-                      <div className="preview-whole-page"></div>
-                    </div>
-                  </div>
-                  <span className="layout-button-label">Full Width Row</span>
+                <div className="layout-button-info">
+                  <p>← Drag layout elements into your resume</p>
+                  {onResumeDataChange && (
+                    <button 
+                      className="global-styles-button"
+                      onClick={() => setShowGlobalStyles(!showGlobalStyles)}
+                      title="Global Styles"
+                    >
+                      🎨 Global Styles
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1591,7 +1606,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         </div>
                       </div>
                       <div className="column-sections">
-                        {column.sections.map((sectionId: string, sectionIndex: number) => {
+                        {column.sections.map((sectionRef: any, sectionIndex: number) => {
+                          const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
                           const section = findSection(sectionId);
                           
                           if (sectionId.startsWith('padding-')) {
@@ -1728,7 +1744,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                     </div>
                   </div>
                   <div className="whole-page-sections">
-                        {row.sections?.map((sectionId: string, sectionIndex: number) => {
+                        {row.sections?.map((sectionRef: any, sectionIndex: number) => {
+                          const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
                       return (
                         <React.Fragment key={`${rowIndex}-whole-${sectionIndex}-${sectionId}`}>
                           {/* Drop zone above each section */}

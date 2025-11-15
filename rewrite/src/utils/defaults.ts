@@ -1,5 +1,5 @@
-import type { ResumeData, TemplateLibrary, GlobalStyles, PageStyles, Section, SectionType } from '../types';
-import { createDefaultLayoutConfig } from './layoutDefaults';
+import type { ResumeData, TemplateLibrary, GlobalStyles, Section, SectionType } from '../types';
+import type { WholePageRow, ColumnPair } from '../types/layout';
 
 export function createDefaultResumeData(): ResumeData {
   const resumeId = crypto.randomUUID();
@@ -42,35 +42,7 @@ export function createDefaultResumeData(): ResumeData {
     },
   };
 
-  const defaultPageStyles: PageStyles[] = [
-    {
-      pageNumber: 1,
-      margins: {
-        top: '1.0cm',
-        right: '1.0cm',
-        bottom: '1.0cm',
-        left: '1.0cm',
-      },
-      footer: {
-        type: 'none',
-        height: '0cm',
-      },
-      columns: {
-        left: {
-          backgroundColor: '#f8f9fa',
-          textColor: '#333333',
-        },
-        right: {
-          backgroundColor: '#ffffff',
-          textColor: '#333333',
-        },
-        wholePage: {
-          backgroundColor: '#ffffff',
-          textColor: '#333333',
-        },
-      },
-    },
-  ];
+
 
   const defaultSections: Section[] = [
     {
@@ -88,15 +60,12 @@ export function createDefaultResumeData(): ResumeData {
       items: [
         {
           id: crypto.randomUUID(),
-          title: 'Bachelor of Science',
-          institution: 'University of Example',
+          title: 'Your Degree',
+          institution: 'Your University',
           location: 'City, State',
-          dates: '2020 - 2024',
-          description: 'Computer Science',
-          details: [
-            'Relevant coursework: Data Structures, Algorithms, Software Engineering',
-            'GPA: 3.8/4.0',
-          ],
+          dates: 'Year - Year',
+          description: 'Your Major',
+          details: [],
         },
       ],
       templateId: 'education-default',
@@ -109,15 +78,14 @@ export function createDefaultResumeData(): ResumeData {
       items: [
         {
           id: crypto.randomUUID(),
-          title: 'Software Developer',
-          organization: 'Tech Company Inc.',
+          title: 'Your Job Title',
+          organization: 'Your Company',
           location: 'City, State',
-          dates: 'Jan 2024 - Present',
-          description: 'Full-stack development using modern technologies',
+          dates: 'Month Year - Present',
+          description: 'Brief job description',
           details: [
-            'Developed responsive web applications using React and Node.js',
-            'Collaborated with cross-functional teams to deliver high-quality software',
-            'Implemented automated testing and CI/CD pipelines',
+            'Add your accomplishments here',
+            'Add another accomplishment',
           ],
         },
       ],
@@ -131,28 +99,12 @@ export function createDefaultResumeData(): ResumeData {
       items: [
         {
           id: crypto.randomUUID(),
-          title: 'Programming Languages',
-          details: ['JavaScript', 'TypeScript', 'Python', 'Java'],
-        },
-        {
-          id: crypto.randomUUID(),
-          title: 'Frameworks',
-          details: ['React', 'Node.js', 'Express', 'Django'],
+          title: 'Technical Skills',
+          details: ['Add your skills here'],
         },
       ],
       templateId: 'skills-default',
       isVisible: true,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: 'Vertical Spacing',
-      type: 'padding',
-      items: [],
-      templateId: 'padding-medium',
-      isVisible: true,
-      customFields: {
-        height: '1cm'
-      }
     },
   ];
 
@@ -160,42 +112,80 @@ export function createDefaultResumeData(): ResumeData {
     id: resumeId,
     name: 'My Resume',
     personalInfo: {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+1 (555) 123-4567',
-      location: 'City, State',
-      website: 'https://johndoe.dev',
-      linkedin: 'johndoe',
-      github: 'johndoe',
+      fullName: 'Your Name',
+      name: 'Your Name',
+      email: 'your.email@example.com',
+      phone: '(555) 123-4567',
+      location: 'Your City, State',
+      website: 'your-website.com',
+      linkedin: 'your-linkedin',
+      github: 'your-github',
     },
     sections: defaultSections,
     
-    // New layout configuration system
-    layoutConfig: createDefaultLayoutConfig(),
-    sectionPlacements: defaultSections.map((section, index) => ({
-      sectionId: section.id,
-      position: {
-        column: index < 2 ? 'left' : 'right',
-        pageNumber: 1,
-        order: index,
+    // Simple layout configuration with basic row structure
+    layout: {
+      pages: [
+        {
+          id: crypto.randomUUID(),
+          rows: [
+            // Personal info as whole page row
+            {
+              id: crypto.randomUUID(),
+              sections: [{ sectionId: defaultSections.find(s => s.type === 'personal_info')?.id || '', instanceId: crypto.randomUUID() }],
+            } as WholePageRow,
+            // Two column row with education and experience
+            {
+              id: crypto.randomUUID(),
+              left: {
+                id: crypto.randomUUID(),
+                width: 40,
+                sections: [{ sectionId: defaultSections.find(s => s.type === 'education')?.id || '', instanceId: crypto.randomUUID() }],
+              },
+              right: {
+                id: crypto.randomUUID(),
+                width: 60, 
+                sections: [{ sectionId: defaultSections.find(s => s.type === 'experience')?.id || '', instanceId: crypto.randomUUID() }],
+              },
+            } as ColumnPair,
+            // Skills as whole page row
+            {
+              id: crypto.randomUUID(),
+              sections: [{ sectionId: defaultSections.find(s => s.type === 'skills')?.id || '', instanceId: crypto.randomUUID() }],
+            } as WholePageRow,
+          ],
+          margins: {
+            top: '1.0cm',
+            right: '1.0cm',
+            bottom: '1.0cm',
+            left: '1.0cm',
+          },
+        },
+      ],
+      sectionInstances: defaultSections.map(section => ({
+        id: crypto.randomUUID(),
+        sectionId: section.id,
+        instanceNumber: 1,
+        selectedItems: section.items.map(item => item.id),
+        showContinuation: false,
+        title: section.title,
+      })),
+      globalStyles: {
+        fontSizes: defaultGlobalStyles.fontSizes,
+        fontFamily: defaultGlobalStyles.fontFamily,
+        colorScheme: {
+          primary: defaultGlobalStyles.colorScheme.primary,
+          secondary: defaultGlobalStyles.colorScheme.secondary,
+          text: defaultGlobalStyles.colorScheme.text.primary,
+          accent: defaultGlobalStyles.colorScheme.accent,
+        },
+        spacing: {
+          sectionMargin: defaultGlobalStyles.spacing.sectionSpacing,
+          itemMargin: defaultGlobalStyles.spacing.itemSpacing,
+          pageMargin: '1.0cm',
+        },
       },
-      pageBreaks: [],
-      isVisible: true,
-    })),
-    
-    // Legacy layout (will be deprecated)
-    layout: defaultSections.map((section, index) => ({
-      sectionId: section.id,
-      position: {
-        column: index < 2 ? 'left' : 'right',
-        pageNumber: 1,
-        order: index,
-      },
-      pageBreaks: [],
-      isVisible: true,
-    })),
-    globalStyles: defaultGlobalStyles,
-    pageStyles: defaultPageStyles,
+    },
     metadata: {
       version: '1.0.0',
       createdAt: new Date().toISOString(),

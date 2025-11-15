@@ -14,6 +14,42 @@ export function PreviewPanel({
   layoutState,
   onZoomChange,
 }: PreviewPanelProps) {
+  // Early return if no resume data or layout is available
+  if (!resumeData || !resumeData.layout || !resumeData.layout.pages || resumeData.layout.pages.length === 0) {
+    return (
+      <div className="preview-panel">
+        <div className="preview-controls">
+          <h2>Preview</h2>
+          <div className="zoom-controls">
+            <label>
+              Zoom: {Math.round(layoutState.zoom * 100)}%
+              <input
+                type="range"
+                min="0.3"
+                max="1.5"
+                step="0.1"
+                value={layoutState.zoom}
+                onChange={(e) => onZoomChange(parseFloat(e.target.value))}
+              />
+            </label>
+          </div>
+        </div>
+        <div className="preview-container">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '400px',
+            color: '#666',
+            fontStyle: 'italic'
+          }}>
+            No layout data available. Add sections to your resume to see the preview.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="preview-panel">
       <div className="preview-controls">
@@ -203,8 +239,9 @@ export function PreviewPanel({
                               zIndex: 1
                             }}
                           >
-                          {column.sections.map((sectionId: string, sectionIndex: number) => {
+                          {column.sections.map((sectionRef: any, sectionIndex: number) => {
                             // Find and render regular section (including personal_info sections)
+                            const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
                             const section = resumeData?.sections.find(s => s.id === sectionId);
                             if (sectionId.startsWith('padding-')) {
                               // If padding section not found, render a placeholder with template-based height
@@ -297,7 +334,8 @@ export function PreviewPanel({
                           flex: page.rows.length === 1 ? '1' : 'auto'
                         }}
                       >
-                      {row.sections.map((sectionId: string, sectionIndex: number) => {
+                      {row.sections.map((sectionRef: any, sectionIndex: number) => {
+                        const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
                         const section = resumeData?.sections.find(s => s.id === sectionId);
                         if (sectionId.startsWith('padding-')) {
                           // If padding section not found, render a placeholder with template-based height
