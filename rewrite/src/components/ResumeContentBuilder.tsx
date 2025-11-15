@@ -371,7 +371,7 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
   // Experience editor with expandable text areas
   const renderExperienceEditor = (section: Section) => (
     <div className="items-editor">
-      {section.items?.map((item) => (
+      {section.items?.map((item, index) => (
         <div key={item.id} className="item-editor">
           <div className="item-header">
             <input

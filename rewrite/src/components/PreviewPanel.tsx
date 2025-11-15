@@ -14,6 +14,32 @@ export function PreviewPanel({
   layoutState,
   onZoomChange,
 }: PreviewPanelProps) {
+  
+  // Helper function to reorder section items based on layout
+  const applySectionItemOrder = (section: any, rowIndex: number, columnIndex?: number) => {
+    if (!section?.items || section.items.length <= 1) {
+      return section;
+    }
+    
+    const row = resumeData.layout?.pages?.[0]?.rows?.[rowIndex] as any;
+    if (!row) return section;
+    
+    const orders = columnIndex !== undefined 
+      ? row.columns?.[columnIndex]?.sectionItemOrders?.[section.id]
+      : row.sectionItemOrders?.[section.id];
+    
+    if (!orders || orders.length !== section.items.length) {
+      return section; // Return original section if no custom order
+    }
+    
+    // Create reordered items array
+    const reorderedItems = orders.map((originalIndex: number) => section.items[originalIndex]).filter(Boolean);
+    
+    return {
+      ...section,
+      items: reorderedItems
+    };
+  };
   // Early return if no resume data or layout is available
   if (!resumeData || !resumeData.layout || !resumeData.layout.pages || resumeData.layout.pages.length === 0) {
     return (
@@ -272,20 +298,23 @@ export function PreviewPanel({
                             }
                             if (!section) return null;
                             
-                            const availableTemplates = TEMPLATE_REGISTRY[section.type] || [];
+                            // Apply item reordering based on layout
+                            const reorderedSection = applySectionItemOrder(section, rowIndex, colIndex);
+                            
+                            const availableTemplates = TEMPLATE_REGISTRY[reorderedSection.type] || [];
                             // Check for template override first, then fallback to section.templateId
-                            const templateId = resumeData.sectionTemplates?.[sectionId] || section.templateId;
+                            const templateId = resumeData.sectionTemplates?.[sectionId] || reorderedSection.templateId;
                             const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
                             
                             if (selectedTemplate) {
                               const TemplateComponent = selectedTemplate.component;
                               
                               // Handle personal_info sections specially - they need access to external personalInfo
-                              if (section.type === 'personal_info') {
-                                return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={section} personalInfo={resumeData?.personalInfo} />;
+                              if (reorderedSection.type === 'personal_info') {
+                                return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={reorderedSection} personalInfo={resumeData?.personalInfo} />;
                               }
                               
-                              return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={section} />;
+                              return <TemplateComponent key={`${colIndex}-${sectionIndex}-${sectionId}`} section={reorderedSection} />;
                             }
                             return null;
                           })}
@@ -366,20 +395,23 @@ export function PreviewPanel({
                         }
                         if (!section) return null;
                         
-                        const availableTemplates = TEMPLATE_REGISTRY[section.type] || [];
+                        // Apply item reordering based on layout for whole page sections
+                        const reorderedSection = applySectionItemOrder(section, rowIndex, undefined);
+                        
+                        const availableTemplates = TEMPLATE_REGISTRY[reorderedSection.type] || [];
                         // Check for template override first, then fallback to section.templateId
-                        const templateId = resumeData.sectionTemplates?.[sectionId] || section.templateId;
+                        const templateId = resumeData.sectionTemplates?.[sectionId] || reorderedSection.templateId;
                         const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
                         
                         if (selectedTemplate) {
                           const TemplateComponent = selectedTemplate.component;
                           
                           // Handle personal_info sections specially - they need access to external personalInfo
-                          if (section.type === 'personal_info') {
-                            return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={section} personalInfo={resumeData?.personalInfo} />;
+                          if (reorderedSection.type === 'personal_info') {
+                            return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={reorderedSection} personalInfo={resumeData?.personalInfo} />;
                           }
                           
-                          return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={section} />;
+                          return <TemplateComponent key={`${rowIndex}-${sectionIndex}-${sectionId}`} section={reorderedSection} />;
                         }
                         return null;
                       })}

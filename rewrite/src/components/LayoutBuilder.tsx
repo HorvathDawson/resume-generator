@@ -30,6 +30,7 @@ interface LayoutRow {
   sections?: string[];
   backgroundColor?: string;
   textColor?: string;
+  sectionItemOrders?: { [sectionId: string]: number[] }; // Store item order for each section
 }
 
 interface LayoutColumn {
@@ -37,6 +38,7 @@ interface LayoutColumn {
   sections: string[];
   backgroundColor?: string;
   textColor?: string;
+  sectionItemOrders?: { [sectionId: string]: number[] }; // Store item order for each section
 }
 
 export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({ 
@@ -67,19 +69,30 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             width: col.width,
             sections: col.sections || [],
             backgroundColor: col.backgroundColor,
-            textColor: col.textColor
+            textColor: col.textColor,
+            sectionItemOrders: col.sectionItemOrders || {}
           })) || []
         } : {
           sections: row.sections || [],
           backgroundColor: row.backgroundColor,
-          textColor: row.textColor
+          textColor: row.textColor,
+          sectionItemOrders: row.sectionItemOrders || {}
         })
       })) || []
     }));
   });
 
+  // Keep track of whether we're updating from internal changes
+  const [isUpdatingFromInternal, setIsUpdatingFromInternal] = useState(false);
+
   // Update pages when resumeData.layout changes (e.g., after import)
   useEffect(() => {
+    // Skip if we're updating from an internal change to avoid conflicts
+    if (isUpdatingFromInternal) {
+      setIsUpdatingFromInternal(false);
+      return;
+    }
+    
     const layoutPages = resumeData.layout?.pages || [];
     if (layoutPages.length > 0) {
       console.log('=== LAYOUT BUILDER: Updating pages from resumeData.layout ===');
@@ -96,12 +109,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               width: col.width,
               sections: col.sections || [],
               backgroundColor: col.backgroundColor,
-              textColor: col.textColor
+              textColor: col.textColor,
+              sectionItemOrders: col.sectionItemOrders || {}
             })) || []
           } : {
             sections: row.sections || [],
             backgroundColor: row.backgroundColor,
-            textColor: row.textColor
+            textColor: row.textColor,
+            sectionItemOrders: row.sectionItemOrders || {}
           })
         })) || []
       }));
@@ -110,7 +125,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       console.log('New processed pages:', newPages);
       setPages(newPages);
     }
-  }, [resumeData.layout]);
+  }, [resumeData.layout, isUpdatingFromInternal]);
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   // Ensure currentPageIndex is within bounds
@@ -196,6 +211,87 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   // Section splitting state
 
   const [splittingSection, setSplittingSection] = useState<string | null>(null);
+
+  // Item reordering state
+  const [reorderingSection, setReorderingSection] = useState<string | null>(null);
+
+  // Get item order for a section from layout
+  const getSectionItemOrder = (sectionId: string, rowIndex: number, columnIndex?: number): number[] => {
+    const row = pages[currentPageIndex]?.rows[rowIndex];
+    if (!row) return [];
+    
+    const orders = columnIndex !== undefined 
+      ? row.columns?.[columnIndex]?.sectionItemOrders?.[sectionId]
+      : row.sectionItemOrders?.[sectionId];
+    
+    const section = resumeData.sections?.find(s => s.id === sectionId);
+    const itemCount = section?.items?.length || 0;
+    
+    if (!orders || orders.length !== itemCount) {
+      // Return default order [0, 1, 2, ...]
+      return Array.from({ length: itemCount }, (_, i) => i);
+    }
+    
+    return orders;
+  };
+
+  // Update item order for a section in layout
+  const updateSectionItemOrder = (sectionId: string, newOrder: number[], rowIndex: number, columnIndex?: number) => {
+    const updatedPages = [...pages];
+    const row = updatedPages[currentPageIndex].rows[rowIndex];
+    
+    if (columnIndex !== undefined && row.columns) {
+      if (!row.columns[columnIndex].sectionItemOrders) {
+        row.columns[columnIndex].sectionItemOrders = {};
+      }
+      row.columns[columnIndex].sectionItemOrders![sectionId] = newOrder;
+    } else {
+      if (!row.sectionItemOrders) {
+        row.sectionItemOrders = {};
+      }
+      row.sectionItemOrders[sectionId] = newOrder;
+    }
+    
+    // Mark that we're updating from an internal change
+    setIsUpdatingFromInternal(true);
+    
+    // Update local state first
+    setPages(updatedPages);
+    
+    // Notify parent of the change
+    onLayoutChange({ pages: updatedPages.map(p => ({ ...p, rows: p.rows })) });
+  };
+
+  // Toggle item reordering mode for a section
+  const toggleSectionReorder = (sectionId: string) => {
+    setReorderingSection(reorderingSection === sectionId ? null : sectionId);
+  };
+
+  // Move an item up in the order
+  const moveItemUp = (sectionId: string, originalIndex: number, rowIndex: number, columnIndex?: number) => {
+    const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
+    const currentPosition = currentOrder.indexOf(originalIndex);
+    
+    if (currentPosition > 0) {
+      const newOrder = [...currentOrder];
+      // Swap with the item above
+      [newOrder[currentPosition], newOrder[currentPosition - 1]] = [newOrder[currentPosition - 1], newOrder[currentPosition]];
+      updateSectionItemOrder(sectionId, newOrder, rowIndex, columnIndex);
+    }
+  };
+
+  // Move an item down in the order
+  const moveItemDown = (sectionId: string, originalIndex: number, rowIndex: number, columnIndex?: number) => {
+    const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
+    const currentPosition = currentOrder.indexOf(originalIndex);
+    
+    if (currentPosition < currentOrder.length - 1) {
+      const newOrder = [...currentOrder];
+      // Swap with the item below
+      [newOrder[currentPosition], newOrder[currentPosition + 1]] = [newOrder[currentPosition + 1], newOrder[currentPosition]];
+      updateSectionItemOrder(sectionId, newOrder, rowIndex, columnIndex);
+    }
+  };
 
   // Template selector state
   const [templateSelector, setTemplateSelector] = useState<{
@@ -1712,6 +1808,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   return debugSection?.title || sectionId;
                                 })()}
                               </span>
+                              
                               <div className="section-actions">
                                 <button
                                   className="remove-section-button"
@@ -1727,8 +1824,72 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 >
                                   ⚙
                                 </button>
+                                <button
+                                  className={`reorder-button ${reorderingSection === sectionId ? 'active' : ''}`}
+                                  onClick={() => toggleSectionReorder(sectionId)}
+                                  title="Reorder items in section"
+                                >
+                                  📋
+                                </button>
                               </div>
                             </div>
+                            {/* Item Reordering Interface - positioned below section */}
+                            {reorderingSection === sectionId && (() => {
+                              const section = findSection(sectionId);
+                              const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
+                              
+                              if (!section?.items || section.items.length <= 1) {
+                                return (
+                                  <div className="reorder-interface">
+                                    <p className="reorder-message">This section has {section?.items?.length || 0} items. Need at least 2 items to reorder.</p>
+                                  </div>
+                                );
+                              }
+                              
+                              return (
+                                <div className="reorder-interface">
+                                  <h4>Reorder Items</h4>
+                                  {currentOrder.map((originalIndex: number, displayPosition: number) => {
+                                    const item = section.items[originalIndex];
+                                    const isFirst = displayPosition === 0;
+                                    const isLast = displayPosition === currentOrder.length - 1;
+                                    
+                                    return (
+                                      <div key={`reorder-${originalIndex}`} className="reorder-item">
+                                        <span className="item-title">
+                                          Item {displayPosition + 1}: {item.title || item.organization || 'Untitled'}
+                                        </span>
+                                        <div className="reorder-controls">
+                                          <button
+                                            className="reorder-move-btn"
+                                            onClick={() => moveItemUp(sectionId, originalIndex, rowIndex, columnIndex)}
+                                            disabled={isFirst}
+                                            title="Move up"
+                                          >
+                                            ↑
+                                          </button>
+                                          <span className="reorder-position">{displayPosition + 1}</span>
+                                          <button
+                                            className="reorder-move-btn"
+                                            onClick={() => moveItemDown(sectionId, originalIndex, rowIndex, columnIndex)}
+                                            disabled={isLast}
+                                            title="Move down"
+                                          >
+                                            ↓
+                                          </button>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  <button
+                                    className="reorder-done-button"
+                                    onClick={() => setReorderingSection(null)}
+                                  >
+                                    Done
+                                  </button>
+                                </div>
+                              );
+                            })()}
                             {/* Drop zone below each section */}
                             {!shouldHideDropZone(rowIndex, columnIndex, sectionIndex, false) && (
                               <div
@@ -1844,6 +2005,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                               return debugSection?.title || sectionId;
                             })()}
                           </span>
+                          
                           <div className="section-actions">
                             <button
                               className="remove-section-button"
@@ -1859,8 +2021,72 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             >
                               ⚙
                             </button>
+                            <button
+                              className={`reorder-button ${reorderingSection === sectionId ? 'active' : ''}`}
+                              onClick={() => toggleSectionReorder(sectionId)}
+                              title="Reorder items in section"
+                            >
+                              📋
+                            </button>
                           </div>
                         </div>
+                        {/* Item Reordering Interface for Whole Page - positioned below section */}
+                        {reorderingSection === sectionId && (() => {
+                          const section = findSection(sectionId);
+                          const currentOrder = getSectionItemOrder(sectionId, rowIndex, undefined);
+                          
+                          if (!section?.items || section.items.length <= 1) {
+                            return (
+                              <div className="reorder-interface">
+                                <p className="reorder-message">This section has {section?.items?.length || 0} items. Need at least 2 items to reorder.</p>
+                              </div>
+                            );
+                          }
+                          
+                          return (
+                            <div className="reorder-interface">
+                              <h4>Reorder Items</h4>
+                              {currentOrder.map((originalIndex: number, displayPosition: number) => {
+                                const item = section.items[originalIndex];
+                                const isFirst = displayPosition === 0;
+                                const isLast = displayPosition === currentOrder.length - 1;
+                                
+                                return (
+                                  <div key={`reorder-whole-${originalIndex}`} className="reorder-item">
+                                    <span className="item-title">
+                                      Item {displayPosition + 1}: {item.title || item.organization || 'Untitled'}
+                                    </span>
+                                    <div className="reorder-controls">
+                                      <button
+                                        className="reorder-move-btn"
+                                        onClick={() => moveItemUp(sectionId, originalIndex, rowIndex, undefined)}
+                                        disabled={isFirst}
+                                        title="Move up"
+                                      >
+                                        ↑
+                                      </button>
+                                      <span className="reorder-position">{displayPosition + 1}</span>
+                                      <button
+                                        className="reorder-move-btn"
+                                        onClick={() => moveItemDown(sectionId, originalIndex, rowIndex, undefined)}
+                                        disabled={isLast}
+                                        title="Move down"
+                                      >
+                                        ↓
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                              <button
+                                className="reorder-done-button"
+                                onClick={() => setReorderingSection(null)}
+                              >
+                                Done
+                              </button>
+                            </div>
+                          );
+                        })()}
                         {/* Drop zone below each section */}
                         {!shouldHideDropZone(rowIndex, undefined, sectionIndex, false) && (
                           <div
