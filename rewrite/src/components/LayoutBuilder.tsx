@@ -1111,15 +1111,16 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const allSectionIds: string[] = [];
     pages.forEach(page => {
       page.rows.forEach(row => {
-        if ('left' in row && 'right' in row) {
-          // ColumnPair
-          const columnPair = row as any;
-          allSectionIds.push(...columnPair.left.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
-          allSectionIds.push(...columnPair.right.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
-        } else if ('sections' in row) {
-          // WholePageRow
-          const wholePageRow = row as any;
-          allSectionIds.push(...wholePageRow.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
+        if (row.type === 'columns' && row.columns) {
+          // Columns layout
+          row.columns.forEach(column => {
+            if (column.sections) {
+              allSectionIds.push(...column.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
+            }
+          });
+        } else if (row.type === 'wholePage' && row.sections) {
+          // Whole page layout
+          allSectionIds.push(...row.sections.map((ref: any) => typeof ref === 'string' ? ref : ref.sectionId));
         }
       });
     });

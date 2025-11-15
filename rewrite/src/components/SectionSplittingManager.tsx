@@ -19,21 +19,33 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
   onSplit,
   onClose
 }) => {
+  console.log('=== SectionSplittingManager received section ===');
+  console.log('Section:', section);
+  console.log('Section keys:', section ? Object.keys(section) : 'null');
+  console.log('Section items:', section?.items);
+  console.log('Section categories:', (section as any)?.categories);
+  
   const [splitParts, setSplitParts] = useState<SplitPart[]>([]);
   const [activePart, setActivePart] = useState(0);
 
   // Get items from the section if it has them
   const getItems = (section: ResumeSection): any[] => {
+    console.log('=== getItems called ===');
+    console.log('Section in getItems:', section);
+    
     if (section && typeof section === 'object') {
       // Handle skills section with categories
       if ('categories' in section && section.categories) {
+        console.log('Found categories:', (section as any).categories);
         return (section as any).categories || [];
       }
       // Handle other sections with items
       if ('items' in section) {
+        console.log('Found items:', (section as any).items);
         return (section as any).items || [];
       }
     }
+    console.log('No items found, returning empty array');
     return [];
   };
 
