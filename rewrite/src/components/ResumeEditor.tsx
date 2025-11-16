@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { ResumeData, LayoutBuilderState, TemplateLibrary } from '../types';
 import { LayoutBuilder } from './LayoutBuilder';
 import { ResumeContentBuilder } from './ResumeContentBuilder';
+import { GlobalStylesPanel } from './GlobalStylesPanel';
 import './ResumeEditor.css';
 
 interface ResumeEditorProps {
@@ -13,7 +14,7 @@ interface ResumeEditorProps {
   onLayoutStateChange: (state: LayoutBuilderState) => void;
 }
 
-type EditorTab = 'layout' | 'content';
+type EditorTab = 'layout' | 'content' | 'styles';
 
 export function ResumeEditor({
   resumeData,
@@ -51,6 +52,12 @@ export function ResumeEditor({
         >
           📝 Resume Builder
         </button>
+        <button
+          className={`editor-tab ${activeTab === 'styles' ? 'active' : ''}`}
+          onClick={() => setActiveTab('styles')}
+        >
+          🎨 Global Styles
+        </button>
       </div>
       
       <div className="editor-content">
@@ -60,8 +67,13 @@ export function ResumeEditor({
             onLayoutChange={handleLayoutChange}
             onResumeDataChange={handleResumeDataChange}
           />
-        ) : (
+        ) : activeTab === 'content' ? (
           <ResumeContentBuilder
+            resumeData={resumeData}
+            onResumeDataChange={handleResumeDataChange}
+          />
+        ) : (
+          <GlobalStylesPanel
             resumeData={resumeData}
             onResumeDataChange={handleResumeDataChange}
           />

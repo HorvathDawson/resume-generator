@@ -5,10 +5,8 @@ import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
 
 import { SectionSplittingManager } from './SectionSplittingManager';
 import { SectionTemplateSelector } from './SectionTemplateSelector';
-import { GlobalStylesPanel } from './GlobalStylesPanel';
 import type { FooterConfig } from './Footer';
 import './LayoutBuilder.css';
-import './GlobalStylesPanel.css';
 
 interface LayoutBuilderProps {
   resumeData: ResumeData;
@@ -225,7 +223,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       : row.sectionItemOrders?.[sectionId];
     
     const section = resumeData.sections?.find(s => s.id === sectionId);
-    const itemCount = section?.items?.length || 0;
+    const reorderableItems = getReorderableItems(section);
+    const itemCount = reorderableItems?.length || 0;
     
     if (!orders || orders.length !== itemCount) {
       // Return default order [0, 1, 2, ...]
@@ -267,6 +266,23 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     setReorderingSection(reorderingSection === sectionId ? null : sectionId);
   };
 
+  // Get reorderable items from any section type
+  const getReorderableItems = (section: any) => {
+    if (!section) return [];
+    
+    // Skills sections use categories
+    if (section.type === 'skills') {
+      // Try different possible locations for categories
+      if (section.categories) return section.categories;
+      if (section.customFields?.categories) return section.customFields.categories;
+      if (section.items?.[0]?.categories) return section.items[0].categories;
+      return [];
+    }
+    
+    // Other sections use items
+    return section.items || [];
+  };
+
   // Move an item up in the order
   const moveItemUp = (sectionId: string, originalIndex: number, rowIndex: number, columnIndex?: number) => {
     const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
@@ -303,9 +319,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     resumeData.sectionTemplates || {}
   );
   const [draggedLayoutButton, setDraggedLayoutButton] = useState<'columns' | 'wholePage' | null>(null);
-  
-  // Global styles popup state
-  const [showGlobalStyles, setShowGlobalStyles] = useState(false);
 
   // Handle layout button drag start
   const handleLayoutButtonDragStart = (e: React.DragEvent, layoutType: 'columns' | 'wholePage') => {
@@ -1415,6 +1428,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           <div className="available-sections">
             <div className="sections-header">
               <h4>Available Sections</h4>
+              <p className="section-tip">Drag items into the layout to use them</p>
             </div>
             <div className="sections-list">
               {availableSections.map((section) => {
@@ -1481,7 +1495,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             {/* Combinable split sections */}
             {getSplitSectionsInLayout().length > 0 && (
               <>
-                <h4 style={{ marginTop: '1.5rem', color: '#8b5cf6' }}>Split Sections</h4>
+                <h4 className="split-sections-header">Split Sections</h4>
+                <p className="section-tip">Click combine to merge split sections back together</p>
                 <div className="split-sections-list">
                   {getSplitSectionsInLayout().map(([baseId, splitSectionIds]) => {
                     const baseSectionTitle = resumeData.sections?.find(s => s.id === splitSectionIds[0])?.title?.replace(/ \((Part \d+|cont)\)$/, '') || baseId;
@@ -1544,15 +1559,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                 </div>
                 <div className="layout-button-info">
                   <p>← Drag layout elements into your resume</p>
-                  {onResumeDataChange && (
-                    <button 
-                      className="global-styles-button"
-                      onClick={() => setShowGlobalStyles(!showGlobalStyles)}
-                      title="Global Styles"
-                    >
-                      🎨 Global Styles
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
@@ -1613,6 +1619,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           <div className="layout-content-scrollable">
             <div className="layout-rows">
             <h4>Page {currentPage.pageNumber} Layout</h4>
+            <p className="layout-tip">Drop layout elements and sections here to build your resume</p>
             
             {/* Drop zone at the top */}
             <div
@@ -1836,12 +1843,13 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             {/* Item Reordering Interface - positioned below section */}
                             {reorderingSection === sectionId && (() => {
                               const section = findSection(sectionId);
+                              const reorderableItems = getReorderableItems(section);
                               const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
                               
-                              if (!section?.items || section.items.length <= 1) {
+                              if (!reorderableItems || reorderableItems.length <= 1) {
                                 return (
                                   <div className="reorder-interface">
-                                    <p className="reorder-message">This section has {section?.items?.length || 0} items. Need at least 2 items to reorder.</p>
+                                    <p className="reorder-message">This section has {reorderableItems?.length || 0} items. Need at least 2 items to reorder.</p>
                                   </div>
                                 );
                               }
@@ -1850,14 +1858,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 <div className="reorder-interface">
                                   <h4>Reorder Items</h4>
                                   {currentOrder.map((originalIndex: number, displayPosition: number) => {
-                                    const item = section.items[originalIndex];
+                                    const item = reorderableItems[originalIndex];
                                     const isFirst = displayPosition === 0;
                                     const isLast = displayPosition === currentOrder.length - 1;
+                                    
+                                    // Get appropriate title based on item type
+                                    const itemTitle = item.title || item.name || item.organization || 'Untitled';
                                     
                                     return (
                                       <div key={`reorder-${originalIndex}`} className="reorder-item">
                                         <span className="item-title">
-                                          Item {displayPosition + 1}: {item.title || item.organization || 'Untitled'}
+                                          Item {displayPosition + 1}: {itemTitle}
                                         </span>
                                         <div className="reorder-controls">
                                           <button
@@ -2033,12 +2044,13 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         {/* Item Reordering Interface for Whole Page - positioned below section */}
                         {reorderingSection === sectionId && (() => {
                           const section = findSection(sectionId);
+                          const reorderableItems = getReorderableItems(section);
                           const currentOrder = getSectionItemOrder(sectionId, rowIndex, undefined);
                           
-                          if (!section?.items || section.items.length <= 1) {
+                          if (!reorderableItems || reorderableItems.length <= 1) {
                             return (
                               <div className="reorder-interface">
-                                <p className="reorder-message">This section has {section?.items?.length || 0} items. Need at least 2 items to reorder.</p>
+                                <p className="reorder-message">This section has {reorderableItems?.length || 0} items. Need at least 2 items to reorder.</p>
                               </div>
                             );
                           }
@@ -2047,14 +2059,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             <div className="reorder-interface">
                               <h4>Reorder Items</h4>
                               {currentOrder.map((originalIndex: number, displayPosition: number) => {
-                                const item = section.items[originalIndex];
+                                const item = reorderableItems[originalIndex];
                                 const isFirst = displayPosition === 0;
                                 const isLast = displayPosition === currentOrder.length - 1;
+                                
+                                // Get appropriate title based on item type
+                                const itemTitle = item.title || item.name || item.organization || 'Untitled';
                                 
                                 return (
                                   <div key={`reorder-whole-${originalIndex}`} className="reorder-item">
                                     <span className="item-title">
-                                      Item {displayPosition + 1}: {item.title || item.organization || 'Untitled'}
+                                      Item {displayPosition + 1}: {itemTitle}
                                     </span>
                                     <div className="reorder-controls">
                                       <button
@@ -2143,27 +2158,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           </div>
         </div>
       </div>
-      
-      {/* Global Styles Popup */}
-      {showGlobalStyles && onResumeDataChange && (
-        <div className="global-styles-popup-overlay" onClick={() => setShowGlobalStyles(false)}>
-          <div className="global-styles-popup" onClick={(e) => e.stopPropagation()}>
-            <div className="global-styles-popup-header">
-              <h3>Global Styles</h3>
-              <button 
-                className="close-popup-button"
-                onClick={() => setShowGlobalStyles(false)}
-              >
-                ×
-              </button>
-            </div>
-            <GlobalStylesPanel 
-              resumeData={resumeData}
-              onResumeDataChange={onResumeDataChange}
-            />
-          </div>
-        </div>
-      )}
+
       
       {/* Section Splitting Modal */}
       {splittingSection && (

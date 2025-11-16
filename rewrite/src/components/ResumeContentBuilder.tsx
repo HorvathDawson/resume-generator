@@ -174,7 +174,7 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
       case 'certifications':
         return renderCertificationsEditor(section);
       case 'skills':
-        return renderSkillsEditor();
+        return renderSkillsEditor(section);
       default:
         return renderGenericEditor(section);
     }
@@ -371,7 +371,7 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
   // Experience editor with expandable text areas
   const renderExperienceEditor = (section: Section) => (
     <div className="items-editor">
-      {section.items?.map((item, index) => (
+      {section.items?.map((item) => (
         <div key={item.id} className="item-editor">
           <div className="item-header">
             <input
@@ -543,12 +543,175 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
   );
 
   // Skills editor
-  const renderSkillsEditor = () => (
-    <div className="skills-section-editor">
-      <p>Skills editor with categories coming in next update...</p>
-      <p>Current skills data structure needs to be enhanced for full editing support.</p>
-    </div>
-  );
+  const renderSkillsEditor = (section: Section) => {
+    // Get categories from multiple possible locations for compatibility
+    const rawCategories = section.customFields?.categories || 
+                          section.items?.[0]?.categories || 
+                          [];
+    
+    // Ensure all categories have IDs for consistent management
+    const categories = rawCategories.map((cat: any, index: number) => ({
+      ...cat,
+      id: cat.id || `category-${cat.name || index}`,
+      skills: cat.skills || []
+    }));
+
+    const updateSkillsCategories = (newCategories: any[]) => {
+      // Update both customFields and items for maximum compatibility
+      const updatedSection = {
+        ...section,
+        customFields: {
+          ...section.customFields,
+          categories: newCategories
+        },
+        items: section.items?.length ? 
+          section.items.map(item => 
+            item.id === section.items?.[0]?.id ? 
+              { ...item, categories: newCategories } : item
+          ) :
+          [{ 
+            id: `skills-item-${Date.now()}`, 
+            title: 'Skills',
+            categories: newCategories 
+          }]
+      };
+      
+      updateSection(section.id, updatedSection);
+    };
+
+    const addCategory = () => {
+      const newCategory = {
+        id: `category-${Date.now()}`,
+        name: 'New Category',
+        skills: [],
+        order: categories.length
+      };
+      updateSkillsCategories([...categories, newCategory]);
+    };
+
+    const updateCategory = (categoryId: string, updates: any) => {
+      const updatedCategories = categories.map((cat: any) => {
+        const catKey = cat.id || cat.name;
+        return catKey === categoryId ? { ...cat, ...updates } : cat;
+      });
+      updateSkillsCategories(updatedCategories);
+    };
+
+    const deleteCategory = (categoryId: string) => {
+      const updatedCategories = categories.filter((cat: any) => {
+        const catKey = cat.id || cat.name;
+        return catKey !== categoryId;
+      });
+      updateSkillsCategories(updatedCategories);
+    };
+
+
+
+
+
+
+
+    return (
+      <div className="skills-section-editor">
+        {categories.map((category: any) => (
+          <div key={category.id || category.name} className="skill-category-editor">
+            <div className="category-header">
+              <input
+                type="text"
+                value={category.name}
+                onChange={(e) => updateCategory(category.id || category.name, { name: e.target.value })}
+                placeholder="Category Name (e.g., Programming Languages)"
+                className="category-name-input"
+              />
+              <button
+                className="delete-category-btn"
+                onClick={() => deleteCategory(category.id || category.name)}
+                title="Delete Category"
+              >
+                🗑️
+              </button>
+            </div>
+            
+            <div className="skills-list-editor">
+              <input
+                type="text"
+                placeholder="Type skills separated by commas and press Enter (e.g., JavaScript, React, Python)..."
+                className="skill-tag-input"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                    e.preventDefault();
+                    const inputValue = e.currentTarget.value.trim();
+                    
+                    // Handle comma-separated skills
+                    const skillsToAdd = inputValue.split(',').map(skill => skill.trim()).filter(skill => skill);
+                    const currentSkills = category.skills || [];
+                    const existingSkillsLower = currentSkills.map((s: string) => s.toLowerCase());
+                    const newSkills = skillsToAdd.filter(skill => 
+                      !existingSkillsLower.includes(skill.toLowerCase())
+                    );
+                    
+                    if (newSkills.length > 0) {
+                      const categoryKey = category.id || category.name;
+                      const updatedCategories = categories.map((cat: any) => {
+                        const catKey = cat.id || cat.name;
+                        return catKey === categoryKey ? 
+                          { ...cat, skills: [...currentSkills, ...newSkills] } : cat;
+                      });
+                      updateSkillsCategories(updatedCategories);
+                      e.currentTarget.value = '';
+                    } else if (skillsToAdd.length > 0) {
+                      // All skills were duplicates - show feedback
+                      e.currentTarget.style.borderColor = '#f59e0b';
+                      e.currentTarget.style.backgroundColor = '#fef3c7';
+                      setTimeout(() => {
+                        e.currentTarget.style.borderColor = '';
+                        e.currentTarget.style.backgroundColor = '';
+                        e.currentTarget.value = '';
+                      }, 1000);
+                    }
+                  }
+                }}
+              />
+              <div className="skills-tags-container">
+                {category.skills && category.skills.length > 0 ? (
+                  category.skills.map((skill: string, skillIndex: number) => (
+                    <div key={skillIndex} className="skill-tag-item">
+                      <span className="skill-tag-text">{skill}</span>
+                      <button
+                        className="skill-tag-delete"
+                        onClick={() => {
+                          const categoryKey = category.id || category.name;
+                          const updatedCategories = categories.map((cat: any) => {
+                            const catKey = cat.id || cat.name;
+                            return catKey === categoryKey ? {
+                              ...cat,
+                              skills: cat.skills.filter((_: any, index: number) => index !== skillIndex)
+                            } : cat;
+                          });
+                          updateSkillsCategories(updatedCategories);
+                        }}
+                        title="Remove skill"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="skills-empty-state">
+                    No skills added yet. Type skills in the input above and press Enter.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        <button className="add-category-btn" onClick={addCategory}>
+          + Add Category
+        </button>
+      </div>
+    );
+  };
 
   // Generic editor for other section types
   const renderGenericEditor = (section: Section) => (
@@ -610,8 +773,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
         </div>
       )}
 
-      <div className="sections-list">
-        {resumeData.sections?.map((section) => (
+      <div className="sections-viewport">
+        <div className="sections-list">
+          {resumeData.sections?.map((section) => (
           <div key={section.id} className="section-card">
             <div className="section-header">
               <input
@@ -644,6 +808,7 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
             )}
           </div>
         ))}
+        </div>
       </div>
     </div>
   );

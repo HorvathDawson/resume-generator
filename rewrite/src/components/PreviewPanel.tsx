@@ -17,7 +17,22 @@ export function PreviewPanel({
   
   // Helper function to reorder section items based on layout
   const applySectionItemOrder = (section: any, rowIndex: number, columnIndex?: number) => {
-    if (!section?.items || section.items.length <= 1) {
+    // Get reorderable items based on section type
+    const getReorderableItems = (sec: any) => {
+      if (!sec) return [];
+      if (sec.type === 'skills') {
+        // Try different possible locations for categories
+        if (sec.categories) return sec.categories;
+        if (sec.customFields?.categories) return sec.customFields.categories;
+        if (sec.items?.[0]?.categories) return sec.items[0].categories;
+        return [];
+      }
+      return sec.items || [];
+    };
+    
+    const reorderableItems = getReorderableItems(section);
+    
+    if (!reorderableItems || reorderableItems.length <= 1) {
       return section;
     }
     
@@ -28,17 +43,48 @@ export function PreviewPanel({
       ? row.columns?.[columnIndex]?.sectionItemOrders?.[section.id]
       : row.sectionItemOrders?.[section.id];
     
-    if (!orders || orders.length !== section.items.length) {
+    if (!orders || orders.length !== reorderableItems.length) {
       return section; // Return original section if no custom order
     }
     
     // Create reordered items array
-    const reorderedItems = orders.map((originalIndex: number) => section.items[originalIndex]).filter(Boolean);
+    const reorderedItems = orders.map((originalIndex: number) => reorderableItems[originalIndex]).filter(Boolean);
     
-    return {
-      ...section,
-      items: reorderedItems
-    };
+    // Return section with reordered items in the appropriate property
+    if (section.type === 'skills') {
+      // Handle different possible structures for skills sections
+      if (section.categories) {
+        return {
+          ...section,
+          categories: reorderedItems
+        };
+      } else if (section.customFields?.categories) {
+        return {
+          ...section,
+          customFields: {
+            ...section.customFields,
+            categories: reorderedItems
+          }
+        };
+      } else if (section.items?.[0]?.categories) {
+        return {
+          ...section,
+          items: [
+            {
+              ...section.items[0],
+              categories: reorderedItems
+            },
+            ...section.items.slice(1)
+          ]
+        };
+      }
+      return section;
+    } else {
+      return {
+        ...section,
+        items: reorderedItems
+      };
+    }
   };
   // Early return if no resume data or layout is available
   if (!resumeData || !resumeData.layout || !resumeData.layout.pages || resumeData.layout.pages.length === 0) {
