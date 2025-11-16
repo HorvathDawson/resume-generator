@@ -2,58 +2,51 @@
 .preview-panel {
   position: relative;
   flex: 1; /* Take up remaining width of screen */
-  background: #e5e7eb;
-  overflow: auto; /* Allow both horizontal and vertical scrolling */
-  padding: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-y: auto; /* Allow vertical scrolling */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-/* Duplicate definition with more specific styles */
-.preview-panel {
-  flex: 1;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  overflow-y: auto; /* Allow vertical scrolling */
-}
-
 .preview-controls {
+  /* Use shared card styles */
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 800px;
-  margin-bottom: 1.5rem;
-  background: #ffffff;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  margin-bottom: var(--spacing-xl);
+  background: var(--color-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-slate-200);
 }
 
 .preview-controls h2 {
   margin: 0;
-  color: #111827;
+  color: var(--color-gray-900);
   font-weight: 700;
 }
 
 .zoom-controls label {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  color: #374151;
+  gap: var(--spacing-md);
+  color: var(--color-gray-700);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .zoom-controls input[type="range"] {
-  margin-left: 0.5rem;
-  accent-color: #2563eb;
-  border-radius: 0.375rem;
+  margin-left: var(--spacing-sm);
+  accent-color: var(--color-blue-500);
+  border-radius: var(--radius-md);
 }
 
 .preview-container {
@@ -61,8 +54,8 @@
   justify-content: flex-start;
   width: 100%;
   overflow: visible; /* Remove scrollbars from container */
-  padding: 1rem;
-  gap: 2rem;
+  padding: var(--spacing-lg);
+  gap: var(--spacing-2xl);
 }
 
 .page-wrapper {
@@ -74,8 +67,8 @@
 
 .page-number {
   font-size: 0.9rem;
-  color: #4b5563;
-  margin-bottom: 0.5rem;
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-sm);
   font-weight: 500;
 }
 
@@ -83,16 +76,16 @@
 .page-content h2 {
   font-size: 0.5cm;
   margin: 0.6cm 0 0.3cm 0;
-  color: #111827;
+  color: var(--color-gray-900);
   text-transform: uppercase;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-slate-200);
   padding-bottom: 0.1cm;
 }
 
 .page-content h3 {
   font-size: 0.4cm;
   margin: 0.3cm 0 0.1cm 0;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .section {
@@ -108,13 +101,13 @@
 
 .organization {
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   margin: 0.1cm 0;
   font-size: 0.35cm;
 }
 
 .dates {
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-style: italic;
   margin: 0.1cm 0;
   font-size: 0.32cm;
@@ -135,15 +128,15 @@
   margin-bottom: 0.1cm;
 }
 
-/* Optimize preview panel layout */
+/* Optimized preview panel layout - using shared variables */
 .preview-panel .preview-controls {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem 0.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid #d1d5db;
+  padding: var(--spacing-sm);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-300);
   margin-bottom: 0;
 }
 
@@ -158,13 +151,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
-  padding: 0.3rem 0 0 0.3rem;
+  padding: var(--spacing-sm) 0 0 var(--spacing-sm);
   overflow: visible; /* Prevent nested scrollbars */
 }
 
 .preview-panel .page-wrapper {
   position: relative;
-  margin-bottom: 0.2rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .preview-panel .page-number {
@@ -172,6 +165,6 @@
   top: -1.2rem;
   left: 0;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-weight: 500;
 }

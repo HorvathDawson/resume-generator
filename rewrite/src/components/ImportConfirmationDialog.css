@@ -13,9 +13,9 @@
 }
 
 .import-dialog {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
   min-width: 500px;
   max-width: 600px;
   max-height: 80vh;
@@ -35,30 +35,31 @@
 }
 
 .import-dialog-header {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid #e2e8f0;
+  /* Use shared card-header pattern */
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-slate-200);
 }
 
 .import-dialog-header h3 {
   margin: 0;
-  color: #1a202c;
+  color: var(--color-gray-900);
   font-size: 1.25rem;
   font-weight: 600;
 }
 
 .import-dialog-content {
-  padding: 20px 24px;
+  padding: var(--spacing-xl);
 }
 
 .resume-preview-info {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
 }
 
 .info-row {
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
 }
 
 .info-row:last-child {
@@ -66,18 +67,19 @@
 }
 
 .info-row strong {
-  color: #374151;
+  color: var(--color-gray-700);
   font-weight: 600;
   display: inline-block;
   min-width: 120px;
 }
 
 .warning-message {
-  background: #fef3cd;
-  border: 1px solid #f6cc4d;
-  border-radius: 6px;
-  padding: 12px;
-  color: #8b5a00;
+  /* Use shared alert styles */
+  background: var(--color-yellow-200);
+  border: 1px solid var(--color-yellow-400);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  color: var(--color-yellow-800);
 }
 
 .warning-message p {
@@ -86,43 +88,20 @@
 }
 
 .import-dialog-actions {
-  padding: 16px 24px 20px;
-  border-top: 1px solid #e2e8f0;
+  padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-xl);
+  border-top: 1px solid var(--color-slate-200);
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
   justify-content: flex-end;
 }
 
-.cancel-button,
-.confirm-button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
+/* Remove custom button styles - use shared .btn classes instead */
+.cancel-button {
+  /* Apply .btn class in JSX */
   min-width: 80px;
 }
 
-.cancel-button {
-  background: #f8f9fa;
-  border: 1px solid #d1d5db;
-  color: #374151;
-}
-
-.cancel-button:hover {
-  background: #e5e7eb;
-  border-color: #9ca3af;
-}
-
 .confirm-button {
-  background: #2563eb;
-  border: 1px solid #2563eb;
-  color: white;
-}
-
-.confirm-button:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+  /* Apply .btn.btn-primary classes in JSX */
+  min-width: 80px;
 }
