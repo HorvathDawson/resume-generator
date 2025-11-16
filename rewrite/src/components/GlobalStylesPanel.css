@@ -1,0 +1,329 @@
+/* Compact Global Styles Panel */
+.global-styles-panel {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: 1px solid #e9ecef;
+}
+
+.global-styles-panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.compact-styles-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compact-row {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.compact-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.compact-group label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.compact-select,
+.compact-input {
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
+  height: 28px;
+  box-sizing: border-box;
+}
+
+.compact-select {
+  background: white;
+  cursor: pointer;
+}
+
+.compact-color {
+  width: 100%;
+  height: 28px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+}
+
+.compact-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+.compact-color::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+}
+
+.compact-input {
+  font-family: inherit;
+}
+
+.compact-input::placeholder {
+  color: #999;
+  font-size: 11px;
+}
+
+/* Font preview select */
+.font-preview-select {
+  background: white;
+  font-weight: 500 !important;
+  position: relative;
+}
+
+.font-preview-select option {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+/* Add visual distinction to the font dropdown */
+.font-preview-select:after {
+  content: "Aa";
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+/* Custom Font Dropdown */
+.font-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.font-dropdown-trigger {
+  width: 100%;
+  height: 28px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  text-align: left;
+  font-weight: 500;
+  color: #333;
+}
+
+.font-dropdown-trigger:hover {
+  border-color: #bbb;
+}
+
+.font-dropdown-trigger:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
+}
+
+.font-dropdown-trigger .font-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.font-dropdown-trigger .font-preview {
+  margin: 0 8px;
+  color: #666;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.font-dropdown-trigger .dropdown-arrow {
+  color: #666;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.font-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Ensure all text in dropdown is visible */
+.font-dropdown-menu * {
+  color: inherit;
+}
+
+.font-option {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.font-option:hover {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.font-option.selected {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.font-option .font-name {
+  flex: 1;
+  font-weight: 500;
+  color: inherit;
+}
+
+.font-option .font-preview {
+  margin: 0 8px;
+  color: #888;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.font-option .check-mark {
+  color: #4a90e2;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Focus states */
+.compact-select:focus,
+.compact-input:focus,
+.compact-color:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
+}
+
+/* Global Styles Button */
+.global-styles-button {
+  padding: 4px 8px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.global-styles-button:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+/* Global Styles Popup */
+.global-styles-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.global-styles-popup {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin: 20px;
+}
+
+.global-styles-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.global-styles-popup-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.close-popup-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-popup-button:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .compact-row {
+    flex-wrap: wrap;
+  }
+  
+  .compact-group {
+    min-width: 80px;
+  }
+}

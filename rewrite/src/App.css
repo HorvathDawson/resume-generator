@@ -1,0 +1,180 @@
+.app {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Top Left Import/Export Menu */
+.top-left-menu {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+}
+
+.menu-button, .preview-actions-button {
+  background: #374151;
+  color: white;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s;
+}
+
+.menu-button:hover, .preview-actions-button:hover {
+  background: #1f2937;
+  border-color: #1f2937;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Top Right Preview Actions */
+.top-right-actions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+
+/* Dropdown Menus */
+.dropdown-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.import-export-menu {
+  top: calc(100% + 8px);
+  left: 0;
+}
+
+.preview-actions-menu {
+  top: calc(100% + 8px);
+  right: 0;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.app-actions button.btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.app-actions button.btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.app-actions button.btn-secondary {
+  background: #6b7280;
+  color: #ffffff;
+  border-color: #6b7280;
+}
+
+.app-actions button.btn-secondary:hover {
+  background: #4b5563;
+  border-color: #4b5563;
+  color: #ffffff;
+}
+
+.app-actions button:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.app-actions button.btn-primary:disabled {
+  background: #9ca3af;
+  border-color: #9ca3af;
+  color: #ffffff;
+}
+
+.app-main {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.editor-panel {
+  width: 65%;
+  min-width: 600px;
+  max-width: 900px;
+  background: #ffffff;
+  border-right: 1px solid #d1d5db;
+  overflow: hidden; /* No scrolling at this level */
+  padding: 0;
+  height: 100vh;
+}
+
+/* End of App.css - Component-specific styles moved to their respective files */
+
+/* Generic Button Styles */
+.btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover {
+  background: #f9fafb;
+  border-color: #2563eb;
+  color: #1d4ed8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-small {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  color: white;
+}
