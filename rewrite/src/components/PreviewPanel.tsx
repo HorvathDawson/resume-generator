@@ -2,6 +2,7 @@ import type { ResumeData, LayoutBuilderState } from '../types';
 import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
 import { Footer } from './Footer';
 import './ResumeStyles.css';
+import './PreviewPanel.css';
 
 interface PreviewPanelProps {
   resumeData: ResumeData;

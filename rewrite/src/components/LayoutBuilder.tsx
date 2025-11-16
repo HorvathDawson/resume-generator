@@ -7,6 +7,7 @@ import { SectionSplittingManager } from './SectionSplittingManager';
 import { SectionTemplateSelector } from './SectionTemplateSelector';
 import type { FooterConfig } from './Footer';
 import './LayoutBuilder.css';
+import './GlobalStylesPanel.css';
 
 interface LayoutBuilderProps {
   resumeData: ResumeData;
