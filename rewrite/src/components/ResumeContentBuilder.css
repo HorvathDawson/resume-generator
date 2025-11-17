@@ -589,3 +589,14 @@
   background: #2563eb;
   color: white;
 }
+
+/* References editor styles */
+.contact-fields {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.half-width {
+  flex: 1;
+}

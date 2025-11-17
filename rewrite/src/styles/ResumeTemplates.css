@@ -1,0 +1,423 @@
+/* Resume Templates CSS - A4 Format Only (21cm x 29.7cm) */
+/* All measurements in cm for print compatibility */
+
+/* CSS Variables for Resume Spacing */
+:root {
+  /* A4 Page dimensions */
+  --a4-width: 21cm;
+  --a4-height: 29.7cm;
+  
+  /* Compact spacing for templates - all in cm */
+  --resume-spacing-xs: 0.1cm;   /* 1mm */
+  --resume-spacing-sm: 0.2cm;   /* 2mm */
+  --resume-spacing-md: 0.3cm;   /* 3mm */
+  --resume-spacing-lg: 0.4cm;   /* 4mm */
+  --resume-spacing-xl: 0.5cm;   /* 5mm */
+  --resume-spacing-2xl: 0.6cm;  /* 6mm */
+  
+  /* Typography sizes in cm */
+  --resume-font-xs: 0.28cm;     /* ~8pt */
+  --resume-font-sm: 0.32cm;     /* ~9pt */
+  --resume-font-md: 0.35cm;     /* ~10pt */
+  --resume-font-lg: 0.42cm;     /* ~12pt */
+  --resume-font-xl: 0.49cm;     /* ~14pt */
+  --resume-font-2xl: 0.56cm;    /* ~16pt */
+  
+  /* Resume-specific colors */
+  --resume-text-primary: #111827;
+  --resume-text-secondary: #374151;
+  --resume-text-muted: #6b7280;
+  --resume-border-light: #e5e7eb;
+  --resume-border-medium: #d1d5db;
+  --resume-background-subtle: #f9fafb;
+}
+
+/* Base resume page styles */
+.resume-page {
+  width: var(--a4-width);
+  min-height: var(--a4-height);
+  background: white;
+  font-family: 'Times New Roman', serif;
+  font-size: var(--resume-font-md);
+  line-height: 1.4;
+  color: var(--resume-text-primary);
+  box-sizing: border-box;
+}
+
+/* Section spacing - compact for better vertical use */
+.resume-section {
+  margin-bottom: var(--resume-spacing-lg);
+}
+
+.resume-section:last-child {
+  margin-bottom: 0;
+}
+
+.resume-section-item {
+  margin-bottom: var(--resume-spacing-md);
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.resume-section-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Headers - compact spacing */
+.resume-section h2 {
+  font-size: var(--resume-font-xl);
+  margin: var(--resume-spacing-xl) 0 var(--resume-spacing-md) 0;
+  color: var(--resume-text-primary);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--resume-border-medium);
+  padding-bottom: var(--resume-spacing-xs);
+  font-weight: bold;
+}
+
+.resume-section h3 {
+  font-size: var(--resume-font-lg);
+  margin: var(--resume-spacing-md) 0 var(--resume-spacing-xs) 0;
+  color: var(--resume-text-secondary);
+  font-weight: bold;
+}
+
+.resume-section h4 {
+  font-size: var(--resume-font-md);
+  margin: var(--resume-spacing-sm) 0 var(--resume-spacing-xs) 0;
+  color: var(--resume-text-secondary);
+  font-weight: 600;
+}
+
+/* Experience template styles */
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--resume-spacing-xs);
+}
+
+.experience-title {
+  font-weight: bold;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-primary);
+  margin: 0;
+}
+
+.experience-company {
+  font-weight: 600;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-secondary);
+  margin: var(--resume-spacing-xs) 0;
+}
+
+.experience-dates {
+  color: var(--resume-text-muted);
+  font-style: italic;
+  font-size: var(--resume-font-sm);
+  white-space: nowrap;
+}
+
+.experience-location {
+  color: var(--resume-text-muted);
+  font-style: italic;
+  font-size: var(--resume-font-sm);
+  margin: var(--resume-spacing-xs) 0;
+}
+
+.experience-description {
+  margin: var(--resume-spacing-sm) 0;
+  font-size: var(--resume-font-md);
+  line-height: 1.3;
+}
+
+/* Bullet points - compact */
+.experience-details {
+  margin: var(--resume-spacing-sm) 0;
+  padding-left: var(--resume-spacing-xl);
+  font-size: var(--resume-font-sm);
+}
+
+.experience-details li {
+  margin-bottom: var(--resume-spacing-xs);
+  line-height: 1.3;
+}
+
+.experience-details li:last-child {
+  margin-bottom: 0;
+}
+
+/* Education template styles */
+.education-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--resume-spacing-xs);
+}
+
+.education-degree {
+  font-weight: bold;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-primary);
+  margin: 0;
+}
+
+.education-school {
+  font-weight: 600;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-secondary);
+  margin: var(--resume-spacing-xs) 0;
+}
+
+.education-dates {
+  color: var(--resume-text-muted);
+  font-style: italic;
+  font-size: var(--resume-font-sm);
+}
+
+.education-details {
+  margin: var(--resume-spacing-sm) 0;
+  font-size: var(--resume-font-sm);
+  color: var(--resume-text-secondary);
+}
+
+/* Skills template styles */
+.skills-category {
+  margin-bottom: var(--resume-spacing-md);
+}
+
+.skills-category:last-child {
+  margin-bottom: 0;
+}
+
+.skills-category-name {
+  font-weight: bold;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-primary);
+  margin: 0 0 var(--resume-spacing-xs) 0;
+}
+
+.skills-list {
+  font-size: var(--resume-font-sm);
+  color: var(--resume-text-secondary);
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* Projects template styles */
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--resume-spacing-xs);
+}
+
+.project-name {
+  font-weight: bold;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-primary);
+  margin: 0;
+}
+
+.project-dates {
+  color: var(--resume-text-muted);
+  font-style: italic;
+  font-size: var(--resume-font-sm);
+}
+
+.project-description {
+  margin: var(--resume-spacing-sm) 0;
+  font-size: var(--resume-font-md);
+}
+
+.project-technologies {
+  margin: var(--resume-spacing-xs) 0;
+  font-size: var(--resume-font-sm);
+  color: var(--resume-text-secondary);
+  font-style: italic;
+}
+
+/* Contact/Personal Info styles */
+.contact-info {
+  text-align: center;
+  margin-bottom: var(--resume-spacing-xl);
+}
+
+.contact-name {
+  font-size: var(--resume-font-2xl);
+  font-weight: bold;
+  color: var(--resume-text-primary);
+  margin: 0 0 var(--resume-spacing-sm) 0;
+}
+
+.contact-details {
+  font-size: var(--resume-font-sm);
+  color: var(--resume-text-secondary);
+  margin: var(--resume-spacing-xs) 0;
+}
+
+.contact-details a {
+  color: var(--resume-text-secondary);
+  text-decoration: none;
+}
+
+/* Summary/Objective styles */
+.summary-text {
+  font-size: var(--resume-font-md);
+  line-height: 1.4;
+  color: var(--resume-text-primary);
+  margin: var(--resume-spacing-sm) 0;
+  text-align: justify;
+}
+
+/* Certifications styles */
+.certification-item {
+  margin-bottom: var(--resume-spacing-sm);
+}
+
+.certification-name {
+  font-weight: bold;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-primary);
+  margin: 0;
+}
+
+.certification-issuer {
+  font-size: var(--resume-font-sm);
+  color: var(--resume-text-secondary);
+  margin: var(--resume-spacing-xs) 0;
+}
+
+.certification-date {
+  font-size: var(--resume-font-sm);
+  color: var(--resume-text-muted);
+  font-style: italic;
+}
+
+/* Volunteer Experience styles */
+.volunteer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--resume-spacing-xs);
+}
+
+.volunteer-role {
+  font-weight: bold;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-primary);
+  margin: 0;
+}
+
+.volunteer-organization {
+  font-weight: 600;
+  font-size: var(--resume-font-md);
+  color: var(--resume-text-secondary);
+  margin: var(--resume-spacing-xs) 0;
+}
+
+.volunteer-dates {
+  color: var(--resume-text-muted);
+  font-style: italic;
+  font-size: var(--resume-font-sm);
+}
+
+.volunteer-description {
+  margin: var(--resume-spacing-sm) 0;
+  font-size: var(--resume-font-sm);
+}
+
+/* Layout-specific styles */
+.column-content {
+  padding: 0 var(--resume-spacing-md);
+}
+
+.column-content:first-child {
+  padding-left: 0;
+}
+
+.column-content:last-child {
+  padding-right: 0;
+}
+
+/* Two-column layout */
+.two-column-layout {
+  display: flex;
+  gap: var(--resume-spacing-xl);
+}
+
+.left-column {
+  flex: 0 0 7cm;
+}
+
+.right-column {
+  flex: 1;
+}
+
+/* Whole page sections */
+.whole-page-section {
+  margin-bottom: var(--resume-spacing-xl);
+}
+
+/* Footer styles */
+.resume-footer {
+  margin-top: var(--resume-spacing-xl);
+  padding-top: var(--resume-spacing-md);
+  border-top: 1px solid var(--resume-border-light);
+  text-align: center;
+  font-size: var(--resume-font-xs);
+  color: var(--resume-text-muted);
+}
+
+/* Print optimizations */
+@media print {
+  .resume-page {
+    width: var(--a4-width);
+    height: var(--a4-height);
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+  }
+  
+  /* Ensure no page breaks within important sections */
+  .experience-header,
+  .education-header,
+  .project-header,
+  .volunteer-header {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
+  
+  .resume-section-item {
+    page-break-inside: avoid;
+  }
+}
+
+/* Global style overrides for resume content */
+.resume-content * {
+  box-sizing: border-box;
+}
+
+.resume-content p {
+  margin: var(--resume-spacing-sm) 0;
+  line-height: 1.3;
+}
+
+.resume-content ul {
+  margin: var(--resume-spacing-sm) 0;
+  padding-left: var(--resume-spacing-xl);
+}
+
+.resume-content li {
+  margin-bottom: var(--resume-spacing-xs);
+  line-height: 1.3;
+}
+
+.resume-content strong {
+  font-weight: bold;
+}
+
+.resume-content em {
+  font-style: italic;
+}

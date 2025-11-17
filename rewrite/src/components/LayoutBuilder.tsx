@@ -165,23 +165,10 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     isUsed: usedSectionIds.has(s.id)
   })) || [];
   
-  // Create comprehensive list showing all possible section types
+  // Only show sections that actually exist in resume data
   const availableSections = [
-    // First show actual sections from resume data
+    // Show actual sections from resume data
     ...availableResumeSection,
-    
-    // Then show all possible section types that don't exist in resume data
-    ...allSectionTypes
-      .filter(sectionType => 
-        // Don't show types that already exist in resume data
-        !resumeData.sections?.some(section => section.type === sectionType)
-      )
-      .map(sectionType => ({
-        id: `placeholder-${sectionType}-${Date.now()}`,
-        title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1).replace('_', ' '),
-        type: sectionType,
-        isAvailable: false // Mark as placeholder/unavailable
-      })),
     
     // Always add padding option if not already available
     ...(!availableResumeSection.some(s => s.type === 'padding') ? [{
@@ -206,6 +193,18 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     columnIndex?: number;
     insertIndex?: number;
   } | null>(null);
+  
+  // Auto-scroll state
+  const [autoScrollInterval, setAutoScrollInterval] = useState<number | null>(null);
+  
+  // Cleanup auto-scroll interval on unmount
+  useEffect(() => {
+    return () => {
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+      }
+    };
+  }, [autoScrollInterval]);
   
   // Section splitting state
 
@@ -351,22 +350,30 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
+
     
     if (draggedSection) {
       // When dragging from sidebar, we want to ADD a new instance, not move an existing one
       // Clone the current rows without removing any existing instances
       const updatedRows = [...currentPage.rows];
 
+      let actualSectionId = draggedSection;
+      
+      // Handle special case for creating padding sections
+      if (draggedSection === 'create-padding') {
+        actualSectionId = createPaddingSection();
+      }
+
       // Add section to new location
       if (targetColumnIndex !== undefined) {
         // Drop in specific column
         if (updatedRows[targetRowIndex]?.columns?.[targetColumnIndex]) {
-          updatedRows[targetRowIndex].columns![targetColumnIndex].sections.push(draggedSection);
+          updatedRows[targetRowIndex].columns![targetColumnIndex].sections.push(actualSectionId);
         }
       } else {
         // Drop in whole page row
         if (updatedRows[targetRowIndex]?.sections) {
-          updatedRows[targetRowIndex].sections!.push(draggedSection);
+          updatedRows[targetRowIndex].sections!.push(actualSectionId);
         }
       }
 
@@ -392,6 +399,79 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    
+    // Auto-scroll functionality - find the actual scrollable container
+    let scrollContainer: HTMLElement | null = null;
+    
+    // Try different possible scroll containers in order of preference
+    const candidates = [
+      '.editor-panel',
+      '.layout-builder-viewport', 
+      '.layout-main-area',
+      document.documentElement, // fallback to page scroll
+      document.body // final fallback
+    ];
+    
+    for (const selector of candidates) {
+      const element = typeof selector === 'string' 
+        ? document.querySelector(selector) as HTMLElement
+        : selector as HTMLElement;
+        
+      if (element && element.scrollHeight > element.clientHeight) {
+        scrollContainer = element;
+        break;
+      }
+    }
+    
+    if (!scrollContainer) return;
+    
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const scrollThreshold = 100; // Distance from edge to start scrolling
+    const scrollSpeed = 10; // Pixels per scroll step
+    
+    const mouseY = e.clientY;
+    const containerTop = containerRect.top;
+    const containerBottom = containerRect.bottom;
+    
+    // Clear existing auto-scroll
+    if (autoScrollInterval) {
+      clearInterval(autoScrollInterval);
+      setAutoScrollInterval(null);
+    }
+    
+    // Check if near top edge
+    if (mouseY - containerTop < scrollThreshold) {
+      const interval = setInterval(() => {
+        if (scrollContainer.scrollTop > 0) {
+          scrollContainer.scrollTop -= scrollSpeed;
+        } else {
+          clearInterval(interval);
+          setAutoScrollInterval(null);
+        }
+      }, 16) as unknown as number; // 60fps
+      setAutoScrollInterval(interval);
+    }
+    // Check if near bottom edge
+    else if (containerBottom - mouseY < scrollThreshold) {
+      const interval = setInterval(() => {
+        const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+        if (scrollContainer.scrollTop < maxScroll) {
+          scrollContainer.scrollTop += scrollSpeed;
+        } else {
+          clearInterval(interval);
+          setAutoScrollInterval(null);
+        }
+      }, 16) as unknown as number; // 60fps
+      setAutoScrollInterval(interval);
+    }
+  };
+
+  // Cleanup auto-scroll
+  const cleanupAutoScroll = () => {
+    if (autoScrollInterval) {
+      clearInterval(autoScrollInterval);
+      setAutoScrollInterval(null);
+    }
   };
 
   // Handlers for within-row dragging and section management
@@ -410,6 +490,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     e.preventDefault();
     e.stopPropagation();
     setDragOverTarget(null);
+    cleanupAutoScroll(); // Clean up auto-scroll on drop
 
 
 
@@ -702,7 +783,24 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }
       return resumeSection;
     }
-    return tempSections[sectionId] || null;
+    
+    // Check temp sections
+    if (tempSections[sectionId]) {
+      return tempSections[sectionId];
+    }
+    
+    // Handle virtual sections like "create-padding"
+    const virtualSection = availableSections.find(s => s.id === sectionId);
+    if (virtualSection) {
+      return {
+        id: virtualSection.id,
+        title: virtualSection.title,
+        type: virtualSection.type,
+        items: []
+      };
+    }
+    
+    return null;
   };
 
   // Update temp section when template changes
@@ -725,20 +823,33 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     // Generate unique ID for the padding section
     const paddingId = `padding-${Date.now()}`;
     
+    // Get the selected template for the create-padding section, or default to medium
+    const selectedTemplateId = sectionTemplates['create-padding'] || 'padding-medium';
+    
+    // Map template IDs to heights and titles
+    const templateInfo: { [key: string]: { height: string; title: string } } = {
+      'padding-extra-small': { height: '0.25cm', title: 'Spacing (0.25cm)' },
+      'padding-small': { height: '0.5cm', title: 'Spacing (0.5cm)' },
+      'padding-medium': { height: '1cm', title: 'Spacing (1cm)' },
+      'padding-large': { height: '1.5cm', title: 'Spacing (1.5cm)' },
+      'padding-extra-large': { height: '2cm', title: 'Spacing (2cm)' },
+      'padding-xxl': { height: '3cm', title: 'Spacing (3cm)' }
+    };
+    
+    const info = templateInfo[selectedTemplateId] || templateInfo['padding-medium'];
+    
     // Create the padding section
     const paddingSection = {
       id: paddingId,
-      title: 'Spacing (1cm)',
+      title: info.title,
       type: 'padding' as const,
-      templateId: 'padding-medium',
+      templateId: selectedTemplateId,
       isVisible: true,
       items: [],
       customFields: {
-        height: '1cm'
+        height: info.height
       }
     };
-
-    console.log('🟢 Creating padding section:', paddingSection);
 
     // Store temporarily for immediate access
     setTempSections(prev => ({
@@ -752,8 +863,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       ...resumeData,
       sections: newSections
     };
-
-    console.log('🟢 Updated resume data sections:', updatedResumeData.sections);
     onResumeDataChange(updatedResumeData);
     return paddingId;
   };
@@ -1338,6 +1447,18 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   };
 
   const handleTemplateChange = (sectionId: string, templateId: string) => {
+    // Special handling for create-padding virtual section
+    if (sectionId === 'create-padding') {
+
+      const newSectionTemplates = {
+        ...sectionTemplates,
+        [sectionId]: templateId
+      };
+      setSectionTemplates(newSectionTemplates);
+      setTemplateSelector(null);
+      return;
+    }
+    
     const newSectionTemplates = {
       ...sectionTemplates,
       [sectionId]: templateId
@@ -1382,7 +1503,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           : s
       );
       
-      console.log('🔧 Updated padding section:', sectionId, 'to height:', newHeight);
+
       
       // Also update temp section if it exists
       updateTempSection(sectionId, {
@@ -1422,7 +1543,10 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
 
       {/* Main Layout Area */}
-      <div className="layout-main-area">
+      <div 
+        className="layout-main-area"
+        onDragOver={handleDragOver}
+      >
         {/* Sticky Left Sidebar */}
         <div className="layout-sidebar">
           {/* Available sections */}
@@ -1456,29 +1580,22 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                     <div className="section-item-with-controls">
                       <div
                         className={`section-item draggable ${
-                          (section as any).isAvailable === false ? 'unavailable' : ''
-                        } ${
                           (section as any).isUsed ? 'used' : ''
                         }`}
-                        draggable={(section as any).isAvailable !== false}
-                        onDragStart={(section as any).isAvailable !== false ? (e) => handleDragStart(e, section.id) : undefined}
+                        draggable={true}
+                        onDragStart={(e) => handleDragStart(e, section.id)}
                         title={
-                          (section as any).isAvailable === false ? 
-                            `${section.title} section not available in current resume data` :
                           (section as any).isUsed ?
                             `${section.title} is already used in layout (drag to add another instance)` :
                             undefined
                         }
                       >
                         {section.title || section.id}
-                        {(section as any).isAvailable === false && (
-                          <span className="section-status"> (not available)</span>
-                        )}
-                        {(section as any).isUsed && (section as any).isAvailable !== false && (
+                        {(section as any).isUsed && (
                           <span className="section-status"> (in use)</span>
                         )}
                       </div>
-                      {canSplit && (section as any).isAvailable !== false && (
+                      {canSplit && (
                         <button
                           className="sidebar-split-button inline"
                           onClick={() => setSplittingSection(section.id)}
@@ -1761,21 +1878,27 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                       <div className="column-sections">
                         {column.sections.map((sectionRef: any, sectionIndex: number) => {
                           const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
-                          const section = findSection(sectionId);
-                          
-                          if (sectionId.startsWith('padding-')) {
-                            console.log('🔍 Rendering padding section:', sectionId, 'section found:', section);
-                          }
                           
                           return (
                             <React.Fragment key={`${rowIndex}-${columnIndex}-${sectionIndex}-${sectionId}`}>
                               {/* Drop zone above each section */}
                               {sectionIndex === 0 && !shouldHideDropZone(rowIndex, columnIndex, sectionIndex, true) && (
                                 <div
-                                  className="section-drop-zone"
+                                  className={`section-drop-zone ${
+                                    dragOverTarget?.rowIndex === rowIndex && 
+                                    dragOverTarget?.columnIndex === columnIndex && 
+                                    dragOverTarget?.insertIndex === 0 ? 'drag-over' : ''
+                                  }`}
                                   onDragOver={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
+                                    setDragOverTarget({ rowIndex, columnIndex, insertIndex: 0 });
+                                  }}
+                                  onDragLeave={(e) => {
+                                    e.preventDefault();
+                                    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                      setDragOverTarget(null);
+                                    }
                                   }}
                                   onDrop={(e) => {
                                     e.stopPropagation();
@@ -1792,6 +1915,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 onDragEnd={() => {
                                   setDraggedSectionInRow(null);
                                   setDragOverTarget(null);
+                                  cleanupAutoScroll();
                                 }}
                                 onDragOver={(e) => {
                                   e.preventDefault();
@@ -1905,10 +2029,21 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             {/* Drop zone below each section */}
                             {!shouldHideDropZone(rowIndex, columnIndex, sectionIndex, false) && (
                               <div
-                                className="section-drop-zone"
+                                className={`section-drop-zone ${
+                                  dragOverTarget?.rowIndex === rowIndex && 
+                                  dragOverTarget?.columnIndex === columnIndex && 
+                                  dragOverTarget?.insertIndex === sectionIndex + 1 ? 'drag-over' : ''
+                                }`}
                                 onDragOver={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
+                                  setDragOverTarget({ rowIndex, columnIndex, insertIndex: sectionIndex + 1 });
+                                }}
+                                onDragLeave={(e) => {
+                                  e.preventDefault();
+                                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                    setDragOverTarget(null);
+                                  }
                                 }}
                                 onDrop={(e) => {
                                   e.stopPropagation();
@@ -1973,10 +2108,21 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                           {/* Drop zone above each section */}
                           {sectionIndex === 0 && !shouldHideDropZone(rowIndex, undefined, sectionIndex, true) && (
                             <div
-                              className="section-drop-zone"
+                              className={`section-drop-zone ${
+                                dragOverTarget?.rowIndex === rowIndex && 
+                                dragOverTarget?.columnIndex === undefined && 
+                                dragOverTarget?.insertIndex === 0 ? 'drag-over' : ''
+                              }`}
                               onDragOver={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                setDragOverTarget({ rowIndex, columnIndex: undefined, insertIndex: 0 });
+                              }}
+                              onDragLeave={(e) => {
+                                e.preventDefault();
+                                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                  setDragOverTarget(null);
+                                }
                               }}
                               onDrop={(e) => {
                                 e.stopPropagation();
@@ -1993,6 +2139,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                             onDragEnd={() => {
                               setDraggedSectionInRow(null);
                               setDragOverTarget(null);
+                              cleanupAutoScroll();
                             }}
                             onDragOver={(e) => {
                               e.preventDefault();
@@ -2106,10 +2253,21 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         {/* Drop zone below each section */}
                         {!shouldHideDropZone(rowIndex, undefined, sectionIndex, false) && (
                           <div
-                            className="section-drop-zone"
+                            className={`section-drop-zone ${
+                              dragOverTarget?.rowIndex === rowIndex && 
+                              dragOverTarget?.columnIndex === undefined && 
+                              dragOverTarget?.insertIndex === sectionIndex + 1 ? 'drag-over' : ''
+                            }`}
                             onDragOver={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
+                              setDragOverTarget({ rowIndex, columnIndex: undefined, insertIndex: sectionIndex + 1 });
+                            }}
+                            onDragLeave={(e) => {
+                              e.preventDefault();
+                              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                setDragOverTarget(null);
+                              }
                             }}
                             onDrop={(e) => {
                               e.stopPropagation();

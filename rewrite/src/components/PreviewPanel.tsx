@@ -316,6 +316,8 @@ export function PreviewPanel({
                             // Find and render regular section (including personal_info sections)
                             const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
                             const section = resumeData?.sections.find(s => s.id === sectionId);
+                            
+
                             if (sectionId.startsWith('padding-')) {
                               // If padding section not found, render a placeholder with template-based height
                               if (!section) {
@@ -338,7 +340,7 @@ export function PreviewPanel({
                                     className="section padding-section" 
                                     style={{ height, minHeight: height }}
                                   >
-                                    {/* Placeholder for missing padding section */}
+                                    {/* Empty spacer element */}
                                   </div>
                                 );
                               }
@@ -352,6 +354,8 @@ export function PreviewPanel({
                             // Check for template override first, then fallback to section.templateId
                             const templateId = resumeData.sectionTemplates?.[sectionId] || reorderedSection.templateId;
                             const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
+                            
+
                             
                             if (selectedTemplate) {
                               const TemplateComponent = selectedTemplate.component;
@@ -413,6 +417,8 @@ export function PreviewPanel({
                       {row.sections.map((sectionRef: any, sectionIndex: number) => {
                         const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
                         const section = resumeData?.sections.find(s => s.id === sectionId);
+                        
+
                         if (sectionId.startsWith('padding-')) {
                           // If padding section not found, render a placeholder with template-based height
                           if (!section) {
@@ -435,7 +441,7 @@ export function PreviewPanel({
                                 className="section padding-section" 
                                 style={{ height, minHeight: height }}
                               >
-                                {/* Placeholder for missing padding section */}
+                                {/* Empty spacer element */}
                               </div>
                             );
                           }
@@ -449,6 +455,8 @@ export function PreviewPanel({
                         // Check for template override first, then fallback to section.templateId
                         const templateId = resumeData.sectionTemplates?.[sectionId] || reorderedSection.templateId;
                         const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
+                        
+
                         
                         if (selectedTemplate) {
                           const TemplateComponent = selectedTemplate.component;

@@ -290,39 +290,40 @@
 }
 
 .section-drop-zone {
-  min-height: 4px;
+  min-height: 8px;
   transition: all 0.2s ease;
   opacity: 0;
   border-radius: 4px;
-  margin: 1px 0;
+  margin: 2px 0;
+  position: relative;
 }
 
 .section-drop-zone:hover {
   opacity: 1;
   background-color: rgba(227, 242, 253, 0.8);
-  min-height: 12px;
+  min-height: 20px;
   border: 2px dashed #2196F3;
 }
 
 /* Show large, visible insertion zones during drag operations */
-.layout-builder:has(.section-item.dragging) .section-drop-zone,
-.layout-builder.has-dragging-section .section-drop-zone,
-.layout-builder:has(.sidebar-section.dragging) .section-drop-zone {
+.layout-builder-viewport:has(.section-item.dragging) .section-drop-zone,
+.layout-builder-viewport.has-dragging-section .section-drop-zone,
+.layout-builder-viewport:has(.sidebar-section.dragging) .section-drop-zone {
   opacity: 1;
   background-color: rgba(240, 249, 255, 0.6);
-  min-height: 24px;
+  min-height: 32px;
   border: 2px dashed #3b82f6;
-  margin: 4px 0;
-  border-radius: 6px;
+  margin: 6px 0;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
 
-.layout-builder:has(.section-item.dragging) .section-drop-zone::before,
-.layout-builder.has-dragging-section .section-drop-zone::before,
-.layout-builder:has(.sidebar-section.dragging) .section-drop-zone::before {
+.layout-builder-viewport:has(.section-item.dragging) .section-drop-zone::before,
+.layout-builder-viewport.has-dragging-section .section-drop-zone::before,
+.layout-builder-viewport:has(.sidebar-section.dragging) .section-drop-zone::before {
   content: "Drop here";
   color: #3b82f6;
   font-size: 0.75rem;
@@ -331,19 +332,20 @@
   pointer-events: none;
 }
 
-.layout-builder:has(.section-item.dragging) .section-drop-zone.drag-over,
-.layout-builder.has-dragging-section .section-drop-zone.drag-over,
-.layout-builder:has(.sidebar-section.dragging) .section-drop-zone.drag-over {
+.layout-builder-viewport:has(.section-item.dragging) .section-drop-zone.drag-over,
+.layout-builder-viewport.has-dragging-section .section-drop-zone.drag-over,
+.layout-builder-viewport:has(.sidebar-section.dragging) .section-drop-zone.drag-over {
   background-color: rgba(219, 234, 254, 0.9);
-  min-height: 32px;
+  min-height: 40px;
   border: 3px dashed #1d4ed8;
-  box-shadow: 0 0 12px rgba(29, 78, 216, 0.4);
-  transform: scale(1.02);
+  box-shadow: 0 0 16px rgba(29, 78, 216, 0.5);
+  transform: scale(1.05);
+  margin: 8px 0;
 }
 
-.layout-builder:has(.section-item.dragging) .section-drop-zone.drag-over::before,
-.layout-builder.has-dragging-section .section-drop-zone.drag-over::before,
-.layout-builder:has(.sidebar-section.dragging) .section-drop-zone.drag-over::before {
+.layout-builder-viewport:has(.section-item.dragging) .section-drop-zone.drag-over::before,
+.layout-builder-viewport.has-dragging-section .section-drop-zone.drag-over::before,
+.layout-builder-viewport:has(.sidebar-section.dragging) .section-drop-zone.drag-over::before {
   content: "Drop here";
   color: #1d4ed8;
   font-weight: 600;

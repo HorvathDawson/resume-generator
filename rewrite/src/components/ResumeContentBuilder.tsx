@@ -17,6 +17,7 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
     { type: 'skills', label: 'Skills', description: 'Technical and soft skills' },
     { type: 'text', label: 'Text Section', description: 'Summary, objective, or custom text' },
     { type: 'certifications', label: 'Certifications', description: 'Professional certifications and licenses' },
+    { type: 'references', label: 'References', description: 'Professional references and contacts' },
   ];
 
   const addSection = (sectionType: string) => {
@@ -29,11 +30,13 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
       items: sectionType === 'skills' ? [] : [
         {
           id: `item-${Date.now()}`,
-          title: '',
-          organization: sectionType === 'experience' ? '' : undefined,
+          title: sectionType === 'references' ? '' : '',
+          organization: sectionType === 'experience' || sectionType === 'references' ? '' : undefined,
           dates: sectionType === 'experience' ? '' : undefined,
           details: sectionType === 'experience' ? [''] : undefined,
           description: sectionType === 'text' ? '' : undefined,
+          phone: sectionType === 'references' ? '' : undefined,
+          email: sectionType === 'references' ? '' : undefined,
         }
       ],
       customFields: sectionType === 'skills' ? { categories: [] } : undefined,
@@ -117,6 +120,14 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
           description: ''
         };
         break;
+      case 'references':
+        newItem = {
+          ...newItem,
+          organization: '',
+          phone: '',
+          email: ''
+        };
+        break;
       default:
         newItem = {
           ...newItem,
@@ -175,6 +186,8 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
         return renderCertificationsEditor(section);
       case 'skills':
         return renderSkillsEditor(section);
+      case 'references':
+        return renderReferencesEditor(section);
       default:
         return renderGenericEditor(section);
     }
@@ -714,6 +727,55 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
   };
 
   // Generic editor for other section types
+  // References section editor
+  const renderReferencesEditor = (section: Section) => (
+    <div className="items-editor">
+      {section.items?.map((item) => (
+        <div key={item.id} className="item-editor">
+          <div className="item-header">
+            <input
+              type="text"
+              value={item.title}
+              onChange={(e) => updateItem(section.id, item.id, { title: e.target.value })}
+              placeholder="Reference Name"
+              className="item-input"
+            />
+            <button className="delete-item-btn" onClick={() => deleteItem(section.id, item.id)}>🗑️</button>
+          </div>
+          
+          <input
+            type="text"
+            value={item.organization || ''}
+            onChange={(e) => updateItem(section.id, item.id, { organization: e.target.value })}
+            placeholder="Job Title / Position"
+            className="item-input"
+          />
+          
+          <div className="contact-fields">
+            <input
+              type="tel"
+              value={item.phone || ''}
+              onChange={(e) => updateItem(section.id, item.id, { phone: e.target.value })}
+              placeholder="Phone Number"
+              className="item-input half-width"
+            />
+            <input
+              type="email"
+              value={item.email || ''}
+              onChange={(e) => updateItem(section.id, item.id, { email: e.target.value })}
+              placeholder="Email Address"
+              className="item-input half-width"
+            />
+          </div>
+        </div>
+      ))}
+      
+      <button className="add-item-btn" onClick={() => addItemToSection(section.id)}>
+        + Add Reference
+      </button>
+    </div>
+  );
+
   const renderGenericEditor = (section: Section) => (
     <div className="items-editor">
       {section.items?.map((item) => (

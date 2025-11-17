@@ -1,95 +1,44 @@
-.resume-editor {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
+/* Editor Tabs Styling */
 .editor-tabs {
   display: flex;
-  background: transparent;
-  border-bottom: 2px solid #dee2e6;
-  padding: 0 16px;
+  border-bottom: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 0;
   margin: 0;
-  align-items: flex-end;
 }
 
 .editor-tab {
-  background: #f8f9fa;
-  border: 2px solid #dee2e6;
-  border-bottom: none;
-  padding: 16px 24px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 12px 24px;
+  border: none;
+  background: transparent;
   color: #6b7280;
-  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
   position: relative;
-  border-radius: 8px 8px 0 0;
-  margin-right: 4px;
 }
 
 .editor-tab:hover {
-  background: #e5e7eb;
+  background: #f3f4f6;
   color: #374151;
-  border-color: #9ca3af;
 }
 
 .editor-tab.active {
+  background: #ffffff;
   color: #2563eb;
-  background: white;
-  border-color: #2563eb;
-  border-bottom: 2px solid white;
-  z-index: 1;
+  border-bottom-color: #2563eb;
 }
 
+.editor-tab:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Ensure tab content area has proper styling */
 .editor-content {
+  background: #ffffff;
   flex: 1;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Resume Editor Content Styles */
-.resume-editor h2 {
-  margin: 0 0 1.5rem 0;
-  color: #111827;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.sections-list {
-  margin-top: 1.5rem;
-}
-
-.sections-list h3 {
-  margin: 0 0 1rem 0;
-  color: #111827;
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.section-item {
-  padding: 1.25rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.section-header {
-  margin-bottom: 0.75rem;
-}
-
-.section-item h4 {
-  margin: 0 0 0.5rem 0;
-  color: #111827;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.section-item p {
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.875rem;
 }

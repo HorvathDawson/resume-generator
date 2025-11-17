@@ -72,61 +72,7 @@
   font-weight: 500;
 }
 
-/* Page Content Styles */
-.page-content h2 {
-  font-size: 0.5cm;
-  margin: 0.6cm 0 0.3cm 0;
-  color: var(--color-gray-900);
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--color-slate-200);
-  padding-bottom: 0.1cm;
-}
-
-.page-content h3 {
-  font-size: 0.4cm;
-  margin: 0.3cm 0 0.1cm 0;
-  color: var(--color-gray-800);
-}
-
-.section {
-  margin-bottom: 0.6cm;
-}
-
-.section-item {
-  margin-bottom: 0.4cm;
-  padding: 0;
-  border: none;
-  background: none;
-}
-
-.organization {
-  font-weight: 600;
-  color: var(--color-gray-700);
-  margin: 0.1cm 0;
-  font-size: 0.35cm;
-}
-
-.dates {
-  color: var(--color-gray-500);
-  font-style: italic;
-  margin: 0.1cm 0;
-  font-size: 0.32cm;
-}
-
-.description {
-  margin: 0.2cm 0;
-  font-size: 0.35cm;
-}
-
-.details {
-  margin: 0.2cm 0;
-  padding-left: 0.5cm;
-  font-size: 0.33cm;
-}
-
-.details li {
-  margin-bottom: 0.1cm;
-}
+/* Resume content styles moved to ResumeStyles.css */
 
 /* Optimized preview panel layout - using shared variables */
 .preview-panel .preview-controls {
