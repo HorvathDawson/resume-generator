@@ -22,8 +22,8 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
   console.log('=== SectionSplittingManager received section ===');
   console.log('Section:', section);
   console.log('Section keys:', section ? Object.keys(section) : 'null');
-  console.log('Section items:', section?.items);
-  console.log('Section categories:', (section as any)?.categories);
+  console.log('Section items:', (section as any)?.data?.items);
+  console.log('Section categories:', (section as any)?.data?.categories);
   
   const [splitParts, setSplitParts] = useState<SplitPart[]>([]);
   const [activePart, setActivePart] = useState(0);

@@ -2,7 +2,7 @@
 export type * from './resume';
 export type * from './styles';
 export type * from './template';
-export type * from './layout';
+export type * from './sections';
 
 // Re-export commonly used interfaces
 export type { 
@@ -31,5 +31,9 @@ export type {
   LayoutBuilderState, 
   PageLayout,
   LayoutPosition,
-  PageBreakInfo 
+  PageBreakInfo,
+  PageStyle,
+  ColumnConfig,
+  GlobalLayoutStyles,
+  LayoutConfig
 } from './layout';
