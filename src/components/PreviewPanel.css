@@ -1,31 +1,34 @@
 /* Preview Panel Styles */
 .preview-panel {
   position: relative;
-  flex: 1; /* Take up remaining width of screen */
-  background: var(--color-white);
-  border: 1px solid var(--color-slate-200);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  overflow-y: auto; /* Allow vertical scrolling */
+  flex: 1;
+  background: var(--color-gray-50);
+  border: none;
+  padding: var(--spacing-lg);
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .preview-controls {
-  /* Use shared card styles */
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 800px;
-  margin-bottom: var(--spacing-xl);
+  max-width: 100%;
+  margin-bottom: var(--spacing-lg);
   background: var(--color-white);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--color-slate-200);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-200);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .preview-controls h2 {
@@ -51,7 +54,8 @@
 
 .preview-container {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: flex-start;
   width: 100%;
   overflow: visible; /* Remove scrollbars from container */
   padding: var(--spacing-lg);
@@ -95,9 +99,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0;
-  padding: var(--spacing-sm) 0 0 var(--spacing-sm);
+  padding: var(--spacing-sm) 0 0 0;
   overflow: visible; /* Prevent nested scrollbars */
 }
 
@@ -121,6 +125,8 @@
   width: fit-content;
   height: fit-content;
   border: 1px solid var(--color-gray-300);
+  margin: 0 auto;
+  transform-origin: top center !important;
 }
 
 /* Ensure pages maintain exact A4 dimensions */
@@ -152,5 +158,74 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ==========================================
+   RESPONSIVE PREVIEW PANEL
+   ========================================== */
+
+/* Mobile devices */
+@media (max-width: 767px) {
+  .preview-panel {
+    padding: var(--spacing-sm);
+  }
+  
+  .preview-controls {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+  
+  .preview-controls h2 {
+    font-size: 1.1rem;
+  }
+  
+  .zoom-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .zoom-controls label {
+    font-size: 0.8rem;
+  }
+  
+  .preview-container {
+    padding: var(--spacing-sm);
+    justify-content: center;
+  }
+  
+  .page-scale-wrapper {
+    transform-origin: top center;
+    margin: 0 auto;
+  }
+}
+
+/* Tablet devices */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .preview-panel {
+    padding: var(--spacing-md);
+  }
+  
+  .preview-controls {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+  
+  .preview-container {
+    justify-content: center;
+  }
+}
+
+/* Desktop devices */
+@media (min-width: 1025px) {
+  .preview-panel {
+    padding: var(--spacing-lg) var(--spacing-xl);
+  }
+  
+  .page-scale-wrapper {
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
 }
 

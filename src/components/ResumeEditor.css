@@ -9,42 +9,111 @@
 /* Editor Tabs Styling */
 .editor-tabs {
   display: flex !important;
-  border-bottom: 1px solid #d1d5db;
-  background: #f9fafb;
+  border-bottom: 1px solid var(--color-gray-300);
+  background: var(--color-gray-50);
   padding: 0;
   margin: 0;
   flex-shrink: 0;
-  min-height: 48px;
-  z-index: 10;
+  min-height: 56px;
+  z-index: 100;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.editor-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .editor-tab {
-  padding: 12px 24px;
+  padding: 16px 28px;
   border: none;
   background: transparent;
-  color: #6b7280;
+  color: var(--color-gray-600);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.editor-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-blue-500);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .editor-tab:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--color-white);
+  color: var(--color-gray-800);
+  transform: translateY(-1px);
+}
+
+.editor-tab:hover::before {
+  opacity: 0.05;
 }
 
 .editor-tab.active {
-  background: #ffffff;
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  background: var(--color-white);
+  color: var(--color-blue-600);
+  border-bottom-color: var(--color-blue-500);
+  transform: translateY(-1px);
+}
+
+.editor-tab.active::before {
+  opacity: 0.08;
 }
 
 .editor-tab:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Responsive tabs */
+@media (max-width: 768px) {
+  .editor-tabs {
+    min-height: 48px;
+  }
+  
+  .editor-tab {
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Editor content area */
+.editor-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--color-white);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-400) var(--color-gray-100);
+}
+
+/* Smooth content transitions */
+.editor-content > * {
+  animation: contentFadeIn 0.3s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Ensure tab content area has proper styling */

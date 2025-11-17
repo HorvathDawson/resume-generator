@@ -11,27 +11,50 @@
   position: fixed;
   top: 16px;
   left: 16px;
-  z-index: 1000;
+  z-index: 1001; /* Higher than tabs to prevent overlap */
 }
 
 .menu-button, .preview-actions-button {
-  background: #374151;
-  color: white;
-  border: 1px solid #374151;
-  border-radius: 8px;
-  padding: 8px 12px;
+  background: var(--color-gray-700);
+  color: var(--color-white);
+  border: 1px solid var(--color-gray-700);
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-button::before, .preview-actions-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.menu-button:hover::before, .preview-actions-button:hover::before {
+  left: 100%;
 }
 
 .menu-button:hover, .preview-actions-button:hover {
-  background: #1f2937;
-  border-color: #1f2937;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transform: translateY(-1px);
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-800);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.menu-button:active, .preview-actions-button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Top Right Preview Actions */
@@ -39,50 +62,96 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  z-index: 1000;
+  z-index: 1001; /* Higher than other elements */
 }
 
 /* Dropdown Menus */
 .dropdown-menu {
   position: absolute;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  min-width: 150px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  min-width: 180px;
   overflow: hidden;
+  backdrop-filter: blur(20px);
+  animation: dropdownSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .import-export-menu {
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   left: 0;
 }
 
 .preview-actions-menu {
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   right: 0;
 }
 
 .menu-item {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  color: #374151;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-blue-500);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .menu-item:hover:not(:disabled) {
-  background: #f3f4f6;
+  background: var(--color-gray-50);
+  color: var(--color-gray-900);
+  padding-left: 22px;
+}
+
+.menu-item:hover:not(:disabled)::before {
+  transform: scaleY(1);
 }
 
 .menu-item:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  color: var(--color-gray-400);
+}
+
+.menu-item:first-child {
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+}
+
+.menu-item:last-child {
+  border-bottom-left-radius: var(--radius-xl);
+  border-bottom-right-radius: var(--radius-xl);
 }
 
 .app-actions button.btn-primary {
@@ -126,17 +195,19 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .editor-panel {
-  width: 65%;
-  min-width: 600px;
-  max-width: 900px;
+  flex: 1;
+  min-width: 350px;
+  max-width: none;
   background: #ffffff;
   border-right: 1px solid #d1d5db;
-  overflow: hidden; /* No scrolling at this level */
+  overflow: hidden;
   padding: 0;
   height: 100vh;
+  transition: all 0.3s ease;
 }
 
 /* CSS Variables for consistent colors and spacing */
@@ -182,6 +253,11 @@
   --spacing-lg: 1rem;      /* 16px */
   --spacing-xl: 1.5rem;    /* 24px */
   --spacing-2xl: 2rem;     /* 32px */
+  
+  /* Timing functions for consistent animations */
+  --ease-out-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out-cubic: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
   /* Border radius values */
   --radius-sm: 0.25rem;    /* 4px */
@@ -427,3 +503,218 @@
 .text-gray-600 { color: var(--color-gray-600); }
 .text-gray-700 { color: var(--color-gray-700); }
 .text-gray-900 { color: var(--color-gray-900); }
+
+/* ==========================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================== */
+
+/* Mobile devices (portrait phones, less than 768px) */
+@media (max-width: 767px) {
+  .app-main {
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .editor-panel {
+    width: 100%;
+    height: 60vh;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid #d1d5db;
+  }
+  
+  .preview-panel {
+    width: 100% !important;
+    height: 40vh !important;
+  }
+  
+  .top-left-menu {
+    top: 8px;
+    left: 8px;
+  }
+  
+  .top-right-actions {
+    top: 8px;
+    right: 8px;
+  }
+  
+  .menu-button, .preview-actions-button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  
+  .dropdown-menu {
+    min-width: 120px;
+  }
+  
+  .menu-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Tablet devices (landscape phones, tablets, 768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .editor-panel {
+    min-width: 400px;
+    width: 50%;
+  }
+  
+  .preview-panel {
+    width: 50% !important;
+  }
+  
+  .menu-button, .preview-actions-button {
+    padding: 7px 11px;
+    font-size: 15px;
+  }
+}
+
+/* Desktop devices (laptops/desktops, 1025px and up) */
+@media (min-width: 1025px) {
+  .editor-panel {
+    width: 60%;
+    min-width: 500px;
+    max-width: 800px;
+  }
+  
+  .preview-panel {
+    flex: 1;
+  }
+}
+
+/* Large desktop devices (wide screens, 1440px and up) */
+@media (min-width: 1440px) {
+  .editor-panel {
+    width: 55%;
+    max-width: 900px;
+  }
+}
+
+/* Ultra-wide screens (1920px and up) */
+@media (min-width: 1920px) {
+  .editor-panel {
+    width: 50%;
+    max-width: 1000px;
+  }
+}
+
+/* ==========================================
+   GLOBAL POLISH & ACCESSIBILITY
+   ========================================== */
+
+/* Custom scrollbars for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-blue-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-gray-300: #000000;
+    --color-gray-700: #ffffff;
+    --color-blue-500: #0000ff;
+  }
+  
+  .dropdown-menu {
+    border-width: 2px;
+  }
+  
+  .menu-button, .preview-actions-button {
+    border-width: 2px;
+  }
+}
+
+/* Loading states and micro-interactions */
+.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--color-gray-300);
+  border-top: 2px solid var(--color-blue-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Improved button interactions */
+.btn, .menu-button, .preview-actions-button, .editor-tab {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Toast notifications area (if needed later) */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  animation: toastSlideIn 0.3s var(--ease-out-cubic);
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

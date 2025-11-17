@@ -233,7 +233,7 @@ export function PreviewPanel({
                   className="page-scale-wrapper"
                   style={{ 
                     transform: `scale(${layoutState.zoom})`,
-                    transformOrigin: 'top left'
+                    transformOrigin: 'top center'
                   }}
                 >
                   <div 
