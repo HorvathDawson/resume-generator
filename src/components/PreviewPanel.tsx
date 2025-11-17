@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import type { ResumeData, LayoutBuilderState } from '../types';
 import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
 import { Footer } from './Footer';
@@ -15,6 +16,17 @@ export function PreviewPanel({
   layoutState,
   onZoomChange,
 }: PreviewPanelProps) {
+  
+  // State to track if user is currently dragging the zoom slider
+  const [isDraggingZoom, setIsDraggingZoom] = useState(false);
+  // State to store the width when dragging started
+  const [dragStartWidth, setDragStartWidth] = useState<string>('21cm');
+  
+  // Calculate the scaled page width
+  const scaledPageWidth = `calc(21cm * ${layoutState.zoom})`;
+  
+  // Use the width from when dragging started during dragging, scaled width when not dragging
+  const dynamicWidth = isDraggingZoom ? dragStartWidth : scaledPageWidth;
   
   // Helper function to reorder section items based on layout
   const applySectionItemOrder = (section: any, rowIndex: number, columnIndex?: number) => {
@@ -126,7 +138,13 @@ export function PreviewPanel({
   return (
     <>
       <div className="preview-panel">
-        <div className="preview-controls">
+        <div 
+          className="preview-controls"
+          style={{ 
+            width: dynamicWidth,
+            minWidth: dynamicWidth 
+          }}
+        >
           <h2>Preview</h2>
           <div className="zoom-controls">
             <label>
@@ -137,12 +155,28 @@ export function PreviewPanel({
                 max="1.5"
                 step="0.1"
                 value={layoutState.zoom}
+                onMouseDown={() => {
+                  setDragStartWidth(scaledPageWidth);
+                  setIsDraggingZoom(true);
+                }}
+                onMouseUp={() => setIsDraggingZoom(false)}
+                onTouchStart={() => {
+                  setDragStartWidth(scaledPageWidth);
+                  setIsDraggingZoom(true);
+                }}
+                onTouchEnd={() => setIsDraggingZoom(false)}
                 onChange={(e) => onZoomChange(parseFloat(e.target.value))}
               />
             </label>
           </div>
         </div>
-        <div className="preview-container">
+        <div 
+          className="preview-container"
+          style={{ 
+            width: dynamicWidth,
+            minWidth: dynamicWidth 
+          }}
+        >
           {/* Dynamic Print Styles - Inject actual values for print media */}
           <style>
             {`
@@ -227,7 +261,14 @@ export function PreviewPanel({
             } as React.CSSProperties}
           >
             {resumeData?.layout?.pages?.map((page: any, pageIndex: number) => (
-              <div key={pageIndex} className="page-wrapper">
+              <div 
+                key={pageIndex} 
+                className="page-wrapper"
+                style={{ 
+                  width: 'fit-content',
+                  minWidth: 'fit-content' 
+                }}
+              >
                 <div className="page-number">Page {pageIndex + 1}</div>
                 <div 
                   className="page-scale-wrapper"

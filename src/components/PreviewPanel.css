@@ -1,24 +1,23 @@
 /* Preview Panel Styles */
 .preview-panel {
   position: relative;
-  flex: 1;
+  width: fit-content;
+  min-width: fit-content;
   background: var(--color-gray-50);
   border: none;
   padding: var(--spacing-lg);
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden; /* Remove scrollbars */
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  justify-content: flex-start;
 }
 
 .preview-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  max-width: 100%;
+  /* Width set dynamically via inline styles */
   margin-bottom: var(--spacing-lg);
   background: var(--color-white);
   padding: var(--spacing-md) var(--spacing-lg);
@@ -56,8 +55,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  width: 100%;
-  overflow: visible; /* Remove scrollbars from container */
+  /* Width set dynamically via inline styles */
+  overflow: visible;
   padding: var(--spacing-lg);
   gap: var(--spacing-2xl);
 }
@@ -67,6 +66,7 @@
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
+  /* Width set to fit-content via inline styles */
 }
 
 .page-number {
@@ -168,12 +168,26 @@
 @media (max-width: 767px) {
   .preview-panel {
     padding: var(--spacing-sm);
+    width: 100% !important;
+    min-width: unset !important;
   }
   
   .preview-controls {
     flex-direction: column;
     gap: var(--spacing-sm);
     padding: var(--spacing-sm);
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  
+  .preview-container {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  
+  .page-wrapper {
+    width: 100% !important;
+    min-width: unset !important;
   }
   
   .preview-controls h2 {
@@ -192,6 +206,7 @@
   .preview-container {
     padding: var(--spacing-sm);
     justify-content: center;
+    width: 100%;
   }
   
   .page-scale-wrapper {
@@ -208,10 +223,6 @@
   
   .preview-controls {
     padding: var(--spacing-md) var(--spacing-lg);
-  }
-  
-  .preview-container {
-    justify-content: center;
   }
 }
 
