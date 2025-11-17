@@ -114,3 +114,19 @@
   color: var(--color-gray-500);
   font-weight: 500;
 }
+
+/* Page scale wrapper for zoom functionality */
+.page-scale-wrapper {
+  display: block;
+  width: fit-content;
+  height: fit-content;
+}
+
+/* Ensure pages maintain exact A4 dimensions */
+.page-scale-wrapper .resume-page,
+.page-scale-wrapper .a4-page {
+  width: 21cm !important;
+  height: 29.7cm !important;
+  display: block;
+  position: relative;
+}

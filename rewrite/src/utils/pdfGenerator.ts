@@ -50,10 +50,17 @@ export const generatePDF = async (elementId: string, filename: string = 'resume.
       tempStyle = document.createElement('style');
       tempStyle.setAttribute('data-pdf-generation', 'true');
       tempStyle.textContent = `
-        .resume-preview .a4-page {
+        .resume-preview .a4-page,
+        .resume-preview .resume-page {
           transform: none !important;
           scale: none !important;
           position: static !important;
+          width: 21cm !important;
+          height: 29.7cm !important;
+        }
+        .page-scale-wrapper {
+          transform: none !important;
+          scale: none !important;
         }
       `;
       document.head.appendChild(tempStyle);

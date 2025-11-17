@@ -33,15 +33,48 @@
 }
 
 /* Base resume page styles */
-.resume-page {
+.resume-page,
+.a4-page {
   width: var(--a4-width);
-  min-height: var(--a4-height);
+  height: var(--a4-height);
+  max-width: var(--a4-width);
+  max-height: var(--a4-height);
   background: white;
   font-family: 'Times New Roman', serif;
   font-size: var(--resume-font-md);
   line-height: 1.4;
   color: var(--resume-text-primary);
   box-sizing: border-box;
+  overflow: hidden; /* Prevent content from spilling outside page bounds */
+  page-break-after: always; /* Ensure proper page breaks for printing */
+}
+
+/* Print-specific styles for PDF generation */
+@media print {
+  .resume-page,
+  .a4-page {
+    width: 21cm !important;
+    height: 29.7cm !important;
+    max-width: 21cm !important;
+    max-height: 29.7cm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: always !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* Hide preview controls when printing */
+  .preview-controls,
+  .page-number {
+    display: none !important;
+  }
+  
+  /* Ensure proper page sizing for print */
+  @page {
+    size: A4;
+    margin: 0;
+  }
 }
 
 /* Section spacing - compact for better vertical use */
