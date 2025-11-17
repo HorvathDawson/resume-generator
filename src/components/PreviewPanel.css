@@ -114,12 +114,10 @@
 }
 
 .preview-panel .page-number {
-  position: absolute;
-  top: -1.2rem;
-  left: 0;
-  font-size: 0.75rem;
   color: var(--color-gray-500);
   font-weight: 500;
+  text-align: left;
+  /* Font size and margin are now handled inline to scale with zoom */
 }
 
 /* Page scale wrapper for zoom functionality */
@@ -128,7 +126,7 @@
   width: fit-content;
   height: fit-content;
   border: 1px solid var(--color-gray-300);
-  margin: 0 auto;
+  margin: 0 auto; /* Center horizontally */
   transform-origin: top center !important;
 }
 

@@ -269,7 +269,15 @@ export function PreviewPanel({
                   minWidth: 'fit-content',
                 }}
               >
-                <div className="page-number">Page {pageIndex + 1}</div>
+                <div 
+                  className="page-number"
+                  style={{
+                    fontSize: `calc(0.75rem * ${layoutState.zoom})`,
+                    marginBottom: `calc(0.5rem * ${layoutState.zoom})`
+                  }}
+                >
+                  Page {pageIndex + 1}
+                </div>
                 <div 
                   className="page-scale-wrapper"
                   style={{ 
