@@ -205,8 +205,14 @@ export const DEFAULT_RESUME_JSON = {
                 {
                   "width": "60%",
                   "sections": [
-                    "experience-001_split_1",
-                    "experience-001_split_2"
+                    {
+                      "sectionId": "experience-001_split_1", 
+                      "instanceId": "instance-exp-split-1"
+                    },
+                    {
+                      "sectionId": "experience-001_split_2",
+                      "instanceId": "instance-exp-split-2"
+                    }
                   ],
                   "sectionItemOrders": {}
                 }

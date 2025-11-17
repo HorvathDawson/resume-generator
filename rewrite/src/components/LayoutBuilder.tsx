@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import type { ResumeData } from '../types';
-import type { SectionType } from '../types/resume';
-import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
 
 import { SectionSplittingManager } from './SectionSplittingManager';
 import { SectionTemplateSelector } from './SectionTemplateSelector';
@@ -47,15 +45,19 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 }) => {
   // Helper function to preserve globalStyles when updating layout
   const updateLayout = (pages: PageLayout[]) => {
+    console.log('🔄 UPDATE LAYOUT: Called with pages:', pages);
+    console.log('🔄 UPDATE LAYOUT: Calling onLayoutChange with globalStyles:', resumeData.layout?.globalStyles);
     onLayoutChange({
       pages,
       globalStyles: resumeData.layout?.globalStyles // Preserve existing globalStyles
     });
   };
 
-  // Initialize pages from resume data
-  const [pages, setPages] = useState<PageLayout[]>(() => {
+  // Get pages from resume data, ensuring we always have at least one page
+  const getPages = (): PageLayout[] => {
     const layoutPages = resumeData.layout?.pages || [];
+    console.log('📄 GET PAGES: Raw layout pages from resumeData:', layoutPages);
+    
     if (layoutPages.length === 0) {
       // Create a default page if none exist
       return [{
@@ -65,7 +67,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }];
     }
     
-    return layoutPages.map((page: any, index: number) => ({
+    const processedPages = layoutPages.map((page: any, index: number) => ({
       id: `page-${index + 1}`,
       pageNumber: index + 1,
       footer: page.footer, // Preserve footer configuration
@@ -88,62 +90,18 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         })
       })) || []
     }));
-  });
-
-  // Keep track of whether we're updating from internal changes
-  const [isUpdatingFromInternal, setIsUpdatingFromInternal] = useState(false);
-
-  // Update pages when resumeData.layout changes (e.g., after import)
-  useEffect(() => {
-    // Skip if we're updating from an internal change to avoid conflicts
-    if (isUpdatingFromInternal) {
-      setIsUpdatingFromInternal(false);
-      return;
-    }
     
-    const layoutPages = resumeData.layout?.pages || [];
-    if (layoutPages.length > 0) {
-      console.log('=== LAYOUT BUILDER: Updating pages from resumeData.layout ===');
-      console.log('New layout pages:', layoutPages);
-      
-      const newPages = layoutPages.map((page: any, index: number) => ({
-        id: `page-${index + 1}`,
-        pageNumber: index + 1,
-        footer: page.footer, // Preserve footer configuration
-        rows: page.rows?.map((row: any, rowIndex: number) => ({
-          id: `page-${index + 1}-row-${rowIndex}`,
-          type: row.type === 'columns' ? 'columns' : 'wholePage',
-          ...(row.type === 'columns' ? {
-            columns: row.columns?.map((col: any) => ({
-              width: col.width,
-              sections: col.sections || [],
-              backgroundColor: col.backgroundColor,
-              textColor: col.textColor,
-              sectionItemOrders: col.sectionItemOrders || {}
-            })) || []
-          } : {
-            sections: row.sections || [],
-            backgroundColor: row.backgroundColor,
-            textColor: row.textColor,
-            sectionItemOrders: row.sectionItemOrders || {}
-          })
-        })) || []
-      }));
-      
-      console.log('=== LAYOUT BUILDER: Setting new pages ===');
-      console.log('New processed pages:', newPages);
-      setPages(newPages);
-    }
-  }, [resumeData.layout, isUpdatingFromInternal]);
+    console.log('📄 GET PAGES: Processed pages:', processedPages);
+    return processedPages;
+  };
+
+  const pages = getPages();
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   // Ensure currentPageIndex is within bounds
   const safePageIndex = Math.min(currentPageIndex, pages.length - 1);
   const currentPage = pages[safePageIndex] || pages[0];
 
-  
-  // Get all possible section types from template registry
-  const allSectionTypes = Object.keys(TEMPLATE_REGISTRY) as SectionType[];
   
   // Get all used section IDs for styling purposes
   const usedSectionIds = new Set<string>();
@@ -206,7 +164,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   
   // Auto-scroll state
   const [autoScrollInterval, setAutoScrollInterval] = useState<number | null>(null);
-  const [lastMousePosition, setLastMousePosition] = useState<{ x: number; y: number } | null>(null);
+
   
   // Cleanup auto-scroll interval on unmount
   useEffect(() => {
@@ -261,12 +219,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }
       row.sectionItemOrders[sectionId] = newOrder;
     }
-    
-    // Mark that we're updating from an internal change
-    setIsUpdatingFromInternal(true);
-    
-    // Update local state first
-    setPages(updatedPages);
     
     // Notify parent of the change
     updateLayout(updatedPages);
@@ -400,7 +352,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       // Update the current page
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-      setPages(newPages);
       updateLayout(newPages);
       setDraggedSection(null);
     } else if (draggedRow !== null) {
@@ -426,7 +377,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
-      setPages(newPages);
       updateLayout(newPages);
       setDraggedRow(null);
     }
@@ -498,7 +448,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     
     // Store mouse position globally for persistent auto-scroll
     (window as any).lastMouseEvent = e.nativeEvent;
-    setLastMousePosition({ x: e.clientX, y: e.clientY });
     
     // Debug: Log what drag type is active during drag over
     if (draggedRow !== null) {
@@ -519,7 +468,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     }
     // Clean up global mouse tracking
     (window as any).lastMouseEvent = null;
-    setLastMousePosition({ x: 0, y: 0 });
   };
 
   // Handlers for within-row dragging and section management
@@ -584,7 +532,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       // Update state
       const newPages = [...pages];
       newPages[safePageIndex] = { ...currentPage, rows: updatedRows };
-      setPages(newPages);
+      updateLayout(newPages);
       updateLayout(newPages);
       
       // Clear all drag state
@@ -634,7 +582,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             // Update state and return
             const newPages = [...pages];
             newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-            setPages(newPages);
+            updateLayout(newPages);
             updateLayout(newPages);
             
             // Clear all drag state
@@ -713,7 +661,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       // Update state
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-      setPages(newPages);
+      updateLayout(newPages);
       updateLayout(newPages);
       
       // Clear all drag state
@@ -762,7 +710,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     // Update state
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-    setPages(newPages);
+    updateLayout(newPages);
     updateLayout(newPages);
   };
 
@@ -791,7 +739,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     }
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
-    setPages(newPages);
+    updateLayout(newPages);
     updateLayout(newPages);
   };
 
@@ -799,19 +747,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newRows = currentPage.rows.filter((_, index) => index !== rowIndex);
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
-    setPages(newPages);
     updateLayout(newPages);
-  };
-
-  const updateColumnWidth = (rowIndex: number, columnIndex: number, newWidth: string) => {
-    const newRows = [...currentPage.rows];
-    if (newRows[rowIndex]?.columns?.[columnIndex]) {
-      newRows[rowIndex].columns![columnIndex].width = newWidth;
-      const newPages = [...pages];
-      newPages[currentPageIndex] = { ...currentPage, rows: newRows };
-      setPages(newPages);
-      updateLayout(newPages);
-    }
+    updateLayout(newPages);
   };
 
   // Page management functions
@@ -822,7 +759,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       rows: []
     };
     const newPages = [...pages, newPage];
-    setPages(newPages);
+    updateLayout(newPages);
     setCurrentPageIndex(pages.length); // Switch to new page
     updateLayout(newPages);
   };
@@ -838,7 +775,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       id: `page-${index + 1}`
     }));
     
-    setPages(renumberedPages);
+    updateLayout(renumberedPages);
     setCurrentPageIndex(Math.min(currentPageIndex, renumberedPages.length - 1));
     updateLayout(renumberedPages);
   };
@@ -944,54 +881,23 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return paddingId;
   };
 
-  // Create a personalInfo section from personalInfo data
-  const createPersonalInfoSection = (): string => {
-    if (!onResumeDataChange) return '';
-
-    // Generate unique ID for the personalInfo section
-    const personalInfoId = `personalInfo-${Date.now()}`;
-
-    const personalInfoSection = {
-      id: personalInfoId,
-      title: 'Contact Information',
-      type: 'personal_info' as const,
-      templateId: 'personal-info-standard',
-      isVisible: true,
-      items: [],
-      personalInfo: resumeData.personalInfo || {}
-    };
-
-    console.log('🟢 Creating personalInfo section:', personalInfoSection);
-
-    // Store temporarily for immediate access
-    setTempSections(prev => ({
-      ...prev,
-      [personalInfoId]: personalInfoSection
-    }));
-
-    // Add to resume data SYNCHRONOUSLY and trigger re-render
-    const newSections = [...(resumeData.sections || []), personalInfoSection];
-    const updatedResumeData = {
-      ...resumeData,
-      sections: newSections
-    };
-
-    console.log('🟢 Updated resume data sections:', updatedResumeData.sections);
-    onResumeDataChange(updatedResumeData);
-    return personalInfoId;
-  };
-
-
-
-
-
   // Section splitting handlers - create actual separate sections
   const handleSplitSection = (originalSectionId: string, splitData: { sections: any[] }) => {
-    if (!onResumeDataChange) return;
+    console.log('🔪 SPLIT: Starting split process for section:', originalSectionId);
+    console.log('🔪 SPLIT: Split data received:', splitData);
+    
+    if (!onResumeDataChange) {
+      console.log('❌ SPLIT: No onResumeDataChange callback available');
+      return;
+    }
 
     // Find the original section
     const originalSection = resumeData.sections?.find(s => s.id === originalSectionId);
-    if (!originalSection) return;
+    console.log('🔪 SPLIT: Found original section:', originalSection);
+    if (!originalSection) {
+      console.log('❌ SPLIT: Original section not found in resumeData.sections');
+      return;
+    }
 
     // Create new sections with unique IDs and smart titles
     const newSections = splitData.sections.map((sectionData, index) => {
@@ -1025,31 +931,49 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     };
 
     // Update layout - replace original section ID with new section IDs
-    const updatedPages = pages.map(page => ({
+    const currentPages = getPages();
+    console.log('🔪 SPLIT: Current pages before layout update:', currentPages);
+    
+    const updatedPages = currentPages.map(page => ({
       ...page,
       rows: page.rows.map(row => ({
         ...row,
         columns: row.columns?.map(col => ({
           ...col,
-          sections: col.sections.flatMap(sId => 
-            sId === originalSectionId ? newSections.map(ns => ns.id) : [sId]
-          )
+          sections: col.sections.flatMap((sectionRef: any) => {
+            const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+            if (sectionId === originalSectionId) {
+              return newSections.map(ns => ns.id);
+            }
+            return [sectionRef]; // Keep original format (string or object)
+          })
         })),
-        sections: row.sections?.flatMap(sId => 
-          sId === originalSectionId ? newSections.map(ns => ns.id) : [sId]
-        )
+        sections: row.sections?.flatMap((sectionRef: any) => {
+          const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+          if (sectionId === originalSectionId) {
+            return newSections.map(ns => ns.id);
+          }
+          return [sectionRef]; // Keep original format (string or object)
+        })
       }))
     }));
 
-    console.log('🏗️ Updated layout sections:', updatedPages.flatMap(p => p.rows.flatMap(r => r.columns?.flatMap(c => c.sections) || r.sections || [])));
-    console.log('🔍 Original section being replaced:', originalSectionId);
-    console.log('� New section IDs:', newSections.map(s => s.id));
+    console.log('🔪 SPLIT: Updated pages after layout update:', updatedPages);
+    console.log('🏗️ SPLIT: All layout sections after update:', updatedPages.flatMap(p => p.rows.flatMap(r => r.columns?.flatMap(c => c.sections) || r.sections || [])));
+    console.log('🔍 SPLIT: Original section being replaced:', originalSectionId);
+    console.log('🆕 SPLIT: New section IDs:', newSections.map(s => s.id));
 
-    console.log('�📤 Calling onResumeDataChange with updated data');
-    onResumeDataChange(newResumeData);
+    // Update resume data with both new sections AND new layout
+    const completeUpdatedResumeData = {
+      ...newResumeData,
+      layout: {
+        ...newResumeData.layout,
+        pages: updatedPages as any // Type assertion for now
+      }
+    };
     
-    // Update local layout state 
-    setPages(updatedPages);
+    console.log('📤 SPLIT: Calling onResumeDataChange with complete updated data (sections + layout)');
+    onResumeDataChange(completeUpdatedResumeData);
     setSplittingSection(null);
   };
 
@@ -1061,14 +985,30 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   // Sidebar-based combine function - automatically finds and removes split sections from layout
   const handleCombineFromSidebar = (baseId: string, splitSectionIds: string[]) => {
-    if (!onResumeDataChange || splitSectionIds.length < 2) return;
+    console.log('🔗 COMBINE: Starting combine process');
+    console.log('🔗 COMBINE: Base ID:', baseId);
+    console.log('🔗 COMBINE: Split section IDs to combine:', splitSectionIds);
+    
+    if (!onResumeDataChange || splitSectionIds.length < 2) {
+      console.log('❌ COMBINE: Invalid state - no callback or insufficient sections');
+      return;
+    }
 
     // Find all the sections to combine
+    console.log('🔗 COMBINE: All resume sections before combine:', resumeData.sections?.map(s => s.id));
     const sectionsToProcess = splitSectionIds.map(id => resumeData.sections?.find(s => s.id === id)).filter(Boolean) as any[];
-    if (sectionsToProcess.length !== splitSectionIds.length) return;
+    console.log('🔗 COMBINE: Sections found to process:', sectionsToProcess.map(s => s?.id));
+    
+    if (sectionsToProcess.length !== splitSectionIds.length) {
+      console.log('❌ COMBINE: Not all split sections found in resume data');
+      return;
+    }
 
     const firstSection = sectionsToProcess[0];
-    if (!firstSection) return;
+    if (!firstSection) {
+      console.log('❌ COMBINE: No first section found');
+      return;
+    }
     
     // Combine all items/categories from the split sections
     const combinedItems: any[] = [];
@@ -1097,33 +1037,102 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       .filter(s => !splitSectionIds.includes(s.id)) // Remove all split sections
       .concat([combinedSection]); // Add combined section
 
+    console.log('🔗 COMBINE: Updated sections after combine:', updatedSections.map(s => s.id));
+    console.log('🔗 COMBINE: Combined section created:', combinedSection);
+
     const newResumeData = {
       ...resumeData,
       sections: updatedSections
     };
 
     // Update layout - remove all split sections from layout (don't add base section automatically)
-    const updatedPages = pages.map(page => ({
+    const currentPages = getPages();
+    console.log('🔗 COMBINE: Current pages before layout update:', currentPages);
+    console.log('🔗 COMBINE: Looking for sections to remove from layout:', splitSectionIds);
+    
+    const updatedPages = currentPages.map(page => ({
       ...page,
-      rows: page.rows.map(row => ({
-        ...row,
-        columns: row.columns?.map(col => ({
-          ...col,
-          sections: col.sections.filter(sId => !splitSectionIds.includes(sId))
-        })),
-        sections: row.sections?.filter(sId => !splitSectionIds.includes(sId))
-      }))
+      rows: page.rows.map(row => {
+        let addedCombinedSection = false;
+        
+        return {
+          ...row,
+          columns: row.columns?.map(col => {
+            console.log('🔗 COMBINE: Processing column sections before filter:', col.sections);
+            
+            let foundFirstSplitSection = false;
+            const updatedSections: any[] = [];
+            
+            col.sections.forEach((sectionRef: any) => {
+              const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+              const shouldKeep = !splitSectionIds.includes(sectionId);
+              console.log(`🔗 COMBINE: Section ${sectionId} - Keep: ${shouldKeep}`);
+              
+              if (!shouldKeep && !foundFirstSplitSection && !addedCombinedSection) {
+                // Replace first split section with combined section
+                updatedSections.push(baseId);
+                foundFirstSplitSection = true;
+                addedCombinedSection = true;
+                console.log(`🔗 COMBINE: Added combined section ${baseId} in place of ${sectionId}`);
+              } else if (shouldKeep) {
+                updatedSections.push(sectionRef);
+              }
+            });
+            
+            console.log('🔗 COMBINE: Column sections after filter:', updatedSections);
+            return {
+              ...col,
+              sections: updatedSections
+            };
+          }),
+          sections: row.sections ? (() => {
+            console.log('🔗 COMBINE: Processing row sections before filter:', row.sections);
+            
+            let foundFirstSplitSection = false;
+            const updatedSections: any[] = [];
+            
+            row.sections.forEach((sectionRef: any) => {
+              const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+              const shouldKeep = !splitSectionIds.includes(sectionId);
+              console.log(`🔗 COMBINE: Section ${sectionId} - Keep: ${shouldKeep}`);
+              
+              if (!shouldKeep && !foundFirstSplitSection && !addedCombinedSection) {
+                // Replace first split section with combined section
+                updatedSections.push(baseId);
+                foundFirstSplitSection = true;
+                addedCombinedSection = true;
+                console.log(`🔗 COMBINE: Added combined section ${baseId} in place of ${sectionId}`);
+              } else if (shouldKeep) {
+                updatedSections.push(sectionRef);
+              }
+            });
+            
+            console.log('🔗 COMBINE: Row sections after filter:', updatedSections);
+            return updatedSections;
+          })() : undefined
+        };
+      })
     }));
 
-    console.log('🔗 Sections combined from sidebar:', splitSectionIds, '→', baseId);
-    onResumeDataChange(newResumeData);
+    console.log('🔗 COMBINE: Updated pages after layout update:', updatedPages);
+    console.log('🔗 COMBINE: Sections combined from sidebar:', splitSectionIds, '→', baseId);
     
-    // Update local layout state and force re-render
-    setPages(updatedPages);
+    // Update resume data with both new sections AND new layout
+    const completeUpdatedResumeData = {
+      ...newResumeData,
+      layout: {
+        ...newResumeData.layout,
+        pages: updatedPages as any // Type assertion for now
+      }
+    };
+    
+    console.log('📤 COMBINE: Calling onResumeDataChange with complete updated data (sections + layout)');
+    onResumeDataChange(completeUpdatedResumeData);
     
     // Force a small delay to ensure state updates are processed
     setTimeout(() => {
       console.log('🔄 Layout updated after combine');
+      console.log('🔍 POST-COMBINE: What does getPages() return now?', getPages());
     }, 100);
   };
 
@@ -1213,20 +1222,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         textColor: newTextColor
       };
       
-      setPages(updatedPages);
-      
-      // Update the layout
-      const currentPage = pages[currentPageIndex];
-      const updatedCurrentPage = {
-        ...currentPage,
-        rows: [...updatedPages[currentPageIndex].rows]
-      };
-      
-      updateLayout(
-        updatedPages.map((page, idx) => 
-          idx === currentPageIndex ? updatedCurrentPage : page
-        )
-      );
+      updateLayout(updatedPages);
     }
   };
 
@@ -1264,7 +1260,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         textColor: newTextColor
       };
       
-      setPages(updatedPages);
+      updateLayout(updatedPages);
       
       // Update the layout
       const currentPage = pages[currentPageIndex];
@@ -1292,7 +1288,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         textColor: color
       };
       
-      setPages(updatedPages);
+      updateLayout(updatedPages);
       
       // Update the layout
       const currentPage = pages[currentPageIndex];
@@ -1320,7 +1316,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         textColor: color
       };
       
-      setPages(updatedPages);
+      updateLayout(updatedPages);
       
       // Update the layout
       const currentPage = pages[currentPageIndex];
@@ -1372,7 +1368,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     console.log('Pages after update:', updatedPages);
     console.log('Updated current page footer:', updatedPages[currentPageIndex]?.footer);
     
-    setPages(updatedPages);
+    updateLayout(updatedPages);
     
     // Update the layout
     updateLayout(updatedPages);
@@ -1395,7 +1391,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-      setPages(newPages);
+      updateLayout(newPages);
       updateLayout(newPages);
     }
   };

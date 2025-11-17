@@ -31,10 +31,16 @@ export function ResumeEditor({
   };
   
   const handleLayoutChange = (newLayout: any) => {
-    onResumeDataChange({
+    console.log('📝 RESUME EDITOR: handleLayoutChange called with:', newLayout);
+    console.log('📝 RESUME EDITOR: Current resumeData.layout:', resumeData.layout);
+    
+    const updatedResumeData = {
       ...resumeData,
       layout: newLayout
-    });
+    };
+    
+    console.log('📝 RESUME EDITOR: Calling onResumeDataChange with updated layout');
+    onResumeDataChange(updatedResumeData);
   };
   
   return (

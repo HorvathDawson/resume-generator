@@ -16,6 +16,8 @@ function App() {
   
   // Debug wrapper for setResumeData 
   const handleResumeDataChange = (data: ResumeData) => {
+    console.log('🏠 APP: handleResumeDataChange called with:', data);
+    console.log('🏠 APP: New layout data:', data.layout);
     setResumeData(data);
   };
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -277,10 +279,6 @@ function App() {
             // Ensure layout includes current state
             pages: resumeData.layout?.pages || layoutState.pages
           }
-        },
-        layoutState: {
-          pages: resumeData.layout?.pages || layoutState.pages,
-          zoom: layoutState.zoom
         }
       };
 
