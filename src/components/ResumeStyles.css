@@ -108,70 +108,11 @@
 }
 
 /* ============================================================================
-   PRINT STYLES - Ensure proper spacing and formatting for print preview
+   PRINT STYLES - Only print-specific overrides (fonts/spacing use regular CSS variables)
    ============================================================================ */
 
 @media print {
-  /* Force proper margins and spacing for print - using actual values instead of CSS variables */
-  #resume-preview .page-content {
-    padding: 1.27cm !important;
-  }
-
-  #resume-preview h1 {
-    font-size: 1.2cm !important;
-    color: #2c5aa0 !important;
-    margin-bottom: 0.5cm !important;
-  }
-
-  #resume-preview h2 {
-    font-size: 0.6cm !important;
-    color: #2c5aa0 !important;
-    margin-bottom: 0.3cm !important;
-    margin-top: 0.5cm !important;
-  }
-
-  #resume-preview h3 {
-    font-size: 0.4cm !important;
-    color: #2c5aa0 !important;
-    margin-bottom: 0.3cm !important;
-  }
-
-  #resume-preview p, #resume-preview li {
-    font-size: 0.35cm !important;
-    color: #333333 !important;
-    margin-bottom: 0.3cm !important;
-  }
-
-  #resume-preview ul li, #resume-preview ol li {
-    margin-bottom: 0.3cm !important;
-  }
-
-  #resume-preview .section .text-content div,
-  #resume-preview .section .content div,
-  #resume-preview .experience-body div,
-  #resume-preview .education-details div,
-  #resume-preview .skills-section div:not(.skill-progress):not(.skill-bar):not(.skill-cloud-tag) {
-    font-size: 0.35cm !important;
-    color: #333333 !important;
-    margin-bottom: 0.3cm !important;
-  }
-
-  #resume-preview .small-text, #resume-preview .dates {
-    font-size: 0.3cm !important;
-    color: #333333 !important;
-    opacity: 0.8;
-    margin-bottom: 0.3cm !important;
-  }
-
-  #resume-preview .section {
-    margin-bottom: 0.5cm !important;
-  }
-
-  #resume-preview .section-item {
-    margin-bottom: 0.3cm !important;
-  }
-
-  /* Ensure proper page breaks */
+  /* Page breaks for proper printing */
   #resume-preview .page-wrapper {
     page-break-after: always;
   }
@@ -180,7 +121,11 @@
     page-break-after: avoid;
   }
 
-  /* Hide page numbers and scale wrappers in print */
+  #resume-preview .section {
+    page-break-inside: avoid;
+  }
+
+  /* Hide UI elements in print */
   #resume-preview .page-number {
     display: none !important;
   }
@@ -189,7 +134,7 @@
     transform: none !important;
   }
 
-  /* Ensure A4 page sizing */
+  /* Ensure proper A4 page sizing for print */
   #resume-preview .a4-page {
     width: 21cm !important;
     min-height: 29.7cm !important;
@@ -1064,7 +1009,7 @@
 
 .resume-preview .text-section.quote-style .quote-content::before {
   content: '"';
-  font-size: 2em;
+  font-size: 0.7cm;
   position: absolute;
   left: -0.3cm;
   top: -0.2cm;
@@ -2140,7 +2085,7 @@
   left: 0;
   color: var(--primary-color);
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 0.4cm;
 }
 
 /* Publications Modern Template - Card Design */
