@@ -638,6 +638,59 @@
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
+/* Combined Row Header */
+.row-header-combined {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.row-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Row Drag Handle */
+.row-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  cursor: grab;
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+  min-width: 2rem;
+  height: 2rem;
+}
+
+.row-drag-handle:hover {
+  background: #e5e7eb;
+  color: #374151;
+  border-color: #9ca3af;
+  transform: scale(1.05);
+}
+
+.row-drag-handle:active {
+  cursor: grabbing;
+  background: #d1d5db;
+  transform: scale(0.95);
+}
+
+
+
 .columns-builder {
   display: flex;
   flex-direction: column;
@@ -1047,6 +1100,26 @@
 }
 
 /* Inline split controls for column widths */
+.column-split-control-inline {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  user-select: none;
+  pointer-events: auto;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+.column-split-control-inline * {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: auto;
+}
 .split-header-inline {
   display: flex;
   align-items: center;
@@ -1121,7 +1194,8 @@
 }
 
 .column-controls,
-.whole-page-controls {
+.whole-page-controls,
+.whole-page-controls-inline {
   display: flex;
   gap: 0.25rem;
 }
@@ -1400,30 +1474,62 @@
 
 /* Layout Drop Zones */
 .layout-drop-zone {
-  min-height: 40px;
-  border: 2px dashed #ccc;
+  min-height: 20px;
+  border: 1px dashed #e5e7eb;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
-  font-size: 13px;
-  margin: 8px 0;
-  background: #fafafa;
-  transition: all 0.2s ease;
+  color: #9ca3af;
+  font-size: 12px;
+  margin: 4px 0;
+  background: transparent;
+  transition: all 0.3s ease;
+  opacity: 0.5;
+}
+
+/* Enhanced visibility when dragging is active */
+.layout-drop-zone.active {
+  min-height: 60px;
+  border: 3px dashed #2563eb;
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.05);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 12px 0;
+  opacity: 1;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  animation: pulse-border 2s infinite;
 }
 
 .layout-drop-zone:hover,
 .layout-drop-zone.drag-over {
-  border-color: #4a90e2;
-  background: rgba(74, 144, 226, 0.05);
-  color: #4a90e2;
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-weight: 600;
+  transform: scale(1.02);
 }
 
-.layout-drop-zone.drag-over {
-  min-height: 60px;
+.layout-drop-zone.active.drag-over {
+  min-height: 80px;
   border-style: solid;
-  background: rgba(74, 144, 226, 0.1);
+  background: rgba(37, 99, 235, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+}
+
+/* Pulse animation for active drop zones */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  }
+  50% {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.2);
+  }
 }
 
 /* Full Screen Layout with Sidebar + Viewport */

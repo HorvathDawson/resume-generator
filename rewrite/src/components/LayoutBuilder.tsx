@@ -196,6 +196,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   
   // Auto-scroll state
   const [autoScrollInterval, setAutoScrollInterval] = useState<number | null>(null);
+  const [lastMousePosition, setLastMousePosition] = useState<{ x: number; y: number } | null>(null);
   
   // Cleanup auto-scroll interval on unmount
   useEffect(() => {
@@ -338,10 +339,12 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   const handleDragStart = (e: React.DragEvent, sectionId: string) => {
     setDraggedSection(sectionId);
+    setDraggedSectionInRow(null); // Clear any existing layout drag state
     e.dataTransfer.effectAllowed = 'move';
   };
 
   const handleRowDragStart = (e: React.DragEvent, rowIndex: number) => {
+    console.log('🏗️ ROW DRAG START:', rowIndex);
     setDraggedRow(rowIndex);
     e.dataTransfer.effectAllowed = 'move';
   };
@@ -349,9 +352,16 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   const handleDrop = (e: React.DragEvent, targetRowIndex: number, targetColumnIndex?: number) => {
     e.preventDefault();
     e.stopPropagation();
-    
+    cleanupAutoScroll(); // Clean up auto-scroll on drop
 
-    
+    console.log('🎯 ROW DROP EVENT:', {
+      draggedSection: !!draggedSection,
+      draggedRow,
+      draggedLayoutButton,
+      targetRowIndex,
+      targetColumnIndex
+    });
+
     if (draggedSection) {
       // When dragging from sidebar, we want to ADD a new instance, not move an existing one
       // Clone the current rows without removing any existing instances
@@ -384,10 +394,25 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
       setDraggedSection(null);
     } else if (draggedRow !== null) {
+      console.log('🔄 REORDERING ROW:', { draggedRow, targetRowIndex });
+      
       // Reorder rows within current page
       const newRows = [...currentPage.rows];
       const [movedRow] = newRows.splice(draggedRow, 1);
-      newRows.splice(targetRowIndex, 0, movedRow);
+      
+      // Adjust target index if moving a row to a position after its original position
+      let adjustedTargetIndex = targetRowIndex;
+      if (draggedRow < targetRowIndex) {
+        adjustedTargetIndex = targetRowIndex - 1;
+      }
+      
+      newRows.splice(adjustedTargetIndex, 0, movedRow);
+      
+      console.log('🔄 ROW REORDER RESULT:', { 
+        originalIndex: draggedRow, 
+        newIndex: adjustedTargetIndex,
+        totalRows: newRows.length 
+      });
       
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
@@ -397,72 +422,82 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
+  // Persistent auto-scroll that checks mouse position continuously
+  const startPersistentAutoScroll = () => {
+    if (autoScrollInterval) return; // Already running
     
-    // Auto-scroll functionality - find the actual scrollable container
-    let scrollContainer: HTMLElement | null = null;
-    
-    // Try different possible scroll containers in order of preference
-    const candidates = [
-      '.editor-panel',
-      '.layout-builder-viewport', 
-      '.layout-main-area',
-      document.documentElement, // fallback to page scroll
-      document.body // final fallback
-    ];
-    
-    for (const selector of candidates) {
-      const element = typeof selector === 'string' 
-        ? document.querySelector(selector) as HTMLElement
-        : selector as HTMLElement;
-        
-      if (element && element.scrollHeight > element.clientHeight) {
-        scrollContainer = element;
-        break;
+    const interval = setInterval(() => {
+      // Get current mouse position from global mouse events
+      const mouseEvent = (window as any).lastMouseEvent;
+      if (!mouseEvent) return;
+      
+      // Find the scrollable container
+      let scrollContainer: HTMLElement | null = null;
+      const candidates = [
+        '.editor-panel',
+        '.layout-builder-viewport', 
+        '.layout-main-area',
+        document.documentElement,
+        document.body
+      ];
+      
+      for (const selector of candidates) {
+        const element = typeof selector === 'string' 
+          ? document.querySelector(selector) as HTMLElement
+          : selector as HTMLElement;
+          
+        if (element && element.scrollHeight > element.clientHeight) {
+          scrollContainer = element;
+          break;
+        }
       }
-    }
-    
-    if (!scrollContainer) return;
-    
-    const containerRect = scrollContainer.getBoundingClientRect();
-    const scrollThreshold = 100; // Distance from edge to start scrolling
-    const scrollSpeed = 10; // Pixels per scroll step
-    
-    const mouseY = e.clientY;
-    const containerTop = containerRect.top;
-    const containerBottom = containerRect.bottom;
-    
-    // Clear existing auto-scroll
-    if (autoScrollInterval) {
-      clearInterval(autoScrollInterval);
-      setAutoScrollInterval(null);
-    }
-    
-    // Check if near top edge
-    if (mouseY - containerTop < scrollThreshold) {
-      const interval = setInterval(() => {
+      
+      if (!scrollContainer) return;
+      
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const scrollThreshold = 120;
+      const mouseY = mouseEvent.clientY;
+      const containerTop = containerRect.top;
+      const containerBottom = containerRect.bottom;
+      
+      const distanceFromTop = mouseY - containerTop;
+      const distanceFromBottom = containerBottom - mouseY;
+      
+      // Scroll up if near top
+      if (distanceFromTop < scrollThreshold && distanceFromTop >= 0) {
+        const scrollSpeed = Math.max(5, Math.min(30, (scrollThreshold - distanceFromTop) / 3));
         if (scrollContainer.scrollTop > 0) {
           scrollContainer.scrollTop -= scrollSpeed;
-        } else {
-          clearInterval(interval);
-          setAutoScrollInterval(null);
         }
-      }, 16) as unknown as number; // 60fps
-      setAutoScrollInterval(interval);
-    }
-    // Check if near bottom edge
-    else if (containerBottom - mouseY < scrollThreshold) {
-      const interval = setInterval(() => {
+      }
+      // Scroll down if near bottom
+      else if (distanceFromBottom < scrollThreshold && distanceFromBottom >= 0) {
+        const scrollSpeed = Math.max(5, Math.min(30, (scrollThreshold - distanceFromBottom) / 3));
         const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
         if (scrollContainer.scrollTop < maxScroll) {
           scrollContainer.scrollTop += scrollSpeed;
-        } else {
-          clearInterval(interval);
-          setAutoScrollInterval(null);
         }
-      }, 16) as unknown as number; // 60fps
-      setAutoScrollInterval(interval);
+      }
+    }, 16) as unknown as number; // 60fps
+    
+    setAutoScrollInterval(interval);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    
+    // Store mouse position globally for persistent auto-scroll
+    (window as any).lastMouseEvent = e.nativeEvent;
+    setLastMousePosition({ x: e.clientX, y: e.clientY });
+    
+    // Debug: Log what drag type is active during drag over
+    if (draggedRow !== null) {
+      console.log('🔄 DRAG OVER - Row dragging:', draggedRow);
+    }
+    
+    // Start persistent auto-scroll if not already running
+    if (!autoScrollInterval && (draggedSection || draggedRow !== null || draggedLayoutButton)) {
+      startPersistentAutoScroll();
     }
   };
 
@@ -472,6 +507,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       clearInterval(autoScrollInterval);
       setAutoScrollInterval(null);
     }
+    // Clean up global mouse tracking
+    (window as any).lastMouseEvent = null;
+    setLastMousePosition({ x: 0, y: 0 });
   };
 
   // Handlers for within-row dragging and section management
@@ -481,6 +519,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       fromRowIndex: rowIndex,
       fromColumnIndex: columnIndex
     });
+    setDraggedSection(null); // Clear any existing sidebar drag state
     e.dataTransfer.effectAllowed = 'move';
     // Stop propagation to prevent row dragging
     e.stopPropagation();
@@ -492,10 +531,19 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     setDragOverTarget(null);
     cleanupAutoScroll(); // Clean up auto-scroll on drop
 
-
+    // Ensure only one drag type is active
+    const isSidebarDrag = draggedSection && !draggedSectionInRow;
+    const isLayoutDrag = draggedSectionInRow && !draggedSection;
+    
+    if (!isSidebarDrag && !isLayoutDrag) {
+      // Clear any stale state and return
+      setDraggedSection(null);
+      setDraggedSectionInRow(null);
+      return;
+    }
 
     // Handle sidebar section drops (creating new instances)
-    if (draggedSection && !draggedSectionInRow) {
+    if (isSidebarDrag) {
       const updatedRows = [...currentPage.rows];
       
       let actualSectionId = draggedSection;
@@ -528,7 +576,10 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       newPages[safePageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
       onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      
+      // Clear all drag state
       setDraggedSection(null);
+      setDraggedSectionInRow(null);
       return;
     }
 
@@ -575,6 +626,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
             setPages(newPages);
             onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+            
+            // Clear all drag state
+            setDraggedSection(null);
             setDraggedSectionInRow(null);
             return;
           }
@@ -585,6 +639,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         
         // If we're moving to the same position, do nothing
         if (currentIndex === targetIndex || (currentIndex === targetIndex - 1 && targetIndex > currentIndex)) {
+          // Clear all drag state
+          setDraggedSection(null);
           setDraggedSectionInRow(null);
           return;
         }
@@ -611,9 +667,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         // Remove from source
         if (fromColumnIndex !== undefined) {
           const sourceCol = updatedRows[fromRowIndex].columns![fromColumnIndex];
-          sourceCol.sections = sourceCol.sections.filter(s => s !== sectionId);
+          sourceCol.sections = sourceCol.sections.filter(s => {
+            // Handle both string IDs and object-based section references
+            const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+            return refSectionId !== sectionId;
+          });
         } else {
-          updatedRows[fromRowIndex].sections = updatedRows[fromRowIndex].sections!.filter(s => s !== sectionId);
+          updatedRows[fromRowIndex].sections = updatedRows[fromRowIndex].sections!.filter(s => {
+            // Handle both string IDs and object-based section references
+            const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+            return refSectionId !== sectionId;
+          });
         }
         
         // Add to target position
@@ -641,6 +705,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
       onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      
+      // Clear all drag state
+      setDraggedSection(null);
       setDraggedSectionInRow(null);
     }
   };
@@ -1741,16 +1808,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             
             {/* Drop zone at the top */}
             <div
-              className="layout-drop-zone"
+              className={`layout-drop-zone ${(draggedLayoutButton || draggedRow !== null) ? 'active' : ''}`}
               onDragOver={(e) => {
                 e.preventDefault();
+                handleDragOver(e);
                 if (draggedLayoutButton) {
                   e.dataTransfer.dropEffect = 'copy';
+                } else if (draggedRow !== null) {
+                  e.dataTransfer.dropEffect = 'move';
                 }
               }}
-              onDrop={(e) => handleLayoutDrop(e, 0)}
+              onDrop={(e) => {
+                if (draggedLayoutButton) {
+                  handleLayoutDrop(e, 0);
+                } else if (draggedRow !== null) {
+                  console.log('🎯 LAYOUT DROP ZONE - Inserting at position 0');
+                  handleDrop(e, 0);
+                }
+              }}
             >
-              Drop layout here
+              {draggedRow !== null ? 'Drop row here' : 'Drop layout here'}
             </div>
             
             {currentPage.rows.map((row: LayoutRow, rowIndex: number) => (
@@ -1762,22 +1839,21 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, rowIndex)}
                 >
-                  {/* Row content will continue here */}
-              <div className="row-header">
-                <span className="row-type">{row.type}</span>
-                <button 
-                  className="btn btn-small btn-danger"
-                  onClick={() => removeRow(rowIndex)}
-                >
-                  Remove
-                </button>
-              </div>
-
-              {row.type === 'columns' && row.columns ? (
-                <div className="columns-builder">
-                  {/* Single slider to control column split */}
+                  {/* Unified Row Header */}
+                  <div className="row-header-combined">
+                    <div className="row-info">
+                      <span className="row-type">{row.type}</span>
+                      <button 
+                        className="btn btn-small btn-danger"
+                        onClick={() => removeRow(rowIndex)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    
+                    {row.type === 'columns' && row.columns && (
                   <div 
-                    className="column-split-control"
+                    className="column-split-control-inline"
                     onDragOver={(e) => e.stopPropagation()}
                     onDrop={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
@@ -1846,9 +1922,33 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                       ></div>
                     </div>
                   </div>
+                    )}
+                    
+                    {row.type === 'wholePage' && (
+                      <div className="whole-page-controls-inline">
+                        <button
+                          className={`bg-toggle-btn ${row.backgroundColor !== '#ffffff' ? 'active' : ''}`}
+                          onClick={() => toggleWholePageBackground(rowIndex)}
+                          title="Cycle background: White → Secondary → Primary"
+                        >
+                          🎨
+                        </button>
+                        <input
+                          type="color"
+                          value={row.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
+                          onChange={(e) => setWholePageTextColor(rowIndex, e.target.value)}
+                          className="text-color-picker"
+                          title="Set text color"
+                        />
+                      </div>
+                    )}
+                  </div>
                   
-                  <div className="columns-container">
-                    {row.columns.map((column: LayoutColumn, columnIndex: number) => (
+                  {/* Row Content */}
+                  {row.type === 'columns' && row.columns ? (
+                    <div className="columns-builder">
+                      <div className="columns-container">
+                      {row.columns.map((column: LayoutColumn, columnIndex: number) => (
                     <div
                       key={columnIndex}
                       className="column-builder"
@@ -2071,35 +2171,15 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         )}
                       </div>
                     </div>
-                  ))}
-                  </div>
-                </div>
-              ) : (
+                      ))}
+                      </div>
+                    </div>
+                  ) : (
                 <div
                   className="whole-page-builder"
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, rowIndex)}
                 >
-                  {/* Whole Page Header with Background Toggle */}
-                  <div className="whole-page-header">
-                    <span className="whole-page-title">Full Width Row</span>
-                    <div className="whole-page-controls">
-                      <button
-                        className={`bg-toggle-btn ${row.backgroundColor !== '#ffffff' ? 'active' : ''}`}
-                        onClick={() => toggleWholePageBackground(rowIndex)}
-                        title="Cycle background: White → Secondary → Primary"
-                      >
-                        🎨
-                      </button>
-                      <input
-                        type="color"
-                        value={row.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
-                        onChange={(e) => setWholePageTextColor(rowIndex, e.target.value)}
-                        className="text-color-picker"
-                        title="Set text color"
-                      />
-                    </div>
-                  </div>
                   <div className="whole-page-sections">
                         {row.sections?.map((sectionRef: any, sectionIndex: number) => {
                           const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
@@ -2300,16 +2380,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             
             {/* Drop zone after each row */}
             <div
-              className="layout-drop-zone"
+              className={`layout-drop-zone ${(draggedLayoutButton || draggedRow !== null) ? 'active' : ''}`}
               onDragOver={(e) => {
                 e.preventDefault();
+                handleDragOver(e);
                 if (draggedLayoutButton) {
                   e.dataTransfer.dropEffect = 'copy';
+                } else if (draggedRow !== null) {
+                  e.dataTransfer.dropEffect = 'move';
                 }
               }}
-              onDrop={(e) => handleLayoutDrop(e, rowIndex + 1)}
+              onDrop={(e) => {
+                if (draggedLayoutButton) {
+                  handleLayoutDrop(e, rowIndex + 1);
+                } else if (draggedRow !== null) {
+                  console.log('🎯 LAYOUT DROP ZONE - Inserting at position', rowIndex + 1);
+                  handleDrop(e, rowIndex + 1);
+                }
+              }}
             >
-              Drop layout here
+              {draggedRow !== null ? 'Drop row here' : 'Drop layout here'}
             </div>
           </React.Fragment>
           ))}
