@@ -18,6 +18,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
     { type: 'skills', label: 'Skills', description: 'Technical and soft skills' },
     { type: 'text', label: 'Text Section', description: 'Summary, objective, or custom text' },
     { type: 'certifications', label: 'Certifications', description: 'Professional certifications and licenses' },
+    { type: 'awards', label: 'Awards & Recognition', description: 'Awards, honors, and achievements' },
+    { type: 'publications', label: 'Publications', description: 'Publications, presentations, and speaking engagements' },
+    { type: 'list', label: 'List Items', description: 'Simple bulleted or numbered list' },
     { type: 'references', label: 'References', description: 'Professional references and contacts' },
   ];
 
@@ -27,6 +30,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
       type: sectionType as any,
       title: sectionType === 'experience' ? 'Experience' : 
              sectionType === 'name' ? 'Name' :
+             sectionType === 'awards' ? 'Awards & Recognition' :
+             sectionType === 'publications' ? 'Publications' :
+             sectionType === 'list' ? 'List' :
              sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
       templateId: sectionType === 'name' ? 'name-standard' : 'basic',
       isVisible: true,
@@ -140,6 +146,25 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
           email: ''
         };
         break;
+      case 'awards':
+        newItem = {
+          ...newItem,
+          organization: '',
+          dates: '',
+          description: ''
+        };
+        break;
+      case 'publications':
+      case 'list':
+        newItem = {
+          ...newItem,
+          organization: '',
+          dates: '',
+          type: '',
+          url: '',
+          details: []
+        };
+        break;
       default:
         newItem = {
           ...newItem,
@@ -202,6 +227,11 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
         return renderSkillsEditor(section);
       case 'references':
         return renderReferencesEditor(section);
+      case 'awards':
+        return renderAwardsEditor(section);
+      case 'publications':
+      case 'list':
+        return renderListEditor(section);
       default:
         return renderGenericEditor(section);
     }
@@ -813,6 +843,151 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
       
       <button className="add-item-btn" onClick={() => addItemToSection(section.id)}>
         + Add Reference
+      </button>
+    </div>
+  );
+
+  // Awards editor with simpler, award-specific fields
+  const renderAwardsEditor = (section: Section) => (
+    <div className="items-editor">
+      {section.items?.map((item) => (
+        <div key={item.id} className="item-editor awards-item-editor">
+          <div className="item-header">
+            <input
+              type="text"
+              value={item.title}
+              onChange={(e) => updateItem(section.id, item.id, { title: e.target.value })}
+              placeholder="Award/Recognition Title"
+              className="item-input"
+            />
+            <button className="delete-item-btn" onClick={() => deleteItem(section.id, item.id)}>🗑️</button>
+          </div>
+          
+          <div className="awards-details">
+            <input
+              type="text"
+              value={item.organization || ''}
+              onChange={(e) => updateItem(section.id, item.id, { organization: e.target.value })}
+              placeholder="Issuing Organization"
+              className="item-input"
+            />
+            <input
+              type="text"
+              value={item.dates || ''}
+              onChange={(e) => updateItem(section.id, item.id, { dates: e.target.value })}
+              placeholder="Date Received (e.g., May 2023)"
+              className="item-input"
+            />
+            <textarea
+              value={item.description || ''}
+              onChange={(e) => updateItem(section.id, item.id, { description: e.target.value })}
+              placeholder="Brief description or significance (optional)"
+              className="detail-textarea"
+              rows={2}
+            />
+          </div>
+        </div>
+      ))}
+      
+      <button className="add-item-btn" onClick={() => addItemToSection(section.id)}>
+        + Add Award
+      </button>
+    </div>
+  );
+
+  // List editor for publications and general lists
+  const renderListEditor = (section: Section) => (
+    <div className="items-editor">
+      {section.items?.map((item) => (
+        <div key={item.id} className="item-editor">
+          <div className="item-header">
+            <input
+              type="text"
+              value={item.title}
+              onChange={(e) => updateItem(section.id, item.id, { title: e.target.value })}
+              placeholder="Item Title"
+              className="item-input"
+            />
+            <input
+              type="text"
+              value={item.organization || ''}
+              onChange={(e) => updateItem(section.id, item.id, { organization: e.target.value })}
+              placeholder="Organization/Venue (optional)"
+              className="item-input"
+            />
+            <button className="delete-item-btn" onClick={() => deleteItem(section.id, item.id)}>🗑️</button>
+          </div>
+          
+          <div className="item-details">
+            <div className="detail-row">
+              <input
+                type="text"
+                value={item.dates || ''}
+                onChange={(e) => updateItem(section.id, item.id, { dates: e.target.value })}
+                placeholder="Date (optional)"
+                className="item-input"
+              />
+              <input
+                type="text"
+                value={item.type || ''}
+                onChange={(e) => updateItem(section.id, item.id, { type: e.target.value })}
+                placeholder="Type (e.g., Conference, Journal)"
+                className="item-input"
+              />
+            </div>
+            
+            {item.url && (
+              <input
+                type="url"
+                value={item.url || ''}
+                onChange={(e) => updateItem(section.id, item.id, { url: e.target.value })}
+                placeholder="URL (optional)"
+                className="item-input"
+              />
+            )}
+            
+            <div className="details-list">
+              <label>Additional Details:</label>
+              {item.details?.map((detail, index) => (
+                <div key={index} className="detail-item">
+                  <textarea
+                    value={detail}
+                    onChange={(e) => {
+                      const newDetails = [...(item.details || [])];
+                      newDetails[index] = e.target.value;
+                      updateItem(section.id, item.id, { details: newDetails });
+                    }}
+                    placeholder="Description or additional information"
+                    className="detail-textarea"
+                    rows={2}
+                  />
+                  <button
+                    onClick={() => {
+                      const newDetails = item.details?.filter((_, i) => i !== index) || [];
+                      updateItem(section.id, item.id, { details: newDetails });
+                    }}
+                    className="delete-detail-btn"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  const newDetails = [...(item.details || []), ''];
+                  updateItem(section.id, item.id, { details: newDetails });
+                }}
+                className="add-detail-btn"
+              >
+                + Add Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+      
+      <button className="add-item-btn" onClick={() => addItemToSection(section.id)}>
+        + Add Item
       </button>
     </div>
   );

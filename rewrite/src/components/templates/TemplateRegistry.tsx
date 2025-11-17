@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Section } from '../../types/resume';
 import { ReferencesTemplate } from './ReferencesTemplate';
+import { AwardsTemplates } from './AwardsTemplate';
+import './AwardsTemplate.css';
 
 // Template registry for different section types
 export interface TemplateOption {
@@ -23,6 +25,7 @@ export const TextTemplates = {
     component: ({ section }: { section: Section }) => {
       const content = (section as any).content || 
                      section.customFields?.content || 
+                     (section.items?.[0]?.content) ||  // Fix: use content instead of description
                      (section.items?.[0]?.description) || 
                      'No content available';
       return (
@@ -43,6 +46,7 @@ export const TextTemplates = {
     component: ({ section }: { section: Section }) => {
       const content = (section as any).content || 
                      section.customFields?.content || 
+                     (section.items?.[0]?.content) ||  // Fix: use content instead of description
                      (section.items?.[0]?.description) || 
                      'No content available';
       return (
@@ -61,7 +65,9 @@ export const TextTemplates = {
     name: 'Quote Style',
     description: 'Text formatted as a quote',
     component: ({ section }: { section: Section }) => {
-      const content = section.customFields?.content || 
+      const content = (section as any).content || 
+                     section.customFields?.content || 
+                     (section.items?.[0]?.content) ||  // Fix: use content instead of description
                      (section.items?.[0]?.description) || 
                      'No content available';
       return (
@@ -1114,93 +1120,9 @@ export const PersonalInfoTemplates = {
   }
 };
 
-// Certification templates (for both academic awards and professional certifications)
-export const CertificationTemplates = {
-  standard: {
-    id: 'certification-standard',
-    name: 'Standard List',
-    description: 'Vertical list with details',
-    component: ({ items, title = 'Certifications' }: { items: any[], title?: string }) => (
-      <div className="section">
-        <h2>{title}</h2>
-        <ul>
-          {items.map((item, index) => (
-            <li key={index}>
-              <div className="award-item">
-                <div className="award-name">{item.name}</div>
-                {(item.organization || item.dates) && (
-                  <div className="award-details">
-                    {item.organization && <span className="organization">{item.organization}</span>}
-                    {item.dates && <span className="dates">{item.dates}</span>}
-                  </div>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  },
-  
-  simple: {
-    id: 'certification-simple',
-    name: 'Simple List',
-    description: 'Simple bullet list',
-    component: ({ items, title = 'Certifications' }: { items: any[], title?: string }) => (
-      <div className="section">
-        <h2>{title}</h2>
-        <ul>
-          {items.map((item, index) => (
-            <li key={index}>{item.name}</li>
-          ))}
-        </ul>
-      </div>
-    )
-  },
-  
-  wide: {
-    id: 'certification-wide',
-    name: 'Horizontal Tags',
-    description: 'Horizontal tag layout',
-    component: ({ items, title = 'Certifications', isContinuation }: { items: any[], title?: string, isContinuation?: boolean }) => (
-      <div className="section certifications-wide">
-        <h2>
-          {title}
-          {isContinuation && <span className="continuation"> (continued)</span>}
-        </h2>
-        <div className="certifications-list">
-          <div className="cert-line">
-            <div className="tags-inline">
-              {items.map((item, index) => (
-                <span key={index} className="cert-tag">
-                  {item.name}
-                  {item.organization && ` (${item.organization})`}
-                  {item.dates && ` - ${item.dates}`}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-};
 
-// Academic Awards templates (use certification templates with different title)
-export const AcademicAwardsTemplates = {
-  standard: {
-    ...CertificationTemplates.standard,
-    id: 'academic-awards-standard',
-    component: ({ items }: { items: any[] }) => 
-      CertificationTemplates.standard.component({ items, title: 'Academic Awards' })
-  },
-  wide: {
-    ...CertificationTemplates.wide,
-    id: 'academic-awards-wide',
-    component: ({ items, isContinuation }: { items: any[], isContinuation?: boolean }) => 
-      CertificationTemplates.wide.component({ items, title: 'Academic Awards', isContinuation })
-  }
-};
+
+
 
 // Padding templates for vertical spacing
 // Helper function to get height for padding template
@@ -1392,21 +1314,52 @@ export const ListTemplates = {
         </div>
       </div>
     )
+  },
+  
+  detailed: {
+    id: 'list-detailed',
+    name: 'Detailed List',
+    description: 'List with additional details and metadata',
+    component: ({ section }: { section: Section }) => (
+      <div className="section list-section detailed">
+        <h2>{section.title}</h2>
+        <ul className="detailed-list">
+          {section.items?.map((item, index) => (
+            <li key={index} className="detailed-list-item">
+              <div className="item-header">
+                <div className="item-title">{item.title || item.name}</div>
+                {item.dates && <div className="item-dates">{item.dates}</div>}
+              </div>
+              {item.organization && <div className="item-organization">{item.organization}</div>}
+              {item.details && (
+                <ul className="item-details">
+                  {item.details.map((detail: string, detailIndex: number) => (
+                    <li key={detailIndex}>{detail}</li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          )) || []}
+        </ul>
+      </div>
+    )
   }
 };
+
+
+
 
 // Template registry
 export const TEMPLATE_REGISTRY: TemplateRegistry = {
   text: Object.values(TextTemplates),
   education: Object.values(EducationTemplates),
   experience: Object.values(ExperienceTemplates),
-  projects: Object.values(ExperienceTemplates), // Projects can use experience templates
   skills: Object.values(SkillsTemplates),
-  certifications: Object.values(CertificationTemplates),
-  references: Object.values(ReferencesTemplates),
-  academic_awards: Object.values(AcademicAwardsTemplates),
   list: Object.values(ListTemplates),
+  references: Object.values(ReferencesTemplates),
   personal_info: Object.values(PersonalInfoTemplates),
   name: Object.values(NameTemplates),
-  padding: Object.values(PaddingTemplates)
+  padding: Object.values(PaddingTemplates),
+  awards: Object.values(AwardsTemplates),
+  publications: Object.values(ListTemplates) // Use ListTemplates for publications
 };

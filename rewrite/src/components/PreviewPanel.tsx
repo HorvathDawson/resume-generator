@@ -255,7 +255,10 @@ export function PreviewPanel({
                       {page.rows?.map((row: any, rowIndex: number) => {
                         if (row.type === 'columns') {
                           return (
-                            <div key={rowIndex} className="layout-row columns-row" style={{ display: 'flex' }}>
+                            <div key={rowIndex} className="layout-row columns-row" style={{ 
+                              display: 'flex',
+                              gap: row.columnMargin ? `${row.columnMargin}%` : '0'
+                            }}>
                               {row.columns.map((column: any, colIndex: number) => (
                                 <div 
                                   key={colIndex} 

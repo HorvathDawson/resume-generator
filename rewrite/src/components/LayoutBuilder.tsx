@@ -27,6 +27,8 @@ interface LayoutRow {
   sections?: string[];
   backgroundColor?: string;
   textColor?: string;
+  columnMargin?: number; // Margin between columns as a percentage (e.g., 4 for 4%)
+  originalSplit?: { left: number; right: number }; // Store original split ratio before margin adjustments
   sectionItemOrders?: { [sectionId: string]: number[] }; // Store item order for each section
 }
 
@@ -45,8 +47,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 }) => {
   // Helper function to preserve globalStyles when updating layout
   const updateLayout = (pages: PageLayout[]) => {
-    console.log('🔄 UPDATE LAYOUT: Called with pages:', pages);
-    console.log('🔄 UPDATE LAYOUT: Calling onLayoutChange with globalStyles:', resumeData.layout?.globalStyles);
     onLayoutChange({
       pages,
       globalStyles: resumeData.layout?.globalStyles // Preserve existing globalStyles
@@ -56,7 +56,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   // Get pages from resume data, ensuring we always have at least one page
   const getPages = (): PageLayout[] => {
     const layoutPages = resumeData.layout?.pages || [];
-    console.log('📄 GET PAGES: Raw layout pages from resumeData:', layoutPages);
     
     if (layoutPages.length === 0) {
       // Create a default page if none exist
@@ -67,7 +66,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }];
     }
     
-    const processedPages = layoutPages.map((page: any, index: number) => ({
+    return layoutPages.map((page: any, index: number) => ({
       id: `page-${index + 1}`,
       pageNumber: index + 1,
       footer: page.footer, // Preserve footer configuration
@@ -81,7 +80,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             backgroundColor: col.backgroundColor,
             textColor: col.textColor,
             sectionItemOrders: col.sectionItemOrders || {}
-          })) || []
+          })) || [],
+          columnMargin: row.columnMargin || 0,
+          originalSplit: row.originalSplit || null
         } : {
           sections: row.sections || [],
           backgroundColor: row.backgroundColor,
@@ -90,9 +91,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         })
       })) || []
     }));
-    
-    console.log('📄 GET PAGES: Processed pages:', processedPages);
-    return processedPages;
   };
 
   const pages = getPages();
@@ -533,7 +531,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[safePageIndex] = { ...currentPage, rows: updatedRows };
       updateLayout(newPages);
-      updateLayout(newPages);
       
       // Clear all drag state
       setDraggedSection(null);
@@ -582,7 +579,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             // Update state and return
             const newPages = [...pages];
             newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-            updateLayout(newPages);
             updateLayout(newPages);
             
             // Clear all drag state
@@ -662,7 +658,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       updateLayout(newPages);
-      updateLayout(newPages);
       
       // Clear all drag state
       setDraggedSection(null);
@@ -711,7 +706,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
     updateLayout(newPages);
-    updateLayout(newPages);
   };
 
   const addNewRow = (type: 'columns' | 'wholePage', insertIndex?: number) => {
@@ -723,7 +717,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         columns: [
           { width: '50%', sections: [], backgroundColor: '#ffffff', textColor: '#333333' },
           { width: '50%', sections: [], backgroundColor: '#ffffff', textColor: '#333333' }
-        ]
+        ],
+        columnMargin: 0
       } : {
         sections: [],
         backgroundColor: '#ffffff',
@@ -740,14 +735,12 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
     updateLayout(newPages);
-    updateLayout(newPages);
   };
 
   const removeRow = (rowIndex: number) => {
     const newRows = currentPage.rows.filter((_, index) => index !== rowIndex);
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
-    updateLayout(newPages);
     updateLayout(newPages);
   };
 
@@ -759,7 +752,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       rows: []
     };
     const newPages = [...pages, newPage];
-    updateLayout(newPages);
     setCurrentPageIndex(pages.length); // Switch to new page
     updateLayout(newPages);
   };
@@ -883,21 +875,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   // Section splitting handlers - create actual separate sections
   const handleSplitSection = (originalSectionId: string, splitData: { sections: any[] }) => {
-    console.log('🔪 SPLIT: Starting split process for section:', originalSectionId);
-    console.log('🔪 SPLIT: Split data received:', splitData);
-    
-    if (!onResumeDataChange) {
-      console.log('❌ SPLIT: No onResumeDataChange callback available');
-      return;
-    }
+    if (!onResumeDataChange) return;
 
     // Find the original section
     const originalSection = resumeData.sections?.find(s => s.id === originalSectionId);
-    console.log('🔪 SPLIT: Found original section:', originalSection);
-    if (!originalSection) {
-      console.log('❌ SPLIT: Original section not found in resumeData.sections');
-      return;
-    }
+    if (!originalSection) return;
 
     // Create new sections with unique IDs and smart titles
     const newSections = splitData.sections.map((sectionData, index) => {
@@ -918,8 +900,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       };
     });
 
-    console.log('🔄 Split sections created:', newSections.map(s => ({ id: s.id, title: s.title, itemCount: s.items?.length || s.categories?.length || 0 })));
-
     // Update resume data - replace original section with new sections
     const updatedSections = (resumeData.sections || [])
       .filter(s => s.id !== originalSectionId) // Remove original
@@ -932,7 +912,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
     // Update layout - replace original section ID with new section IDs
     const currentPages = getPages();
-    console.log('🔪 SPLIT: Current pages before layout update:', currentPages);
     
     const updatedPages = currentPages.map(page => ({
       ...page,
@@ -958,11 +937,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }))
     }));
 
-    console.log('🔪 SPLIT: Updated pages after layout update:', updatedPages);
-    console.log('🏗️ SPLIT: All layout sections after update:', updatedPages.flatMap(p => p.rows.flatMap(r => r.columns?.flatMap(c => c.sections) || r.sections || [])));
-    console.log('🔍 SPLIT: Original section being replaced:', originalSectionId);
-    console.log('🆕 SPLIT: New section IDs:', newSections.map(s => s.id));
-
     // Update resume data with both new sections AND new layout
     const completeUpdatedResumeData = {
       ...newResumeData,
@@ -972,7 +946,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }
     };
     
-    console.log('📤 SPLIT: Calling onResumeDataChange with complete updated data (sections + layout)');
     onResumeDataChange(completeUpdatedResumeData);
     setSplittingSection(null);
   };
@@ -985,30 +958,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   // Sidebar-based combine function - automatically finds and removes split sections from layout
   const handleCombineFromSidebar = (baseId: string, splitSectionIds: string[]) => {
-    console.log('🔗 COMBINE: Starting combine process');
-    console.log('🔗 COMBINE: Base ID:', baseId);
-    console.log('🔗 COMBINE: Split section IDs to combine:', splitSectionIds);
-    
-    if (!onResumeDataChange || splitSectionIds.length < 2) {
-      console.log('❌ COMBINE: Invalid state - no callback or insufficient sections');
-      return;
-    }
+    if (!onResumeDataChange || splitSectionIds.length < 2) return;
 
     // Find all the sections to combine
-    console.log('🔗 COMBINE: All resume sections before combine:', resumeData.sections?.map(s => s.id));
     const sectionsToProcess = splitSectionIds.map(id => resumeData.sections?.find(s => s.id === id)).filter(Boolean) as any[];
-    console.log('🔗 COMBINE: Sections found to process:', sectionsToProcess.map(s => s?.id));
-    
-    if (sectionsToProcess.length !== splitSectionIds.length) {
-      console.log('❌ COMBINE: Not all split sections found in resume data');
-      return;
-    }
+    if (sectionsToProcess.length !== splitSectionIds.length) return;
 
     const firstSection = sectionsToProcess[0];
-    if (!firstSection) {
-      console.log('❌ COMBINE: No first section found');
-      return;
-    }
+    if (!firstSection) return;
     
     // Combine all items/categories from the split sections
     const combinedItems: any[] = [];
@@ -1037,9 +994,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       .filter(s => !splitSectionIds.includes(s.id)) // Remove all split sections
       .concat([combinedSection]); // Add combined section
 
-    console.log('🔗 COMBINE: Updated sections after combine:', updatedSections.map(s => s.id));
-    console.log('🔗 COMBINE: Combined section created:', combinedSection);
-
     const newResumeData = {
       ...resumeData,
       sections: updatedSections
@@ -1047,8 +1001,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
     // Update layout - remove all split sections from layout (don't add base section automatically)
     const currentPages = getPages();
-    console.log('🔗 COMBINE: Current pages before layout update:', currentPages);
-    console.log('🔗 COMBINE: Looking for sections to remove from layout:', splitSectionIds);
     
     const updatedPages = currentPages.map(page => ({
       ...page,
@@ -1058,65 +1010,52 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         return {
           ...row,
           columns: row.columns?.map(col => {
-            console.log('🔗 COMBINE: Processing column sections before filter:', col.sections);
-            
             let foundFirstSplitSection = false;
             const updatedSections: any[] = [];
             
             col.sections.forEach((sectionRef: any) => {
               const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
               const shouldKeep = !splitSectionIds.includes(sectionId);
-              console.log(`🔗 COMBINE: Section ${sectionId} - Keep: ${shouldKeep}`);
               
               if (!shouldKeep && !foundFirstSplitSection && !addedCombinedSection) {
                 // Replace first split section with combined section
                 updatedSections.push(baseId);
                 foundFirstSplitSection = true;
                 addedCombinedSection = true;
-                console.log(`🔗 COMBINE: Added combined section ${baseId} in place of ${sectionId}`);
               } else if (shouldKeep) {
                 updatedSections.push(sectionRef);
               }
             });
             
-            console.log('🔗 COMBINE: Column sections after filter:', updatedSections);
             return {
               ...col,
               sections: updatedSections
             };
           }),
           sections: row.sections ? (() => {
-            console.log('🔗 COMBINE: Processing row sections before filter:', row.sections);
-            
             let foundFirstSplitSection = false;
             const updatedSections: any[] = [];
             
-            row.sections.forEach((sectionRef: any) => {
+            row.sections!.forEach((sectionRef: any) => {
               const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
               const shouldKeep = !splitSectionIds.includes(sectionId);
-              console.log(`🔗 COMBINE: Section ${sectionId} - Keep: ${shouldKeep}`);
               
               if (!shouldKeep && !foundFirstSplitSection && !addedCombinedSection) {
                 // Replace first split section with combined section
                 updatedSections.push(baseId);
                 foundFirstSplitSection = true;
                 addedCombinedSection = true;
-                console.log(`🔗 COMBINE: Added combined section ${baseId} in place of ${sectionId}`);
               } else if (shouldKeep) {
                 updatedSections.push(sectionRef);
               }
             });
             
-            console.log('🔗 COMBINE: Row sections after filter:', updatedSections);
             return updatedSections;
           })() : undefined
         };
       })
     }));
 
-    console.log('🔗 COMBINE: Updated pages after layout update:', updatedPages);
-    console.log('🔗 COMBINE: Sections combined from sidebar:', splitSectionIds, '→', baseId);
-    
     // Update resume data with both new sections AND new layout
     const completeUpdatedResumeData = {
       ...newResumeData,
@@ -1126,14 +1065,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       }
     };
     
-    console.log('📤 COMBINE: Calling onResumeDataChange with complete updated data (sections + layout)');
     onResumeDataChange(completeUpdatedResumeData);
-    
-    // Force a small delay to ensure state updates are processed
-    setTimeout(() => {
-      console.log('🔄 Layout updated after combine');
-      console.log('🔍 POST-COMBINE: What does getPages() return now?', getPages());
-    }, 100);
   };
 
   // Helper function to convert percentage string to number
@@ -1376,24 +1308,136 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     console.log('Footer update completed');
   };
 
+  // Helper function to get the display percentage for the slider (original split, not current width)
+  const getDisplayPercentage = (row: LayoutRow, columnIndex: number = 0): number => {
+    if (row.originalSplit) {
+      return columnIndex === 0 ? row.originalSplit.left : row.originalSplit.right;
+    }
+    // Fallback: calculate from current widths if no originalSplit stored
+    const leftPercent = parsePercentage(row.columns?.[0]?.width || '50%');
+    const rightPercent = parsePercentage(row.columns?.[1]?.width || '50%');
+    const totalContent = leftPercent + rightPercent;
+    
+    if (columnIndex === 0) {
+      return Math.round((leftPercent / totalContent) * 100);
+    } else {
+      return Math.round((rightPercent / totalContent) * 100);
+    }
+  };
+
   // Helper function to update column width with percentage
   const updateColumnWidthSlider = (rowIndex: number, columnIndex: number, percentage: number) => {
-    const updatedRows = [...currentPage.rows];
-    const row = updatedRows[rowIndex];
-    if (row.columns && row.columns[columnIndex]) {
-      row.columns[columnIndex].width = `${percentage}%`;
+    const currentRow = currentPage.rows[rowIndex];
+    if (!currentRow || !currentRow.columns || !currentRow.columns[columnIndex]) return;
+    
+    const margin = currentRow.columnMargin || 0;
+    const availableWidth = 100 - margin;
+    
+    // Calculate the actual percentage of available width
+    const actualPercentage = (percentage / 100) * availableWidth;
+    const otherPercentage = availableWidth - actualPercentage;
+    
+    // Create new pages array
+    const newPages = pages.map((page, pageIndex) => {
+      if (pageIndex !== currentPageIndex) return page;
       
-      // Auto-adjust other column in 2-column layout
-      if (row.columns.length === 2) {
-        const otherIndex = columnIndex === 0 ? 1 : 0;
-        row.columns[otherIndex].width = `${100 - percentage}%`;
+      const newRows = page.rows.map((row, rIndex) => {
+        if (rIndex !== rowIndex) return row;
+        
+        const newColumns = row.columns!.map((col, colIndex) => {
+          if (colIndex === columnIndex) {
+            return { ...col, width: `${Math.round(actualPercentage * 100) / 100}%` };
+          } else if (row.columns!.length === 2 && colIndex === (columnIndex === 0 ? 1 : 0)) {
+            return { ...col, width: `${Math.round(otherPercentage * 100) / 100}%` };
+          }
+          return col;
+        });
+        
+        return {
+          ...row,
+          columns: newColumns,
+          // Update original split when user manually adjusts the slider (this is the original split, not affected by margin)
+          originalSplit: {
+            left: columnIndex === 0 ? percentage : (100 - percentage),
+            right: columnIndex === 0 ? (100 - percentage) : percentage
+          }
+        };
+      });
+      
+      return { ...page, rows: newRows };
+    });
+    
+    updateLayout(newPages);
+  };
+
+  // Helper function to update column margin and adjust column widths accordingly
+  const updateColumnMargin = (rowIndex: number, marginPercent: number) => {
+    const currentRow = currentPage.rows[rowIndex];
+    if (!currentRow || !currentRow.columns || currentRow.columns.length !== 2) return;
+    
+    // Calculate or get the original split ratio (without margin)
+    let originalSplit = currentRow.originalSplit;
+    
+    if (!originalSplit) {
+      // If no original split stored, calculate it from current widths
+      const currentMargin = currentRow.columnMargin || 0;
+      const leftPercent = parsePercentage(currentRow.columns[0].width);
+      const rightPercent = parsePercentage(currentRow.columns[1].width);
+      
+      if (currentMargin > 0) {
+        // If there's already a margin, we need to calculate back to the original split
+        const totalCurrentWidth = leftPercent + rightPercent;
+        const leftRatio = leftPercent / totalCurrentWidth;
+        const rightRatio = rightPercent / totalCurrentWidth;
+        originalSplit = {
+          left: Math.round(leftRatio * 100),
+          right: Math.round(rightRatio * 100)
+        };
+      } else {
+        // No margin, so current widths represent the original split
+        originalSplit = {
+          left: Math.round(leftPercent),
+          right: Math.round(rightPercent)
+        };
       }
-      
-      const newPages = [...pages];
-      newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
-      updateLayout(newPages);
-      updateLayout(newPages);
     }
+    
+    // Calculate new widths based on the original split and new margin
+    const availableWidth = 100 - marginPercent;
+    const newLeftWidth = (availableWidth * originalSplit.left) / 100;
+    const newRightWidth = (availableWidth * originalSplit.right) / 100;
+    
+    // Create new pages array with updated row
+    const newPages = pages.map((page, pageIndex) => {
+      if (pageIndex !== currentPageIndex) return page;
+      
+      const newRows = page.rows.map((row, rIndex) => {
+        if (rIndex !== rowIndex) return row;
+        
+        return {
+          ...row,
+          columnMargin: marginPercent,
+          originalSplit: originalSplit,
+          columns: [
+            {
+              ...row.columns![0],
+              width: `${Math.round(newLeftWidth * 100) / 100}%`
+            },
+            {
+              ...row.columns![1],
+              width: `${Math.round(newRightWidth * 100) / 100}%`
+            }
+          ]
+        };
+      });
+      
+      return {
+        ...page,
+        rows: newRows
+      };
+    });
+    
+    updateLayout(newPages);
   };
 
   // Helper function to get all section IDs currently used in layout
@@ -1512,7 +1556,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           : s
       );
       
-
+ 
       
       // Also update temp section if it exists
       updateTempSection(sectionId, {
@@ -1746,14 +1790,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                 }}
                 className={`footer-select ${(pages[currentPageIndex]?.footer?.type && pages[currentPageIndex]?.footer?.type !== 'none') ? 'has-footer' : ''}`}
               >
-                  <option value="none">No Footer</option>
-                  <option value="default">Default Design</option>
-                  <option value="minimal">Minimal Line</option>
-                  <option value="modern">Modern Accent</option>
-                  <option value="mountains">Mountains</option>
-                  <option value="fish">Fish Design</option>
-                  <option value="salmon">Salmon Design</option>
-                </select>
+                <option value="none">No Footer</option>
+                <option value="default">Default Design</option>
+                <option value="minimal">Minimal Line</option>
+                <option value="modern">Modern Accent</option>
+                <option value="mountains">Mountains</option>
+                <option value="fish">Fish Design</option>
+                <option value="salmon">Salmon Design</option>
+              </select>
               </div>
           </div>
           
@@ -1801,160 +1845,351 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, rowIndex)}
                 >
-                  {/* Unified Row Header */}
-                  <div className="row-header-combined">
-                    <div className="row-info">
-                      <span className="row-type">{row.type}</span>
-                      <button 
-                        className="btn btn-small btn-danger"
-                        onClick={() => removeRow(rowIndex)}
-                      >
-                        Remove
-                      </button>
-                    </div>
+                  {/* Top badges */}
+                  <div className="row-badges-top">
+                    <button 
+                      className="btn-remove-x-badge"
+                      onClick={() => removeRow(rowIndex)}
+                      title="Remove row"
+                    >
+                      ×
+                    </button>
+                    
+                    <span className="row-type-badge">{row.type}</span>
                     
                     {row.type === 'columns' && row.columns && (
-                  <div 
-                    className="column-split-control-inline"
-                    onDragOver={(e) => e.stopPropagation()}
-                    onDrop={(e) => e.stopPropagation()}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onMouseMove={(e) => e.stopPropagation()}
-                    onMouseUp={(e) => e.stopPropagation()}
-                  >
-                    <div className="split-header-inline">
-                      <span className="split-label">{row.columns[0].width} | {row.columns[1].width}</span>
-                      
-                      <div className="split-controls-inline">
-                        <button
-                          className="split-btn-compact"
-                          onClick={() => {
-                            if (row.columns && row.columns[0]) {
-                              const current = parsePercentage(row.columns[0].width);
-                              const newValue = Math.max(10, current - 5);
-                              updateColumnWidthSlider(rowIndex, 0, newValue);
-                            }
-                          }}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          title="Decrease by 5%"
-                        >
-                          −
-                        </button>
-                        
-                        <div className="percentage-input-group">
-                          <input
-                            type="number"
-                            min="10"
-                            max="90"
-                            value={parsePercentage(row.columns[0].width)}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value, 10);
-                              if (!isNaN(value) && value >= 10 && value <= 90) {
-                                updateColumnWidthSlider(rowIndex, 0, value);
-                              }
-                            }}
-                            className="percentage-input"
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onDragStart={(e) => e.preventDefault()}
-                          />
-                          <span className="percentage-symbol">%</span>
+                      <>
+                        <div className="split-badge">
+                          <span className="split-label">
+                            {getDisplayPercentage(row, 0)}% | {getDisplayPercentage(row, 1)}%
+                            {row.columnMargin ? ` (${row.columnMargin}% gap)` : ''}
+                          </span>
+                          
+                          <div className="split-controls-inline">
+                            {/* 5% adjustment buttons */}
+                            <button
+                              className="split-btn-compact split-btn-large"
+                              onClick={() => {
+                                if (row.columns && row.columns[0]) {
+                                  const current = getDisplayPercentage(row, 0);
+                                  const newValue = Math.max(10, current - 5);
+                                  updateColumnWidthSlider(rowIndex, 0, newValue);
+                                }
+                              }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              title="Decrease by 5%"
+                            >
+                              −5
+                            </button>
+                            
+                            {/* 1% adjustment buttons */}
+                            <button
+                              className="split-btn-compact split-btn-small"
+                              onClick={() => {
+                                if (row.columns && row.columns[0]) {
+                                  const current = getDisplayPercentage(row, 0);
+                                  const newValue = Math.max(10, current - 1);
+                                  updateColumnWidthSlider(rowIndex, 0, newValue);
+                                }
+                              }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              title="Decrease by 1%"
+                            >
+                              −1
+                            </button>
+                            
+                            <div className="percentage-input-group">
+                              <input
+                                type="number"
+                                min="10"
+                                max="90"
+                                value={getDisplayPercentage(row, 0)}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  if (!isNaN(value) && value >= 10 && value <= 90) {
+                                    updateColumnWidthSlider(rowIndex, 0, value);
+                                  }
+                                }}
+                                className="percentage-input"
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onDragStart={(e) => e.preventDefault()}
+                              />
+                              <span className="percentage-symbol">%</span>
+                            </div>
+                            
+                            {/* 1% adjustment buttons */}
+                            <button
+                              className="split-btn-compact split-btn-small"
+                              onClick={() => {
+                                if (row.columns && row.columns[0]) {
+                                  const current = getDisplayPercentage(row, 0);
+                                  const newValue = Math.min(90, current + 1);
+                                  updateColumnWidthSlider(rowIndex, 0, newValue);
+                                }
+                              }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              title="Increase by 1%"
+                            >
+                              +1
+                            </button>
+                            
+                            {/* 5% adjustment buttons */}
+                            <button
+                              className="split-btn-compact split-btn-large"
+                              onClick={() => {
+                                if (row.columns && row.columns[0]) {
+                                  const current = getDisplayPercentage(row, 0);
+                                  const newValue = Math.min(90, current + 5);
+                                  updateColumnWidthSlider(rowIndex, 0, newValue);
+                                }
+                              }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              title="Increase by 5%"
+                            >
+                              +5
+                            </button>
+                          </div>
                         </div>
                         
-                        <button
-                          className="split-btn-compact"
-                          onClick={() => {
-                            if (row.columns && row.columns[0]) {
-                              const current = parsePercentage(row.columns[0].width);
-                              const newValue = Math.min(90, current + 5);
-                              updateColumnWidthSlider(rowIndex, 0, newValue);
-                            }
-                          }}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          title="Increase by 5%"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="split-progress-bar">
-                      <div 
-                        className="split-progress-fill"
-                        style={{ width: `${parsePercentage(row.columns[0].width)}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                        <div className="gap-badge">
+                          <span className="margin-label">Gap:</span>
+                          <div className="margin-controls-inline">
+                            <button
+                              className="split-btn-compact"
+                              onClick={() => updateColumnMargin(rowIndex, Math.max(0, (row.columnMargin || 0) - 1))}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              title="Decrease gap by 1%"
+                            >
+                              −
+                            </button>
+                            
+                            <div className="percentage-input-group">
+                              <input
+                                type="number"
+                                min="0"
+                                max="20"
+                                value={row.columnMargin || 0}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  if (!isNaN(value) && value >= 0 && value <= 20) {
+                                    updateColumnMargin(rowIndex, value);
+                                  }
+                                }}
+                                className="percentage-input"
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onDragStart={(e) => e.preventDefault()}
+                              />
+                              <span className="percentage-symbol">%</span>
+                            </div>
+                            
+                            <button
+                              className="split-btn-compact"
+                              onClick={() => updateColumnMargin(rowIndex, Math.min(20, (row.columnMargin || 0) + 1))}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              title="Increase gap by 1%"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      </>
                     )}
-                    
-                    {row.type === 'wholePage' && (
-                      <div className="whole-page-controls-inline">
-                        <button
-                          className={`bg-toggle-btn ${row.backgroundColor !== '#ffffff' ? 'active' : ''}`}
-                          onClick={() => toggleWholePageBackground(rowIndex)}
-                          title="Cycle background: White → Secondary → Primary"
-                        >
-                          🎨
-                        </button>
-                        <input
-                          type="color"
-                          value={row.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
-                          onChange={(e) => setWholePageTextColor(rowIndex, e.target.value)}
-                          className="text-color-picker"
-                          title="Set text color"
-                        />
-                      </div>
-                    )}
                   </div>
-                  
-                  {/* Row Content */}
-                  {row.type === 'columns' && row.columns ? (
+
+                  {/* Row Content based on type */}
+                  {row.type === 'columns' && row.columns && (
                     <div className="columns-builder">
                       <div className="columns-container">
                       {row.columns.map((column: LayoutColumn, columnIndex: number) => (
-                    <div
-                      key={columnIndex}
-                      className="column-builder"
-                      onDragOver={handleDragOver}
-                      onDrop={(e) => handleDrop(e, rowIndex, columnIndex)}
-                    >
-                      {/* Column Header with Background Toggle */}
-                      <div className="column-header">
-                        <span className="column-title">Column {columnIndex + 1}</span>
-                        <div className="column-controls">
-                          <button
-                            className={`bg-toggle-btn ${column.backgroundColor !== '#ffffff' ? 'active' : ''}`}
-                            onClick={() => toggleColumnBackground(rowIndex, columnIndex)}
-                            title="Cycle background: White → Secondary → Primary"
-                          >
-                            🎨
-                          </button>
-                          <input
-                            type="color"
-                            value={column.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
-                            onChange={(e) => setColumnTextColor(rowIndex, columnIndex, e.target.value)}
-                            className="text-color-picker"
-                            title="Set text color"
-                          />
+                      <div
+                        key={columnIndex}
+                        className="column-builder"
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, rowIndex, columnIndex)}
+                      >
+                        {/* Column Header with Background Toggle */}
+                        <div className="column-header">
+                          <span className="column-title">Column {columnIndex + 1}</span>
+                          <div className="column-controls">
+                            <button
+                              className={`bg-toggle-btn ${column.backgroundColor !== '#ffffff' ? 'active' : ''}`}
+                              onClick={() => toggleColumnBackground(rowIndex, columnIndex)}
+                              title="Cycle background: White → Secondary → Primary"
+                            >
+                              🎨
+                            </button>
+                            <input
+                              type="color"
+                              value={column.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
+                              onChange={(e) => setColumnTextColor(rowIndex, columnIndex, e.target.value)}
+                              className="text-color-picker"
+                              title="Set text color"
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="column-sections">
-                        {column.sections.map((sectionRef: any, sectionIndex: number) => {
-                          const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
-                          
-                          return (
-                            <React.Fragment key={`${rowIndex}-${columnIndex}-${sectionIndex}-${sectionId}`}>
-                              {/* Drop zone above each section */}
-                              {sectionIndex === 0 && !shouldHideDropZone(rowIndex, columnIndex, sectionIndex, true) && (
+                        <div className="column-sections">
+                          {column.sections.map((sectionRef: any, sectionIndex: number) => {
+                            const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+                            
+                            return (
+                              <React.Fragment key={`${rowIndex}-${columnIndex}-${sectionIndex}-${sectionId}`}>
+                                {/* Drop zone above each section */}
+                                {sectionIndex === 0 && !shouldHideDropZone(rowIndex, columnIndex, sectionIndex, true) && (
+                                  <div
+                                    className={`section-drop-zone ${
+                                      dragOverTarget?.rowIndex === rowIndex && 
+                                      dragOverTarget?.columnIndex === columnIndex && 
+                                      dragOverTarget?.insertIndex === 0 ? 'drag-over' : ''
+                                    }`}
+                                    onDragOver={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setDragOverTarget({ rowIndex, columnIndex, insertIndex: 0 });
+                                    }}
+                                    onDragLeave={(e) => {
+                                      e.preventDefault();
+                                      if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                        setDragOverTarget(null);
+                                      }
+                                    }}
+                                    onDrop={(e) => {
+                                      e.stopPropagation();
+                                      handleSectionDrop(e, rowIndex, columnIndex, 0);
+                                    }}
+                                  />
+                                )}
+                                <div 
+                                  className={`section-item placed ${
+                                    draggedSectionInRow?.sectionId === sectionId ? 'dragging' : ''
+                                  }`}
+                                  draggable
+                                  onDragStart={(e) => handleSectionDragStart(e, sectionId, rowIndex, columnIndex)}
+                                  onDragEnd={() => {
+                                    setDraggedSectionInRow(null);
+                                    setDragOverTarget(null);
+                                    cleanupAutoScroll();
+                                  }}
+                                  onDragOver={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setDragOverTarget({ rowIndex, columnIndex });
+                                  }}
+                                  onDragLeave={(e) => {
+                                    e.preventDefault();
+                                    setDragOverTarget(null);
+                                  }}
+                                  onDrop={(e) => handleSectionDrop(e, rowIndex, columnIndex, sectionIndex, true)}
+                                  onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
+                                >
+                                <span className="section-title">
+                                  {(() => {
+                                    const debugSection = findSection(sectionId);
+                                    if (sectionId.startsWith('padding-')) {
+                                      console.log('📝 Rendering section title for:', sectionId);
+                                      console.log('📝 Found section:', debugSection);
+                                      console.log('📝 Section title:', debugSection?.title);
+                                    }
+                                    return debugSection?.title || sectionId;
+                                  })()}
+                                </span>
+                                
+                                <div className="section-actions">
+                                  <button
+                                    className="remove-section-button"
+                                    onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
+                                    title="Remove section"
+                                  >
+                                    ×
+                                  </button>
+                                  <button
+                                    className="template-button"
+                                    onClick={(e) => handleSectionRightClick(e, sectionId)}
+                                    title="Select template"
+                                  >
+                                    ⚙
+                                  </button>
+                                  <button
+                                    className={`reorder-button ${reorderingSection === sectionId ? 'active' : ''}`}
+                                    onClick={() => toggleSectionReorder(sectionId)}
+                                    title="Reorder items in section"
+                                  >
+                                    📋
+                                  </button>
+                                </div>
+                              </div>
+                              {/* Item Reordering Interface - positioned below section */}
+                              {reorderingSection === sectionId && (() => {
+                                const section = findSection(sectionId);
+                                const reorderableItems = getReorderableItems(section);
+                                const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
+                                
+                                if (!reorderableItems || reorderableItems.length <= 1) {
+                                  return (
+                                    <div className="reorder-interface">
+                                      <p className="reorder-message">This section has {reorderableItems?.length || 0} items. Need at least 2 items to reorder.</p>
+                                    </div>
+                                  );
+                                }
+                                
+                                return (
+                                  <div className="reorder-interface">
+                                    <h4>Reorder Items</h4>
+                                    {currentOrder.map((originalIndex: number, displayPosition: number) => {
+                                      const item = reorderableItems[originalIndex];
+                                      const isFirst = displayPosition === 0;
+                                      const isLast = displayPosition === currentOrder.length - 1;
+                                      
+                                      // Get appropriate title based on item type
+                                      const itemTitle = item.title || item.name || item.organization || 'Untitled';
+                                      
+                                      return (
+                                        <div key={`reorder-${originalIndex}`} className="reorder-item">
+                                          <span className="item-title">
+                                            Item {displayPosition + 1}: {itemTitle}
+                                          </span>
+                                          <div className="reorder-controls">
+                                            <button
+                                              className="reorder-move-btn"
+                                              onClick={() => moveItemUp(sectionId, originalIndex, rowIndex, columnIndex)}
+                                              disabled={isFirst}
+                                              title="Move up"
+                                            >
+                                              ↑
+                                            </button>
+                                            <span className="reorder-position">{displayPosition + 1}</span>
+                                            <button
+                                              className="reorder-move-btn"
+                                              onClick={() => moveItemDown(sectionId, originalIndex, rowIndex, columnIndex)}
+                                              disabled={isLast}
+                                              title="Move down"
+                                            >
+                                              ↓
+                                            </button>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                    <button
+                                      className="reorder-done-button"
+                                      onClick={() => setReorderingSection(null)}
+                                    >
+                                      Done
+                                    </button>
+                                  </div>
+                                );
+                              })()}
+                              {/* Drop zone below each section */}
+                              {!shouldHideDropZone(rowIndex, columnIndex, sectionIndex, false) && (
                                 <div
                                   className={`section-drop-zone ${
                                     dragOverTarget?.rowIndex === rowIndex && 
                                     dragOverTarget?.columnIndex === columnIndex && 
-                                    dragOverTarget?.insertIndex === 0 ? 'drag-over' : ''
+                                    dragOverTarget?.insertIndex === sectionIndex + 1 ? 'drag-over' : ''
                                   }`}
                                   onDragOver={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    setDragOverTarget({ rowIndex, columnIndex, insertIndex: 0 });
+                                    setDragOverTarget({ rowIndex, columnIndex, insertIndex: sectionIndex + 1 });
                                   }}
                                   onDragLeave={(e) => {
                                     e.preventDefault();
@@ -1964,7 +2199,88 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   }}
                                   onDrop={(e) => {
                                     e.stopPropagation();
-                                    handleSectionDrop(e, rowIndex, columnIndex, 0);
+                                    handleSectionDrop(e, rowIndex, columnIndex, sectionIndex + 1);
+                                  }}
+                                />
+                              )}
+                              </React.Fragment>
+                            );
+                          })}
+                          {column.sections.length === 0 && (
+                            <div 
+                              className={`drop-zone ${
+                                dragOverTarget?.rowIndex === rowIndex && dragOverTarget?.columnIndex === columnIndex ? 'drag-over' : ''
+                              }`}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                setDragOverTarget({ rowIndex, columnIndex });
+                              }}
+                              onDragLeave={() => setDragOverTarget(null)}
+                              onDrop={(e) => handleSectionDrop(e, rowIndex, columnIndex)}
+                            >
+                              Drop sections here
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* --- BROKEN BLOCK REMOVED --- */}
+                  {/* The malformed `wholePage` block that was here (lines 2235-2477) has been deleted. */}
+                  
+                  {row.type === 'wholePage' && (
+                    <div className="row-main-content">
+                      <div className="row-left-sidebar">
+                        <div className="color-controls-vertical">
+                          <button
+                            className={`bg-toggle-btn ${row.backgroundColor !== '#ffffff' ? 'active' : ''}`}
+                            onClick={() => toggleWholePageBackground(rowIndex)}
+                            title="Cycle background: White → Secondary → Primary"
+                          >
+                            🎨
+                          </button>
+                          <input
+                            type="color"
+                            value={row.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
+                            onChange={(e) => setWholePageTextColor(rowIndex, e.target.value)}
+                            className="text-color-picker"
+                            title="Set text color"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="row-content-area">
+                        <div className="whole-page-builder">
+                          {row.sections && row.sections.map((sectionRef: any, sectionIndex: number) => {
+                            const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+                            
+                            return (
+                            <React.Fragment key={`${rowIndex}-${sectionIndex}-${sectionId}`}>
+                              {/* Drop zone above each section */}
+                              {sectionIndex === 0 && !shouldHideDropZone(rowIndex, undefined, sectionIndex, true) && (
+                                <div
+                                  className={`section-drop-zone ${
+                                    dragOverTarget?.rowIndex === rowIndex && 
+                                    dragOverTarget?.columnIndex === undefined && 
+                                    dragOverTarget?.insertIndex === 0 ? 'drag-over' : ''
+                                  }`}
+                                  onDragOver={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setDragOverTarget({ rowIndex, columnIndex: undefined, insertIndex: 0 });
+                                  }}
+                                  onDragLeave={(e) => {
+                                    e.preventDefault();
+                                    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                      setDragOverTarget(null);
+                                    }
+                                  }}
+                                  onDrop={(e) => {
+                                    e.stopPropagation();
+                                    handleSectionDrop(e, rowIndex, undefined, 0);
                                   }}
                                 />
                               )}
@@ -1973,7 +2289,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   draggedSectionInRow?.sectionId === sectionId ? 'dragging' : ''
                                 }`}
                                 draggable
-                                onDragStart={(e) => handleSectionDragStart(e, sectionId, rowIndex, columnIndex)}
+                                onDragStart={(e) => handleSectionDragStart(e, sectionId, rowIndex, undefined)}
                                 onDragEnd={() => {
                                   setDraggedSectionInRow(null);
                                   setDragOverTarget(null);
@@ -1982,20 +2298,20 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 onDragOver={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  setDragOverTarget({ rowIndex, columnIndex });
+                                  setDragOverTarget({ rowIndex });
                                 }}
                                 onDragLeave={(e) => {
                                   e.preventDefault();
                                   setDragOverTarget(null);
                                 }}
-                                onDrop={(e) => handleSectionDrop(e, rowIndex, columnIndex, sectionIndex, true)}
+                                onDrop={(e) => handleSectionDrop(e, rowIndex, undefined, sectionIndex, true)}
                                 onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
                               >
                               <span className="section-title">
                                 {(() => {
                                   const debugSection = findSection(sectionId);
                                   if (sectionId.startsWith('padding-')) {
-                                    console.log('📝 Rendering section title for:', sectionId);
+                                    console.log('📝 Whole page rendering section title for:', sectionId);
                                     console.log('📝 Found section:', debugSection);
                                     console.log('📝 Section title:', debugSection?.title);
                                   }
@@ -2006,7 +2322,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                               <div className="section-actions">
                                 <button
                                   className="remove-section-button"
-                                  onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
+                                  onClick={() => removeSectionFromRow(sectionId, rowIndex, undefined, sectionIndex)}
                                   title="Remove section"
                                 >
                                   ×
@@ -2027,11 +2343,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 </button>
                               </div>
                             </div>
-                            {/* Item Reordering Interface - positioned below section */}
+                            {/* Item Reordering Interface for Whole Page - positioned below section */}
                             {reorderingSection === sectionId && (() => {
                               const section = findSection(sectionId);
                               const reorderableItems = getReorderableItems(section);
-                              const currentOrder = getSectionItemOrder(sectionId, rowIndex, columnIndex);
+                              const currentOrder = getSectionItemOrder(sectionId, rowIndex, undefined);
                               
                               if (!reorderableItems || reorderableItems.length <= 1) {
                                 return (
@@ -2053,14 +2369,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                     const itemTitle = item.title || item.name || item.organization || 'Untitled';
                                     
                                     return (
-                                      <div key={`reorder-${originalIndex}`} className="reorder-item">
+                                      <div key={`reorder-whole-${originalIndex}`} className="reorder-item">
                                         <span className="item-title">
                                           Item {displayPosition + 1}: {itemTitle}
                                         </span>
                                         <div className="reorder-controls">
                                           <button
                                             className="reorder-move-btn"
-                                            onClick={() => moveItemUp(sectionId, originalIndex, rowIndex, columnIndex)}
+                                            onClick={() => moveItemUp(sectionId, originalIndex, rowIndex, undefined)}
                                             disabled={isFirst}
                                             title="Move up"
                                           >
@@ -2069,7 +2385,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                           <span className="reorder-position">{displayPosition + 1}</span>
                                           <button
                                             className="reorder-move-btn"
-                                            onClick={() => moveItemDown(sectionId, originalIndex, rowIndex, columnIndex)}
+                                            onClick={() => moveItemDown(sectionId, originalIndex, rowIndex, undefined)}
                                             disabled={isLast}
                                             title="Move down"
                                           >
@@ -2089,17 +2405,17 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                               );
                             })()}
                             {/* Drop zone below each section */}
-                            {!shouldHideDropZone(rowIndex, columnIndex, sectionIndex, false) && (
+                            {!shouldHideDropZone(rowIndex, undefined, sectionIndex, false) && (
                               <div
                                 className={`section-drop-zone ${
                                   dragOverTarget?.rowIndex === rowIndex && 
-                                  dragOverTarget?.columnIndex === columnIndex && 
+                                  dragOverTarget?.columnIndex === undefined && 
                                   dragOverTarget?.insertIndex === sectionIndex + 1 ? 'drag-over' : ''
                                 }`}
                                 onDragOver={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  setDragOverTarget({ rowIndex, columnIndex, insertIndex: sectionIndex + 1 });
+                                  setDragOverTarget({ rowIndex, columnIndex: undefined, insertIndex: sectionIndex + 1 });
                                 }}
                                 onDragLeave={(e) => {
                                   e.preventDefault();
@@ -2109,262 +2425,58 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 }}
                                 onDrop={(e) => {
                                   e.stopPropagation();
-                                  handleSectionDrop(e, rowIndex, columnIndex, sectionIndex + 1);
+                                  handleSectionDrop(e, rowIndex, undefined, sectionIndex + 1);
                                 }}
                               />
                             )}
                             </React.Fragment>
-                          );
-                        })}
-                        {column.sections.length === 0 && (
-                          <div 
-                            className={`drop-zone ${
-                              dragOverTarget?.rowIndex === rowIndex && dragOverTarget?.columnIndex === columnIndex ? 'drag-over' : ''
-                            }`}
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              setDragOverTarget({ rowIndex, columnIndex });
-                            }}
-                            onDragLeave={() => setDragOverTarget(null)}
-                            onDrop={(e) => handleSectionDrop(e, rowIndex, columnIndex)}
-                          >
-                            Drop sections here
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                      ))}
-                      </div>
-                    </div>
-                  ) : (
-                <div
-                  className="whole-page-builder"
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, rowIndex)}
-                >
-                  <div className="whole-page-sections">
-                        {row.sections?.map((sectionRef: any, sectionIndex: number) => {
-                          const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
-                      return (
-                        <React.Fragment key={`${rowIndex}-whole-${sectionIndex}-${sectionId}`}>
-                          {/* Drop zone above each section */}
-                          {sectionIndex === 0 && !shouldHideDropZone(rowIndex, undefined, sectionIndex, true) && (
-                            <div
-                              className={`section-drop-zone ${
-                                dragOverTarget?.rowIndex === rowIndex && 
-                                dragOverTarget?.columnIndex === undefined && 
-                                dragOverTarget?.insertIndex === 0 ? 'drag-over' : ''
+                          )})}
+                          {(!row.sections || row.sections.length === 0) && (
+                            <div 
+                              className={`drop-zone ${
+                                dragOverTarget?.rowIndex === rowIndex && dragOverTarget?.columnIndex === undefined ? 'drag-over' : ''
                               }`}
                               onDragOver={(e) => {
                                 e.preventDefault();
-                                e.stopPropagation();
-                                setDragOverTarget({ rowIndex, columnIndex: undefined, insertIndex: 0 });
+                                setDragOverTarget({ rowIndex });
                               }}
-                              onDragLeave={(e) => {
-                                e.preventDefault();
-                                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                                  setDragOverTarget(null);
-                                }
-                              }}
-                              onDrop={(e) => {
-                                e.stopPropagation();
-                                handleSectionDrop(e, rowIndex, undefined, 0);
-                              }}
-                            />
-                          )}
-                          <div 
-                            className={`section-item placed ${
-                              draggedSectionInRow?.sectionId === sectionId ? 'dragging' : ''
-                            }`}
-                            draggable
-                            onDragStart={(e) => handleSectionDragStart(e, sectionId, rowIndex)}
-                            onDragEnd={() => {
-                              setDraggedSectionInRow(null);
-                              setDragOverTarget(null);
-                              cleanupAutoScroll();
-                            }}
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setDragOverTarget({ rowIndex });
-                            }}
-                            onDragLeave={(e) => {
-                              e.preventDefault();
-                              setDragOverTarget(null);
-                            }}
-                            onDrop={(e) => handleSectionDrop(e, rowIndex, undefined, sectionIndex, true)}
-                            onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
-                          >
-                          <span className="section-title">
-                            {(() => {
-                              const debugSection = findSection(sectionId);
-                              if (sectionId.startsWith('padding-')) {
-                                console.log('📝 Whole page rendering section title for:', sectionId);
-                                console.log('📝 Found section:', debugSection);
-                                console.log('📝 Section title:', debugSection?.title);
-                              }
-                              return debugSection?.title || sectionId;
-                            })()}
-                          </span>
-                          
-                          <div className="section-actions">
-                            <button
-                              className="remove-section-button"
-                              onClick={() => removeSectionFromRow(sectionId, rowIndex, undefined, sectionIndex)}
-                              title="Remove section"
+                              onDragLeave={() => setDragOverTarget(null)}
+                              onDrop={(e) => handleSectionDrop(e, rowIndex)}
                             >
-                              ×
-                            </button>
-                            <button
-                              className="template-button"
-                              onClick={(e) => handleSectionRightClick(e, sectionId)}
-                              title="Select template"
-                            >
-                              ⚙
-                            </button>
-                            <button
-                              className={`reorder-button ${reorderingSection === sectionId ? 'active' : ''}`}
-                              onClick={() => toggleSectionReorder(sectionId)}
-                              title="Reorder items in section"
-                            >
-                              📋
-                            </button>
-                          </div>
-                        </div>
-                        {/* Item Reordering Interface for Whole Page - positioned below section */}
-                        {reorderingSection === sectionId && (() => {
-                          const section = findSection(sectionId);
-                          const reorderableItems = getReorderableItems(section);
-                          const currentOrder = getSectionItemOrder(sectionId, rowIndex, undefined);
-                          
-                          if (!reorderableItems || reorderableItems.length <= 1) {
-                            return (
-                              <div className="reorder-interface">
-                                <p className="reorder-message">This section has {reorderableItems?.length || 0} items. Need at least 2 items to reorder.</p>
-                              </div>
-                            );
-                          }
-                          
-                          return (
-                            <div className="reorder-interface">
-                              <h4>Reorder Items</h4>
-                              {currentOrder.map((originalIndex: number, displayPosition: number) => {
-                                const item = reorderableItems[originalIndex];
-                                const isFirst = displayPosition === 0;
-                                const isLast = displayPosition === currentOrder.length - 1;
-                                
-                                // Get appropriate title based on item type
-                                const itemTitle = item.title || item.name || item.organization || 'Untitled';
-                                
-                                return (
-                                  <div key={`reorder-whole-${originalIndex}`} className="reorder-item">
-                                    <span className="item-title">
-                                      Item {displayPosition + 1}: {itemTitle}
-                                    </span>
-                                    <div className="reorder-controls">
-                                      <button
-                                        className="reorder-move-btn"
-                                        onClick={() => moveItemUp(sectionId, originalIndex, rowIndex, undefined)}
-                                        disabled={isFirst}
-                                        title="Move up"
-                                      >
-                                        ↑
-                                      </button>
-                                      <span className="reorder-position">{displayPosition + 1}</span>
-                                      <button
-                                        className="reorder-move-btn"
-                                        onClick={() => moveItemDown(sectionId, originalIndex, rowIndex, undefined)}
-                                        disabled={isLast}
-                                        title="Move down"
-                                      >
-                                        ↓
-                                      </button>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                              <button
-                                className="reorder-done-button"
-                                onClick={() => setReorderingSection(null)}
-                              >
-                                Done
-                              </button>
+                              Drop sections here
                             </div>
-                          );
-                        })()}
-                        {/* Drop zone below each section */}
-                        {!shouldHideDropZone(rowIndex, undefined, sectionIndex, false) && (
-                          <div
-                            className={`section-drop-zone ${
-                              dragOverTarget?.rowIndex === rowIndex && 
-                              dragOverTarget?.columnIndex === undefined && 
-                              dragOverTarget?.insertIndex === sectionIndex + 1 ? 'drag-over' : ''
-                            }`}
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setDragOverTarget({ rowIndex, columnIndex: undefined, insertIndex: sectionIndex + 1 });
-                            }}
-                            onDragLeave={(e) => {
-                              e.preventDefault();
-                              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                                setDragOverTarget(null);
-                              }
-                            }}
-                            onDrop={(e) => {
-                              e.stopPropagation();
-                              handleSectionDrop(e, rowIndex, undefined, sectionIndex + 1);
-                            }}
-                          />
-                        )}
-                        </React.Fragment>
-                      );
-                    })}
-                    {(!row.sections || row.sections.length === 0) && (
-                      <div 
-                        className={`drop-zone ${
-                          dragOverTarget?.rowIndex === rowIndex && dragOverTarget?.columnIndex === undefined ? 'drag-over' : ''
-                        }`}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          setDragOverTarget({ rowIndex });
-                        }}
-                        onDragLeave={() => setDragOverTarget(null)}
-                        onDrop={(e) => handleSectionDrop(e, rowIndex)}
-                      >
-                        Drop sections here
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
             
-            {/* Drop zone after each row */}
-            <div
-              className={`layout-drop-zone ${(draggedLayoutButton || draggedRow !== null) ? 'active' : ''}`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                handleDragOver(e);
-                if (draggedLayoutButton) {
-                  e.dataTransfer.dropEffect = 'copy';
-                } else if (draggedRow !== null) {
-                  e.dataTransfer.dropEffect = 'move';
-                }
-              }}
-              onDrop={(e) => {
-                if (draggedLayoutButton) {
-                  handleLayoutDrop(e, rowIndex + 1);
-                } else if (draggedRow !== null) {
-                  console.log('🎯 LAYOUT DROP ZONE - Inserting at position', rowIndex + 1);
-                  handleDrop(e, rowIndex + 1);
-                }
-              }}
-            >
-              {draggedRow !== null ? 'Drop row here' : 'Drop layout here'}
-            </div>
-          </React.Fragment>
-          ))}
+              {/* Drop zone after each row */}
+              <div
+                className={`layout-drop-zone ${(draggedLayoutButton || draggedRow !== null) ? 'active' : ''}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  handleDragOver(e);
+                  if (draggedLayoutButton) {
+                    e.dataTransfer.dropEffect = 'copy';
+                  } else if (draggedRow !== null) {
+                    e.dataTransfer.dropEffect = 'move';
+                  }
+                }}
+                onDrop={(e) => {
+                  if (draggedLayoutButton) {
+                    handleLayoutDrop(e, rowIndex + 1);
+                  } else if (draggedRow !== null) {
+                    console.log('🎯 LAYOUT DROP ZONE - Inserting at position', rowIndex + 1);
+                    handleDrop(e, rowIndex + 1);
+                  }
+                }}
+              >
+                {draggedRow !== null ? 'Drop row here' : 'Drop layout here'}
+              </div>
+            </React.Fragment>
+            ))}
             </div>
           </div>
         </div>

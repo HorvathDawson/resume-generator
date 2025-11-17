@@ -16,8 +16,6 @@ function App() {
   
   // Debug wrapper for setResumeData 
   const handleResumeDataChange = (data: ResumeData) => {
-    console.log('🏠 APP: handleResumeDataChange called with:', data);
-    console.log('🏠 APP: New layout data:', data.layout);
     setResumeData(data);
   };
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -204,10 +202,12 @@ function App() {
             
             /* Remove specific margins that cause page overflow */
             .resume-preview-wrapper,
+            .page-scale-wrapper,
             .page-wrapper,
             .preview-container {
               margin: 0 !important;
               padding: 0 !important;
+              border: none !important;
             }
             
             /* Print media queries */
