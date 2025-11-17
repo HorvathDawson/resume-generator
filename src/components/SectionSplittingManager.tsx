@@ -89,19 +89,60 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
   };
 
   const addNewPart = () => {
+    const currentCount = splitParts.length;
+    let newTitle: string;
+
+    if (currentCount === 1) {
+      // When adding the second part, use "(cont)" 
+      newTitle = `${section.title} (cont)`;
+    } else {
+      // For 3+ parts, use "Part X" numbering
+      newTitle = `${section.title} (Part ${currentCount + 1})`;
+    }
+
     const newPart: SplitPart = {
-      title: `${section.title} (Part ${splitParts.length + 1})`,
+      title: newTitle,
       items: itemsWithIds,
       selectedItems: [] // Start with no items selected - user must select them
     };
-    setSplitParts([...splitParts, newPart]);
+
+    const newParts = [...splitParts, newPart];
+    
+    // If we now have 3 parts, rename the second part from "(cont)" to "(Part 2)"
+    if (newParts.length === 3 && newParts[1].title.endsWith('(cont)')) {
+      newParts[1] = {
+        ...newParts[1],
+        title: `${section.title} (Part 2)`
+      };
+    }
+
+    setSplitParts(newParts);
     setActivePart(splitParts.length);
   };
 
   const removePart = (partIndex: number) => {
     if (splitParts.length <= 1) return; // Can't remove the last part
     
-    const newParts = splitParts.filter((_, index) => index !== partIndex);
+    let newParts = splitParts.filter((_, index) => index !== partIndex);
+    
+    // Handle renaming when going from 3+ parts back to 2 parts
+    if (newParts.length === 2) {
+      // Rename the second part to use "(cont)" instead of "(Part 2)"
+      newParts[1] = {
+        ...newParts[1],
+        title: `${section.title} (cont)`
+      };
+    } else if (newParts.length > 2) {
+      // Renumber all parts after the first one to maintain proper "Part X" numbering
+      newParts = newParts.map((part, index) => {
+        if (index === 0) return part; // Keep first part unchanged
+        return {
+          ...part,
+          title: `${section.title} (Part ${index + 1})`
+        };
+      });
+    }
+    
     setSplitParts(newParts);
     setActivePart(Math.min(activePart, newParts.length - 1));
   };

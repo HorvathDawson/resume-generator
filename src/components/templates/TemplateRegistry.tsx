@@ -2,6 +2,7 @@ import React from 'react';
 import type { Section } from '../../types/resume';
 import { ReferencesTemplate } from './ReferencesTemplate';
 import { AwardsTemplates } from './AwardsTemplate';
+import { PublicationsTemplates } from './PublicationsTemplate';
 import './AwardsTemplate.css';
 
 // Template registry for different section types
@@ -1462,5 +1463,5 @@ export const TEMPLATE_REGISTRY: TemplateRegistry = {
   name: Object.values(NameTemplates),
   padding: Object.values(PaddingTemplates),
   awards: Object.values(AwardsTemplates),
-  publications: Object.values(ListTemplates) // Use ListTemplates for publications
+  publications: Object.values(PublicationsTemplates)
 };

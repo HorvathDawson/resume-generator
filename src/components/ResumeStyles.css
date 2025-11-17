@@ -2086,3 +2086,415 @@
   width: 100%;
   height: 100%;
 }
+
+/* =====================================================================
+   PUBLICATIONS TEMPLATES - MODERN & CLEAN DESIGNS
+   ===================================================================== */
+
+/* Global Publications Styles */
+.resume-preview .publications-section h2 {
+  font-size: var(--font-size-h2);
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 0.4cm;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.1cm;
+  position: relative;
+}
+
+.resume-preview .publications-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 2cm;
+  height: 2px;
+  background: var(--accent-color, #e74c3c);
+}
+
+/* Publications Simple Template - Super Simple */
+.resume-preview .publications-section.simple {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .publications-section.simple .publications-simple-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cm;
+}
+
+.resume-preview .publications-section.simple .publication-item-simple {
+  position: relative;
+  padding-left: 0.4cm;
+  font-size: var(--font-size-body);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.resume-preview .publications-section.simple .publication-item-simple::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Publications Modern Template - Card Design */
+.resume-preview .publications-section.modern {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .publications-section.modern .publications-modern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr));
+  gap: 0.4cm;
+}
+
+.resume-preview .publications-section.modern .publication-card-modern {
+  background: linear-gradient(135deg, var(--card-background, #f8f9fa) 0%, #ffffff 100%);
+  border: 1px solid var(--border-light, #e9ecef);
+  border-radius: 0.3cm;
+  padding: 0.4cm;
+  box-shadow: 0 0.1cm 0.3cm rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.resume-preview .publications-section.modern .publication-card-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color, #e74c3c) 100%);
+}
+
+.resume-preview .publications-section.modern .publication-card-modern:hover {
+  transform: translateY(-0.05cm);
+  box-shadow: 0 0.15cm 0.6cm rgba(0, 0, 0, 0.12);
+}
+
+.resume-preview .publications-section.modern .publication-title-modern {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.15cm 0;
+  line-height: 1.3;
+}
+
+.resume-preview .publications-section.modern .publication-venue-modern {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  font-weight: 500;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .publications-section.modern .publication-date-modern {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  font-weight: 500;
+  margin-bottom: 0.15cm;
+}
+
+.resume-preview .publications-section.modern .publication-description-modern {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Publications Elegant Template - Timeline Style */
+.resume-preview .publications-section.elegant {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .publications-section.elegant .publications-elegant-list {
+  position: relative;
+  padding-left: 0.8cm;
+}
+
+.resume-preview .publications-section.elegant .publication-item-elegant {
+  position: relative;
+  margin-bottom: 0.5cm;
+  padding-bottom: 0.3cm;
+}
+
+/* Timeline line - extends from top to bottom connecting all items */
+.resume-preview .publications-section.elegant .publication-item-elegant::before {
+  content: '';
+  position: absolute;
+  left: -0.66cm;
+  top: 0.1cm;
+  bottom: -0.2cm;
+  width: 0.05cm;
+  background-color: var(--primary-color);
+  opacity: 0.3;
+}
+
+/* Timeline dots/markers */
+.resume-preview .publications-section.elegant .publication-item-elegant::after {
+  content: '';
+  position: absolute;
+  left: -0.75cm;
+  top: 0.15cm;
+  width: 0.2cm;
+  height: 0.2cm;
+  background-color: var(--primary-color);
+  border: 1px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--primary-color);
+  z-index: 2;
+}
+
+/* Last item timeline adjustment */
+.resume-preview .publications-section.elegant .publication-item-elegant:last-child::before {
+  bottom: auto;
+  height: 1.2cm;
+}
+
+/* Hide the timeline marker div since we're using pseudo-elements now */
+.resume-preview .publications-section.elegant .publication-marker {
+  display: none;
+}
+
+.resume-preview .publications-section.elegant .publication-content-elegant {
+  background: var(--hover-background, #ffffff);
+  border: 1px solid var(--border-light, #e9ecef);
+  border-radius: 0.2cm;
+  padding: 0.3cm;
+  box-shadow: 0 0.05cm 0.2cm rgba(0, 0, 0, 0.05);
+}
+
+.resume-preview .publications-section.elegant .publication-header-elegant {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.15cm;
+  gap: 0.3cm;
+}
+
+.resume-preview .publications-section.elegant .publication-title-elegant {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+  flex: 1;
+  line-height: 1.3;
+}
+
+.resume-preview .publications-section.elegant .publication-date-elegant {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--card-background, #f8f9fa);
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.15cm;
+}
+
+.resume-preview .publications-section.elegant .publication-venue-elegant {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  font-weight: 500;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .publications-section.elegant .publication-location-elegant {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  font-style: italic;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .publications-section.elegant .publication-description-elegant {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  line-height: 1.4;
+  margin: 0.1cm 0 0 0;
+}
+
+.resume-preview .publications-section.elegant .publication-details-elegant {
+  list-style: none;
+  padding: 0;
+  margin: 0.1cm 0 0 0;
+}
+
+.resume-preview .publications-section.elegant .publication-details-elegant li {
+  position: relative;
+  padding-left: 0.4cm;
+  margin-bottom: 0.05cm;
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  line-height: 1.3;
+}
+
+.resume-preview .publications-section.elegant .publication-details-elegant li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+}
+
+/* Publications Minimal Template - Clean & Subtle */
+.resume-preview .publications-section.minimal {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .publications-section.minimal .publications-minimal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3cm;
+}
+
+.resume-preview .publications-section.minimal .publication-item-minimal {
+  padding: 0.25cm 0;
+  border-bottom: 1px solid var(--border-light, #e9ecef);
+  transition: all 0.2s ease;
+}
+
+.resume-preview .publications-section.minimal .publication-item-minimal:last-child {
+  border-bottom: none;
+}
+
+.resume-preview .publications-section.minimal .publication-item-minimal:hover {
+  padding-left: 0.2cm;
+  background: var(--hover-background, #f8f9fa);
+  margin: 0 -0.2cm;
+  border-radius: 0.1cm;
+}
+
+.resume-preview .publications-section.minimal .publication-main-minimal {
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .publications-section.minimal .publication-title-minimal {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.05cm 0;
+  line-height: 1.3;
+}
+
+.resume-preview .publications-section.minimal .publication-meta-minimal {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.resume-preview .publications-section.minimal .publication-venue-minimal {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.resume-preview .publications-section.minimal .publication-date-minimal {
+  font-weight: 500;
+}
+
+.resume-preview .publications-section.minimal .separator-minimal {
+  margin: 0 0.2cm;
+  color: var(--border-medium, #dee2e6);
+}
+
+.resume-preview .publications-section.minimal .publication-description-minimal {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  line-height: 1.4;
+  margin: 0.1cm 0 0 0;
+  font-style: italic;
+}
+
+/* Publications Academic Template - Citation Style */
+.resume-preview .publications-section.academic {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .publications-section.academic .publications-academic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4cm;
+}
+
+.resume-preview .publications-section.academic .publication-item-academic {
+  display: flex;
+  gap: 0.3cm;
+  align-items: flex-start;
+  padding: 0.25cm;
+  background: var(--card-background, #f8f9fa);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0.1cm;
+}
+
+.resume-preview .publications-section.academic .publication-number-academic {
+  font-size: var(--font-size-body);
+  font-weight: 700;
+  color: var(--primary-color);
+  min-width: 0.6cm;
+  margin-top: 0.05cm;
+}
+
+.resume-preview .publications-section.academic .publication-content-academic {
+  flex: 1;
+}
+
+.resume-preview .publications-section.academic .publication-citation-academic {
+  font-size: var(--font-size-body);
+  color: var(--text-color);
+  line-height: 1.4;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .publications-section.academic .publication-title-academic {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.resume-preview .publications-section.academic .publication-venue-academic {
+  font-style: italic;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.resume-preview .publications-section.academic .publication-date-academic {
+  color: var(--secondary-text);
+  font-weight: 500;
+}
+
+.resume-preview .publications-section.academic .publication-location-academic {
+  color: var(--secondary-text);
+}
+
+.resume-preview .publications-section.academic .publication-description-academic {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  line-height: 1.4;
+  margin: 0.1cm 0 0 0;
+  font-style: italic;
+}
+
+.resume-preview .publications-section.academic .publication-details-academic {
+  margin-top: 0.15cm;
+}
+
+.resume-preview .publications-section.academic .publication-detail-academic {
+  font-size: var(--font-size-small);
+  color: var(--secondary-text);
+  line-height: 1.3;
+  margin-bottom: 0.05cm;
+  padding-left: 0.3cm;
+  position: relative;
+}
+
+.resume-preview .publications-section.academic .publication-detail-academic::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+}
