@@ -809,51 +809,6 @@ export const SkillsTemplates = {
       );
     }
   },
-
-  columns: {
-    id: 'skills-columns',
-    name: 'Columns Layout',
-    description: 'Skills displayed in organized columns by category',
-    component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
-      return (
-        <div className="section skills-section columns">
-          <h2>{section.title}</h2>
-          <div className="skills-columns-container">
-            {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-column">
-                <h3 className="column-header">{category.name}</h3>
-                <div className="column-skills">
-                  {category.skills.map((skill: any, skillIndex: number) => {
-                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
-                    const skillProficiency = typeof skill === 'object' && skill.proficiency ? skill.proficiency : null;
-                    
-                    return (
-                      <div key={skillIndex} className="column-skill-item">
-                        <span className="column-skill-name">{skillName}</span>
-                        {skillProficiency && (
-                          <div className="column-skill-indicator">
-                            <div className="skill-dots">
-                              {[1, 2, 3, 4, 5].map(dot => (
-                                <div 
-                                  key={dot} 
-                                  className={`skill-dot ${skillProficiency >= (dot * 20) ? 'filled' : ''}`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-  },
   
   wide: {
     id: 'skills-wide',
@@ -982,6 +937,77 @@ export const SkillsTemplates = {
                     typeof skill === 'string' ? skill : skill.name || skill
                   ).join(' • ')}
                 </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+  },
+
+  columns: {
+    id: 'skills-columns',
+    name: 'Columns Layout',
+    description: 'Clean columns of skills by category',
+    component: ({ section }: { section: Section }) => {
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
+      return (
+        <div className="section skills-section columns">
+          <h2>{section.title}</h2>
+          <div className="skills-columns-grid">
+            {categories.map((category: any, index: number) => (
+              <div key={index} className="skill-column-simple">
+                <h3 className="column-title">{category.name}</h3>
+                <ul className="column-skill-list">
+                  {category.skills.map((skill: any, skillIndex: number) => {
+                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
+                    return (
+                      <li key={skillIndex} className="column-skill">{skillName}</li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+  },
+
+  proficiency: {
+    id: 'skills-proficiency',
+    name: 'Proficiency Dots',
+    description: 'Skills with dot-based proficiency indicators',
+    component: ({ section }: { section: Section }) => {
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
+      return (
+        <div className="section skills-section proficiency">
+          <h2>{section.title}</h2>
+          <div className="skills-proficiency-list">
+            {categories.map((category: any, index: number) => (
+              <div key={index} className="proficiency-category">
+                <h3 className="proficiency-title">{category.name}</h3>
+                <div className="proficiency-skills">
+                  {category.skills.map((skill: any, skillIndex: number) => {
+                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
+                    const skillProficiency = typeof skill === 'object' && skill.proficiency ? skill.proficiency : 85;
+                    const filledDots = Math.ceil(skillProficiency / 20);
+                    
+                    return (
+                      <div key={skillIndex} className="proficiency-item">
+                        <span className="proficiency-name">{skillName}</span>
+                        <div className="proficiency-dots">
+                          {[1, 2, 3, 4, 5].map(dot => (
+                            <div 
+                              key={dot} 
+                              className={`dot ${dot <= filledDots ? 'filled' : 'empty'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ))}
           </div>
