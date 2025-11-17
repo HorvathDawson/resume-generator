@@ -154,6 +154,7 @@ function App() {
               width: 100% !important;
               height: 100% !important;
               overflow: visible !important;
+              border: none !important;
               padding: 0 !important;
             }
             

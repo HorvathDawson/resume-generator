@@ -45,6 +45,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   onLayoutChange,
   onResumeDataChange 
 }) => {
+  // Helper function to preserve globalStyles when updating layout
+  const updateLayout = (pages: PageLayout[]) => {
+    onLayoutChange({
+      pages,
+      globalStyles: resumeData.layout?.globalStyles // Preserve existing globalStyles
+    });
+  };
+
   // Initialize pages from resume data
   const [pages, setPages] = useState<PageLayout[]>(() => {
     const layoutPages = resumeData.layout?.pages || [];
@@ -261,7 +269,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     setPages(updatedPages);
     
     // Notify parent of the change
-    onLayoutChange({ pages: updatedPages });
+    updateLayout(updatedPages);
   };
 
   // Toggle item reordering mode for a section
@@ -393,7 +401,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages });
+      updateLayout(newPages);
       setDraggedSection(null);
     } else if (draggedRow !== null) {
       console.log('🔄 REORDERING ROW:', { draggedRow, targetRowIndex });
@@ -419,7 +427,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages });
+      updateLayout(newPages);
       setDraggedRow(null);
     }
   };
@@ -577,7 +585,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[safePageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages });
+      updateLayout(newPages);
       
       // Clear all drag state
       setDraggedSection(null);
@@ -627,7 +635,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             const newPages = [...pages];
             newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
             setPages(newPages);
-            onLayoutChange({ pages: newPages });
+            updateLayout(newPages);
             
             // Clear all drag state
             setDraggedSection(null);
@@ -706,7 +714,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages });
+      updateLayout(newPages);
       
       // Clear all drag state
       setDraggedSection(null);
@@ -755,7 +763,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
     setPages(newPages);
-    onLayoutChange({ pages: newPages });
+    updateLayout(newPages);
   };
 
   const addNewRow = (type: 'columns' | 'wholePage', insertIndex?: number) => {
@@ -784,7 +792,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
     setPages(newPages);
-    onLayoutChange({ pages: newPages });
+    updateLayout(newPages);
   };
 
   const removeRow = (rowIndex: number) => {
@@ -792,7 +800,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
     setPages(newPages);
-    onLayoutChange({ pages: newPages });
+    updateLayout(newPages);
   };
 
   const updateColumnWidth = (rowIndex: number, columnIndex: number, newWidth: string) => {
@@ -802,7 +810,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages });
+      updateLayout(newPages);
     }
   };
 
@@ -816,7 +824,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages, newPage];
     setPages(newPages);
     setCurrentPageIndex(pages.length); // Switch to new page
-    onLayoutChange({ pages: newPages });
+    updateLayout(newPages);
   };
 
   const removePage = (pageIndex: number) => {
@@ -832,7 +840,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     
     setPages(renumberedPages);
     setCurrentPageIndex(Math.min(currentPageIndex, renumberedPages.length - 1));
-    onLayoutChange({ pages: renumberedPages.map(p => ({ ...p, rows: p.rows })) });
+    updateLayout(renumberedPages);
   };
 
   // Store newly created sections temporarily until they're reflected in resumeData
@@ -1214,11 +1222,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         rows: [...updatedPages[currentPageIndex].rows]
       };
       
-      onLayoutChange({
-        pages: updatedPages.map((page, idx) => 
+      updateLayout(
+        updatedPages.map((page, idx) => 
           idx === currentPageIndex ? updatedCurrentPage : page
         )
-      });
+      );
     }
   };
 
@@ -1265,11 +1273,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         rows: [...updatedPages[currentPageIndex].rows]
       };
       
-      onLayoutChange({
-        pages: updatedPages.map((page, idx) => 
+      updateLayout(
+        updatedPages.map((page, idx) => 
           idx === currentPageIndex ? updatedCurrentPage : page
         )
-      });
+      );
     }
   };
 
@@ -1293,11 +1301,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         rows: [...updatedPages[currentPageIndex].rows]
       };
       
-      onLayoutChange({
-        pages: updatedPages.map((page, idx) => 
+      updateLayout(
+        updatedPages.map((page, idx) => 
           idx === currentPageIndex ? updatedCurrentPage : page
         )
-      });
+      );
     }
   };
 
@@ -1321,11 +1329,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         rows: [...updatedPages[currentPageIndex].rows]
       };
       
-      onLayoutChange({
-        pages: updatedPages.map((page, idx) => 
+      updateLayout(
+        updatedPages.map((page, idx) => 
           idx === currentPageIndex ? updatedCurrentPage : page
         )
-      });
+      );
     }
   };
 
@@ -1367,9 +1375,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     setPages(updatedPages);
     
     // Update the layout
-    onLayoutChange({
-      pages: updatedPages
-    });
+    updateLayout(updatedPages);
     
     console.log('Footer update completed');
   };
@@ -1390,7 +1396,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages });
+      updateLayout(newPages);
     }
   };
 
