@@ -1441,68 +1441,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return Object.entries(splitGroups).filter(([_, sections]) => sections.length > 1);
   };
 
-  // Helper function to detect combinable section groups
-  const getCombinableSectionGroups = (sections: string[], rowIndex: number, columnIndex?: number) => {
-    const groups: { sectionIds: string[], startIndex: number, endIndex: number, baseType: string }[] = [];
-    
-    let currentGroup: string[] = [];
-    let currentBaseType: string | null = null;
-    let groupStartIndex = -1;
-    
-    sections.forEach((sectionId, index) => {
-      // Extract base type (remove _split_X suffix)
-      const baseId = sectionId.replace(/_split_\d+$/, '');
-      const isSplitSection = sectionId.includes('_split_');
-      
-      if (isSplitSection && baseId === currentBaseType) {
-        // Continue current group
-        currentGroup.push(sectionId);
-      } else if (isSplitSection) {
-        // Finish previous group if it has multiple sections
-        if (currentGroup.length > 1) {
-          groups.push({
-            sectionIds: [...currentGroup],
-            startIndex: groupStartIndex,
-            endIndex: groupStartIndex + currentGroup.length - 1,
-            baseType: currentBaseType!
-          });
-        }
-        
-        // Start new group
-        currentGroup = [sectionId];
-        currentBaseType = baseId;
-        groupStartIndex = index;
-      } else {
-        // Finish previous group if it has multiple sections
-        if (currentGroup.length > 1) {
-          groups.push({
-            sectionIds: [...currentGroup],
-            startIndex: groupStartIndex,
-            endIndex: groupStartIndex + currentGroup.length - 1,
-            baseType: currentBaseType!
-          });
-        }
-        
-        // Reset for non-split section
-        currentGroup = [];
-        currentBaseType = null;
-        groupStartIndex = -1;
-      }
-    });
-    
-    // Don't forget the last group
-    if (currentGroup.length > 1) {
-      groups.push({
-        sectionIds: [...currentGroup],
-        startIndex: groupStartIndex,
-        endIndex: groupStartIndex + currentGroup.length - 1,
-        baseType: currentBaseType!
-      });
-    }
-    
-    return groups;
-  };
-
   // Template selection handlers
   const handleSectionRightClick = (e: React.MouseEvent, sectionId: string) => {
     e.preventDefault();
@@ -1630,6 +1568,34 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               <h4>Available Sections</h4>
               <p className="section-tip">Drag items into the layout to use them</p>
             </div>
+
+            {/* Combinable split sections */}
+            {getSplitSectionsInLayout().length > 0 && (
+              <>
+                <h4 className="split-sections-header">Split Sections</h4>
+                <p className="section-tip">Click combine to merge split sections back together</p>
+                <div className="split-sections-list">
+                  {getSplitSectionsInLayout().map(([baseId, splitSectionIds]) => {
+                    const baseSectionTitle = resumeData.sections?.find(s => s.id === splitSectionIds[0])?.title?.replace(/ \((Part \d+|cont)\)$/, '') || baseId;
+                    return (
+                      <div key={baseId} className="split-section-group">
+                        <div className="split-section-info">
+                          <span className="split-section-title">{baseSectionTitle}</span>
+                          <span className="split-section-count">({splitSectionIds.length} parts)</span>
+                        </div>
+                        <button
+                          className="sidebar-combine-button"
+                          onClick={() => handleCombineFromSidebar(baseId, splitSectionIds)}
+                          title={`Combine ${splitSectionIds.length} parts back into one section`}
+                        >
+                          🔗 Combine
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
             <div className="sections-list">
               {availableSections.map((section) => {
                 const resumeSection = resumeData.sections?.find(s => s.id === section.id);
@@ -1689,34 +1655,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                 );
               })}
             </div>
-
-            {/* Combinable split sections */}
-            {getSplitSectionsInLayout().length > 0 && (
-              <>
-                <h4 className="split-sections-header">Split Sections</h4>
-                <p className="section-tip">Click combine to merge split sections back together</p>
-                <div className="split-sections-list">
-                  {getSplitSectionsInLayout().map(([baseId, splitSectionIds]) => {
-                    const baseSectionTitle = resumeData.sections?.find(s => s.id === splitSectionIds[0])?.title?.replace(/ \((Part \d+|cont)\)$/, '') || baseId;
-                    return (
-                      <div key={baseId} className="split-section-group">
-                        <div className="split-section-info">
-                          <span className="split-section-title">{baseSectionTitle}</span>
-                          <span className="split-section-count">({splitSectionIds.length} parts)</span>
-                        </div>
-                        <button
-                          className="sidebar-combine-button"
-                          onClick={() => handleCombineFromSidebar(baseId, splitSectionIds)}
-                          title={`Combine ${splitSectionIds.length} parts back into one section`}
-                        >
-                          🔗 Combine
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
           </div>
         </div>
 

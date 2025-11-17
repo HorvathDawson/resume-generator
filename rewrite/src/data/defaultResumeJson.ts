@@ -1,7 +1,7 @@
 // Default resume data as JSON structure - matches export format exactly
 export const DEFAULT_RESUME_JSON = {
   "version": "1.0",
-  "exportDate": "2024-01-01T00:00:00.000Z",
+  "exportDate": "2025-11-17T06:59:05.833Z",
   "resumeData": {
     "id": "default-resume-2024",
     "name": "Default Resume Template",
@@ -16,9 +16,25 @@ export const DEFAULT_RESUME_JSON = {
     },
     "sections": [
       {
+        "id": "name-1763362145393",
+        "type": "name",
+        "title": "Name",
+        "templateId": "name-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "name-item-1763362145393",
+            "title": "Boot Boot",
+            "content": {
+              "fullName": "Boot Boot"
+            }
+          }
+        ]
+      },
+      {
         "id": "personal-info-001",
         "title": "Personal Information",
-        "type": "personal_info" as const,
+        "type": "personal_info",
         "templateId": "contact-header",
         "isVisible": true,
         "items": [
@@ -40,7 +56,7 @@ export const DEFAULT_RESUME_JSON = {
       {
         "id": "education-001",
         "title": "Education",
-        "type": "education" as const,
+        "type": "education",
         "templateId": "education-standard",
         "isVisible": true,
         "items": [
@@ -53,14 +69,59 @@ export const DEFAULT_RESUME_JSON = {
             "location": "City, State",
             "dates": "September 2020 - May 2024",
             "gpa": "3.8",
-            "details": ["Dean's List", "Graduated Magna Cum Laude"]
+            "details": [
+              "Dean's List",
+              "Graduated Magna Cum Laude"
+            ]
           }
         ]
       },
       {
-        "id": "experience-001",
+        "id": "skills-001",
+        "title": "Skills",
+        "type": "skills",
+        "templateId": "skills-categorized",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "skills-tech",
+            "title": "Technical Skills",
+            "categories": [
+              {
+                "name": "Programming Languages",
+                "skills": [
+                  "JavaScript",
+                  "TypeScript",
+                  "Python",
+                  "Java"
+                ]
+              },
+              {
+                "name": "Frameworks & Libraries",
+                "skills": [
+                  "React",
+                  "Node.js",
+                  "Express",
+                  "Django"
+                ]
+              },
+              {
+                "name": "Tools & Technologies",
+                "skills": [
+                  "Git",
+                  "Docker",
+                  "AWS",
+                  "PostgreSQL"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "experience-001_split_1",
         "title": "Work Experience",
-        "type": "experience" as const,
+        "type": "experience",
         "templateId": "experience-detailed",
         "isVisible": true,
         "items": [
@@ -75,7 +136,16 @@ export const DEFAULT_RESUME_JSON = {
               "Use action verbs and quantify results when possible",
               "Highlight skills and technologies used"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "id": "experience-001_split_2",
+        "title": "Work Experience (Part 2)",
+        "type": "experience",
+        "templateId": "experience-detailed",
+        "isVisible": true,
+        "items": [
           {
             "id": "exp-002",
             "title": "Previous Role",
@@ -86,33 +156,6 @@ export const DEFAULT_RESUME_JSON = {
               "Another role with specific accomplishments",
               "Focus on transferable skills and growth",
               "Mention any leadership or project management experience"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "skills-001",
-        "title": "Skills",
-        "type": "skills" as const,
-        "templateId": "skills-categorized",
-        "isVisible": true,
-        "items": [
-          {
-            "id": "skills-tech",
-            "title": "Technical Skills",
-            "categories": [
-              {
-                "name": "Programming Languages",
-                "skills": ["JavaScript", "TypeScript", "Python", "Java"]
-              },
-              {
-                "name": "Frameworks & Libraries",
-                "skills": ["React", "Node.js", "Express", "Django"]
-              },
-              {
-                "name": "Tools & Technologies",
-                "skills": ["Git", "Docker", "AWS", "PostgreSQL"]
-              }
             ]
           }
         ]
@@ -135,10 +178,15 @@ export const DEFAULT_RESUME_JSON = {
               "type": "wholePage",
               "sections": [
                 {
+                  "sectionId": "name-1763362145393",
+                  "instanceId": "instance-name-001"
+                },
+                {
                   "sectionId": "personal-info-001",
                   "instanceId": "instance-personal-001"
                 }
-              ]
+              ],
+              "sectionItemOrders": {}
             },
             {
               "id": "page-1-row-1",
@@ -151,16 +199,16 @@ export const DEFAULT_RESUME_JSON = {
                       "sectionId": "education-001",
                       "instanceId": "instance-education-001"
                     }
-                  ]
+                  ],
+                  "sectionItemOrders": {}
                 },
                 {
                   "width": "60%",
                   "sections": [
-                    {
-                      "sectionId": "experience-001",
-                      "instanceId": "instance-experience-001"
-                    }
-                  ]
+                    "experience-001_split_1",
+                    "experience-001_split_2"
+                  ],
+                  "sectionItemOrders": {}
                 }
               ]
             },
@@ -172,49 +220,10 @@ export const DEFAULT_RESUME_JSON = {
                   "sectionId": "skills-001",
                   "instanceId": "instance-skills-001"
                 }
-              ]
+              ],
+              "sectionItemOrders": {}
             }
-          ],
-          "margins": {
-            "top": "1.0cm",
-            "right": "1.0cm",
-            "bottom": "1.0cm",
-            "left": "1.0cm"
-          }
-        }
-      ],
-      "sectionInstances": [
-        {
-          "id": "instance-personal-001",
-          "sectionId": "personal-info-001",
-          "instanceNumber": 1,
-          "selectedItems": ["contact-001"],
-          "showContinuation": false,
-          "title": "Personal Information"
-        },
-        {
-          "id": "instance-education-001",
-          "sectionId": "education-001",
-          "instanceNumber": 1,
-          "selectedItems": ["edu-001"],
-          "showContinuation": false,
-          "title": "Education"
-        },
-        {
-          "id": "instance-experience-001",
-          "sectionId": "experience-001",
-          "instanceNumber": 1,
-          "selectedItems": ["exp-001", "exp-002"],
-          "showContinuation": false,
-          "title": "Work Experience"
-        },
-        {
-          "id": "instance-skills-001",
-          "sectionId": "skills-001",
-          "instanceNumber": 1,
-          "selectedItems": ["skills-tech"],
-          "showContinuation": false,
-          "title": "Skills"
+          ]
         }
       ],
       "globalStyles": {
@@ -246,51 +255,12 @@ export const DEFAULT_RESUME_JSON = {
       "updatedAt": "2024-11-15T00:00:00.000Z",
       "author": "Resume Builder",
       "description": "A professional resume template with placeholder content",
-      "tags": ["resume", "template", "default"]
+      "tags": [
+        "resume",
+        "template",
+        "default"
+      ]
     }
-  },
-  "layoutState": {
-    "pages": [
-      {
-        "id": "page-1",
-        "pageNumber": 1,
-        "rows": [
-          {
-            "id": "page-1-row-0",
-            "type": "wholePage",
-            "sections": ["personal-info-001"],
-            "backgroundColor": "#ffffff",
-            "textColor": "#333333"
-          },
-          {
-            "id": "page-1-row-1",
-            "type": "columns",
-            "columns": [
-              {
-                "width": "40%",
-                "sections": ["education-001"],
-                "backgroundColor": "#ffffff",
-                "textColor": "#333333"
-              },
-              {
-                "width": "60%",
-                "sections": ["experience-001"],
-                "backgroundColor": "#ffffff",
-                "textColor": "#333333"
-              }
-            ]
-          },
-          {
-            "id": "page-1-row-2",
-            "type": "wholePage",
-            "sections": ["skills-001"],
-            "backgroundColor": "#ffffff",
-            "textColor": "#333333"
-          }
-        ]
-      }
-    ],
-    "zoom": 0.6
   }
 };
 

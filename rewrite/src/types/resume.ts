@@ -48,6 +48,7 @@ export type SectionType =
   | 'experience'
   | 'projects'
   | 'skills'
+  | 'name'
   | 'certifications'
   | 'references'
   | 'text'

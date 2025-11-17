@@ -12,6 +12,7 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
   const [showAddSection, setShowAddSection] = useState(false);
 
   const availableSectionTypes = [
+    { type: 'name', label: 'Name', description: 'Full name or header name' },
     { type: 'experience', label: 'Experience', description: 'Work experience, projects, volunteer work, etc.' },
     { type: 'education', label: 'Education', description: 'Schools, degrees, certifications' },
     { type: 'skills', label: 'Skills', description: 'Technical and soft skills' },
@@ -24,10 +25,21 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
     const newSection: Section = {
       id: `${sectionType}-${Date.now()}`,
       type: sectionType as any,
-      title: sectionType === 'experience' ? 'Experience' : sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
-      templateId: 'basic',
+      title: sectionType === 'experience' ? 'Experience' : 
+             sectionType === 'name' ? 'Name' :
+             sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
+      templateId: sectionType === 'name' ? 'name-standard' : 'basic',
       isVisible: true,
-      items: sectionType === 'skills' ? [] : [
+      items: sectionType === 'skills' ? [] : 
+             sectionType === 'name' ? [
+        {
+          id: `name-item-${Date.now()}`,
+          title: resumeData.personalInfo?.fullName || 'Your Name',
+          content: {
+            fullName: resumeData.personalInfo?.fullName || 'Your Name'
+          }
+        }
+      ] : [
         {
           id: `item-${Date.now()}`,
           title: sectionType === 'references' ? '' : '',
@@ -173,6 +185,8 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
   // Render section editor based on type
   const renderSectionEditor = (section: Section) => {
     switch (section.type) {
+      case 'name':
+        return renderNameEditor(section);
       case 'text':
         return renderTextEditor(section);
       case 'personal_info':
@@ -192,6 +206,33 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
         return renderGenericEditor(section);
     }
   };
+
+  // Name section editor
+  const renderNameEditor = (section: Section) => (
+    <div className="name-section-editor">
+      <div className="form-group">
+        <label>Full Name</label>
+        <input
+          type="text"
+          value={section.items?.[0]?.content?.fullName || section.items?.[0]?.title || ''}
+          onChange={(e) => {
+            const itemId = section.items?.[0]?.id || `name-item-${Date.now()}`;
+            const items = section.items?.length ? section.items : [{ id: itemId, title: e.target.value }];
+            const updatedItems = items.map(item =>
+              item.id === itemId ? { 
+                ...item, 
+                title: e.target.value,
+                content: { ...item.content, fullName: e.target.value }
+              } : item
+            );
+            updateSection(section.id, { items: updatedItems });
+          }}
+          placeholder="Enter your full name"
+          className="form-input"
+        />
+      </div>
+    </div>
+  );
 
   // Text section editor
   const renderTextEditor = (section: Section) => (
