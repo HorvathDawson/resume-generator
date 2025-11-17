@@ -60,6 +60,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return layoutPages.map((page: any, index: number) => ({
       id: `page-${index + 1}`,
       pageNumber: index + 1,
+      footer: page.footer, // Preserve footer configuration
       rows: page.rows?.map((row: any, rowIndex: number) => ({
         id: `page-${index + 1}-row-${rowIndex}`,
         type: row.type === 'columns' ? 'columns' : 'wholePage',
@@ -100,6 +101,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = layoutPages.map((page: any, index: number) => ({
         id: `page-${index + 1}`,
         pageNumber: index + 1,
+        footer: page.footer, // Preserve footer configuration
         rows: page.rows?.map((row: any, rowIndex: number) => ({
           id: `page-${index + 1}-row-${rowIndex}`,
           type: row.type === 'columns' ? 'columns' : 'wholePage',
@@ -259,7 +261,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     setPages(updatedPages);
     
     // Notify parent of the change
-    onLayoutChange({ pages: updatedPages.map(p => ({ ...p, rows: p.rows })) });
+    onLayoutChange({ pages: updatedPages });
   };
 
   // Toggle item reordering mode for a section
@@ -391,7 +393,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      onLayoutChange({ pages: newPages });
       setDraggedSection(null);
     } else if (draggedRow !== null) {
       console.log('🔄 REORDERING ROW:', { draggedRow, targetRowIndex });
@@ -417,7 +419,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      onLayoutChange({ pages: newPages });
       setDraggedRow(null);
     }
   };
@@ -575,7 +577,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[safePageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      onLayoutChange({ pages: newPages });
       
       // Clear all drag state
       setDraggedSection(null);
@@ -625,7 +627,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             const newPages = [...pages];
             newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
             setPages(newPages);
-            onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+            onLayoutChange({ pages: newPages });
             
             // Clear all drag state
             setDraggedSection(null);
@@ -704,7 +706,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      onLayoutChange({ pages: newPages });
       
       // Clear all drag state
       setDraggedSection(null);
@@ -753,7 +755,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
     setPages(newPages);
-    onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+    onLayoutChange({ pages: newPages });
   };
 
   const addNewRow = (type: 'columns' | 'wholePage', insertIndex?: number) => {
@@ -782,7 +784,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
     setPages(newPages);
-    onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+    onLayoutChange({ pages: newPages });
   };
 
   const removeRow = (rowIndex: number) => {
@@ -790,7 +792,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages];
     newPages[currentPageIndex] = { ...currentPage, rows: newRows };
     setPages(newPages);
-    onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+    onLayoutChange({ pages: newPages });
   };
 
   const updateColumnWidth = (rowIndex: number, columnIndex: number, newWidth: string) => {
@@ -800,7 +802,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      onLayoutChange({ pages: newPages });
     }
   };
 
@@ -814,7 +816,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     const newPages = [...pages, newPage];
     setPages(newPages);
     setCurrentPageIndex(pages.length); // Switch to new page
-    onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+    onLayoutChange({ pages: newPages });
   };
 
   const removePage = (pageIndex: number) => {
@@ -1388,7 +1390,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
       setPages(newPages);
-      onLayoutChange({ pages: newPages.map(p => ({ ...p, rows: p.rows })) });
+      onLayoutChange({ pages: newPages });
     }
   };
 
@@ -1802,7 +1804,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   console.log('Current page footer before:', pages[currentPageIndex]?.footer);
                   updatePageFooter(e.target.value as any);
                 }}
-                className="footer-select"
+                className={`footer-select ${(pages[currentPageIndex]?.footer?.type && pages[currentPageIndex]?.footer?.type !== 'none') ? 'has-footer' : ''}`}
               >
                   <option value="none">No Footer</option>
                   <option value="default">Default Design</option>

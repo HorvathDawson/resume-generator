@@ -1277,6 +1277,15 @@
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
+  min-width: 140px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.65rem;
+  padding-right: 2rem;
 }
 
 .footer-select:hover {
@@ -1288,6 +1297,18 @@
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Style for when a footer is selected (not "none") */
+.footer-select.has-footer {
+  background-color: #f0f9ff;
+  border-color: #0ea5e9;
+  font-weight: 500;
+}
+
+.footer-select option:checked {
+  background-color: #2563eb;
+  color: white;
 }
 
 /* Adjust column-sections and whole-page-sections to connect with headers */
