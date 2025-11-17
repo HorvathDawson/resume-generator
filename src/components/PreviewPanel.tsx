@@ -266,7 +266,7 @@ export function PreviewPanel({
                 className="page-wrapper"
                 style={{ 
                   width: 'fit-content',
-                  minWidth: 'fit-content' 
+                  minWidth: 'fit-content',
                 }}
               >
                 <div className="page-number">Page {pageIndex + 1}</div>
@@ -282,6 +282,7 @@ export function PreviewPanel({
                     style={{
                       position: 'relative',
                       minHeight: '29.7cm',
+                      height: 'fit-content',
                       overflow: 'hidden'
                     }}
                   >
@@ -289,7 +290,8 @@ export function PreviewPanel({
                       className="page-content"
                       style={{
                         paddingBottom: page?.footer ? `calc(var(--page-margin) + ${page.footer.height})` : undefined,
-                        minHeight: page?.footer ? `calc(29.7cm - ${page.footer.height})` : '29.7cm'
+                        minHeight: page?.footer ? `calc(29.7cm - ${page.footer.height})` : '29.7cm',
+                        height: 'fit-content'
                       }}
                     >
                       {/* Render layout rows for this page */}

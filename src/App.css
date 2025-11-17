@@ -214,7 +214,7 @@
   width: auto;
   min-width: fit-content;
   height: 100vh;
-  overflow: hidden; /* Remove scrollbars */
+  overflow: hidden; /* No scrollbars on panel, only on container inside */
 }
 
 /* CSS Variables for consistent colors and spacing */
@@ -534,7 +534,7 @@
     flex: 1;
     width: 100% !important;
     height: 40vh !important;
-    overflow-x: auto;
+    overflow: hidden; /* No scrollbars on panel, only on container inside */
   }
   
   .top-left-menu {
@@ -586,7 +586,7 @@
   .editor-panel {
     flex: 1;
     min-width: 500px;
-    max-width: 800px;
+    /* Remove max-width to allow full expansion */
   }
   
   .preview-panel {
@@ -599,7 +599,7 @@
 @media (min-width: 1440px) {
   .editor-panel {
     flex: 1;
-    max-width: 900px;
+    /* Remove max-width to allow full expansion */
   }
 }
 
@@ -607,7 +607,7 @@
 @media (min-width: 1920px) {
   .editor-panel {
     flex: 1;
-    max-width: 1000px;
+    /* Remove max-width to allow full expansion */
   }
 }
 

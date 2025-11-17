@@ -3,10 +3,11 @@
   position: relative;
   width: fit-content;
   min-width: fit-content;
+  height: 100vh; /* Take full height */
   background: var(--color-gray-50);
   border: none;
   padding: var(--spacing-lg);
-  overflow: hidden; /* Remove scrollbars */
+  overflow: hidden; /* No scrollbars on the panel itself */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -56,9 +57,12 @@
   justify-content: center;
   align-items: flex-start;
   /* Width set dynamically via inline styles */
-  overflow: visible;
+  overflow-x: auto; /* Allow horizontal scrolling when needed */
+  overflow-y: auto; /* Allow vertical scrolling when needed */
   padding: var(--spacing-lg);
   gap: var(--spacing-2xl);
+  flex: 1; /* Take up remaining height after controls */
+  min-height: 0; /* Allow flex shrinking */
 }
 
 .page-wrapper {
@@ -67,6 +71,10 @@
   align-items: center;
   flex-shrink: 0;
   /* Width set to fit-content via inline styles */
+  margin-bottom: var(--spacing-lg); /* Add some spacing between multiple pages */
+  position: relative;
+  margin-bottom: var(--spacing-sm);
+
 }
 
 .page-number {
@@ -103,11 +111,6 @@
   gap: 0;
   padding: var(--spacing-sm) 0 0 0;
   overflow: visible; /* Prevent nested scrollbars */
-}
-
-.preview-panel .page-wrapper {
-  position: relative;
-  margin-bottom: var(--spacing-sm);
 }
 
 .preview-panel .page-number {
@@ -170,6 +173,8 @@
     padding: var(--spacing-sm);
     width: 100% !important;
     min-width: unset !important;
+    height: 40vh !important; /* Match mobile height from App.css */
+    overflow: hidden !important; /* No scrollbars on panel */
   }
   
   .preview-controls {
@@ -183,13 +188,11 @@
   .preview-container {
     width: 100% !important;
     min-width: unset !important;
+    padding: var(--spacing-sm);
+    justify-content: center;
+    overflow: auto !important; /* Ensure container can scroll on mobile */
   }
-  
-  .page-wrapper {
-    width: 100% !important;
-    min-width: unset !important;
-  }
-  
+
   .preview-controls h2 {
     font-size: 1.1rem;
   }
@@ -201,12 +204,6 @@
   
   .zoom-controls label {
     font-size: 0.8rem;
-  }
-  
-  .preview-container {
-    padding: var(--spacing-sm);
-    justify-content: center;
-    width: 100%;
   }
   
   .page-scale-wrapper {
