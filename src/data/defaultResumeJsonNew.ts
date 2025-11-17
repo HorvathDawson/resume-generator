@@ -187,53 +187,53 @@ export const defaultResumeJson = {
               {
                 "name": "Programming Languages",
                 "skills": [
-                  "JavaScript",
-                  "TypeScript",
-                  "Python",
-                  "Java",
-                  "Go"
+                  { "name": "JavaScript", "proficiency": 95 },
+                  { "name": "TypeScript", "proficiency": 90 },
+                  { "name": "Python", "proficiency": 85 },
+                  { "name": "Java", "proficiency": 80 },
+                  { "name": "Go", "proficiency": 75 }
                 ]
               },
               {
                 "name": "Frontend Technologies",
                 "skills": [
-                  "React",
-                  "Vue.js",
-                  "HTML5/CSS3",
-                  "Tailwind CSS",
-                  "Webpack"
+                  { "name": "React", "proficiency": 92 },
+                  { "name": "Vue.js", "proficiency": 78 },
+                  { "name": "HTML5/CSS3", "proficiency": 95 },
+                  { "name": "Tailwind CSS", "proficiency": 88 },
+                  { "name": "Webpack", "proficiency": 82 }
                 ]
               },
               {
                 "name": "Backend Technologies",
                 "skills": [
-                  "Node.js",
-                  "Express.js",
-                  "Django",
-                  "Flask",
-                  "RESTful APIs",
-                  "GraphQL"
+                  { "name": "Node.js", "proficiency": 90 },
+                  { "name": "Express.js", "proficiency": 88 },
+                  { "name": "Django", "proficiency": 75 },
+                  { "name": "Flask", "proficiency": 70 },
+                  { "name": "RESTful APIs", "proficiency": 93 },
+                  { "name": "GraphQL", "proficiency": 85 }
                 ]
               },
               {
                 "name": "Databases",
                 "skills": [
-                  "PostgreSQL",
-                  "MongoDB",
-                  "Redis",
-                  "MySQL",
-                  "Elasticsearch"
+                  { "name": "PostgreSQL", "proficiency": 87 },
+                  { "name": "MongoDB", "proficiency": 82 },
+                  { "name": "Redis", "proficiency": 78 },
+                  { "name": "MySQL", "proficiency": 85 },
+                  { "name": "Elasticsearch", "proficiency": 75 }
                 ]
               },
               {
                 "name": "Cloud & DevOps",
                 "skills": [
-                  "AWS",
-                  "Docker",
-                  "Kubernetes",
-                  "Jenkins",
-                  "Terraform",
-                  "Git"
+                  { "name": "AWS", "proficiency": 85 },
+                  { "name": "Docker", "proficiency": 90 },
+                  { "name": "Kubernetes", "proficiency": 80 },
+                  { "name": "Jenkins", "proficiency": 75 },
+                  { "name": "Terraform", "proficiency": 78 },
+                  { "name": "Git", "proficiency": 95 }
                 ]
               }
             ]

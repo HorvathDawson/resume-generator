@@ -633,11 +633,20 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
                           section.items?.[0]?.categories || 
                           [];
     
-    // Ensure all categories have IDs for consistent management
+    // Ensure all categories have IDs for consistent management and convert legacy skills
     const categories = rawCategories.map((cat: any, index: number) => ({
       ...cat,
       id: cat.id || `category-${cat.name || index}`,
-      skills: cat.skills || []
+      skills: (cat.skills || []).map((skill: any) => {
+        // Convert legacy string skills to objects
+        if (typeof skill === 'string') {
+          return {
+            name: skill,
+            proficiency: 85 // Default proficiency for legacy skills
+          };
+        }
+        return skill;
+      })
     }));
 
     const updateSkillsCategories = (newCategories: any[]) => {
@@ -729,10 +738,16 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
                     // Handle comma-separated skills
                     const skillsToAdd = inputValue.split(',').map(skill => skill.trim()).filter(skill => skill);
                     const currentSkills = category.skills || [];
-                    const existingSkillsLower = currentSkills.map((s: string) => s.toLowerCase());
-                    const newSkills = skillsToAdd.filter(skill => 
-                      !existingSkillsLower.includes(skill.toLowerCase())
-                    );
+                    const existingSkillsLower = currentSkills.map((s: any) => {
+                      const skillName = typeof s === 'string' ? s : s.name || s;
+                      return skillName.toLowerCase();
+                    });
+                    const newSkills = skillsToAdd
+                      .filter(skill => !existingSkillsLower.includes(skill.toLowerCase()))
+                      .map(skill => ({
+                        name: skill,
+                        proficiency: 85 // Default proficiency level
+                      }));
                     
                     if (newSkills.length > 0) {
                       const categoryKey = category.id || category.name;
@@ -758,28 +773,70 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
               />
               <div className="skills-tags-container">
                 {category.skills && category.skills.length > 0 ? (
-                  category.skills.map((skill: string, skillIndex: number) => (
-                    <div key={skillIndex} className="skill-tag-item">
-                      <span className="skill-tag-text">{skill}</span>
-                      <button
-                        className="skill-tag-delete"
-                        onClick={() => {
-                          const categoryKey = category.id || category.name;
-                          const updatedCategories = categories.map((cat: any) => {
-                            const catKey = cat.id || cat.name;
-                            return catKey === categoryKey ? {
-                              ...cat,
-                              skills: cat.skills.filter((_: any, index: number) => index !== skillIndex)
-                            } : cat;
-                          });
-                          updateSkillsCategories(updatedCategories);
-                        }}
-                        title="Remove skill"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))
+                  category.skills.map((skill: any, skillIndex: number) => {
+                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
+                    const skillProficiency = typeof skill === 'object' && skill.proficiency ? skill.proficiency : 85;
+                    
+                    const updateSkill = (newName: string, newProficiency: number) => {
+                      const categoryKey = category.id || category.name;
+                      const updatedCategories = categories.map((cat: any) => {
+                        const catKey = cat.id || cat.name;
+                        if (catKey === categoryKey) {
+                          const updatedSkills = [...cat.skills];
+                          updatedSkills[skillIndex] = {
+                            name: newName.trim(),
+                            proficiency: Math.max(1, Math.min(100, newProficiency))
+                          };
+                          return { ...cat, skills: updatedSkills };
+                        }
+                        return cat;
+                      });
+                      updateSkillsCategories(updatedCategories);
+                    };
+
+                    return (
+                      <div key={skillIndex} className="skill-bubble-editor">
+                        <div className="skill-bubble-container">
+                          <input
+                            type="text"
+                            value={skillName}
+                            onChange={(e) => updateSkill(e.target.value, skillProficiency)}
+                            className="skill-bubble-input"
+                            placeholder="Skill name"
+                          />
+                          <button
+                            className="skill-bubble-delete"
+                            onClick={() => {
+                              const categoryKey = category.id || category.name;
+                              const updatedCategories = categories.map((cat: any) => {
+                                const catKey = cat.id || cat.name;
+                                return catKey === categoryKey ? {
+                                  ...cat,
+                                  skills: cat.skills.filter((_: any, index: number) => index !== skillIndex)
+                                } : cat;
+                              });
+                              updateSkillsCategories(updatedCategories);
+                            }}
+                            title="Remove skill"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className="skill-controls">
+                          <input
+                            type="range"
+                            min="1"
+                            max="100"
+                            value={skillProficiency}
+                            onChange={(e) => updateSkill(skillName, parseInt(e.target.value))}
+                            className="skill-slider"
+                            title={`Proficiency: ${skillProficiency}%`}
+                          />
+                          <span className="skill-value-display">{skillProficiency}%</span>
+                        </div>
+                      </div>
+                    );
+                  })
                 ) : (
                   <div className="skills-empty-state">
                     No skills added yet. Type skills in the input above and press Enter.

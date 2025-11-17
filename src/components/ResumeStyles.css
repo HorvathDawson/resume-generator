@@ -362,7 +362,7 @@
 
 .resume-preview .experience .experience-body li {
   margin-bottom: 0.1cm;
-  font-size: var(--font-size-experience-body);
+  font-size: var(--font-size-body);
   list-style-type: disc;
 }
 
@@ -739,15 +739,20 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.2cm;
+  line-height: 1.6;
 }
 
 .resume-preview .skills-section .skill-tag {
-  background-color: #f0f0f0;
-  padding: 0.1cm 0.2cm;
-  border-radius: 0.1cm;
-  font-size: calc(var(--font-size-small) * 0.9);
-  color: #555;
-  border: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+  padding: 0.12cm 0.25cm;
+  border-radius: 0.15cm;
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: #374151;
+  border: 1px solid #d1d5db;
+  margin: 0.05cm;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  white-space: nowrap;
+  font-weight: 500;
 }
 
 /* Skills template variations - bars and cloud styles */
@@ -766,49 +771,256 @@
 .resume-preview .skills-section.bars .skill-bar-item {
   display: flex;
   align-items: center;
-  margin-bottom: 0.2cm;
+  margin-bottom: 0.25cm;
+  gap: 0.3cm;
 }
 
 .resume-preview .skills-section.bars .skill-name {
-  width: 3cm;
+  min-width: 3.5cm;
   font-size: var(--font-size-small);
-  margin-right: 0.3cm;
+  font-weight: 500;
+  color: var(--text-color);
 }
 
 .resume-preview .skills-section.bars .skill-progress {
   flex: 1;
-  height: 0.2cm;
-  background-color: #e0e0e0;
-  border-radius: 0.1cm;
+  height: 0.25cm;
+  background-color: #e5e7eb;
+  border-radius: 0.125cm;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .resume-preview .skills-section.bars .skill-bar {
   height: 100%;
-  background-color: var(--primary-color);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color, #4a90e2));
+  border-radius: 0.125cm;
+  transition: width 0.5s ease-in-out;
+  position: relative;
+}
+
+.resume-preview .skills-section.bars .skill-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  border-radius: 0.125cm;
+}
+
+.resume-preview .skills-section.bars .skill-percentage {
+  min-width: 1cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--primary-color);
+  font-weight: 600;
+  text-align: right;
 }
 
 .resume-preview .skills-section.cloud .skills-cloud {
-  margin: 0.2cm 0;
-  line-height: 1.8;
+  margin: 0.3cm 0;
+  line-height: 2.2;
+  text-align: center;
 }
 
 .resume-preview .skills-section.cloud .skill-cloud-tag {
   display: inline-block;
-  background-color: #f0f0f0;
-  padding: 0.1cm 0.2cm;
-  margin: 0.05cm;
-  border-radius: 0.1cm;
+  background-color: #f8f9fa;
+  padding: 0.15cm 0.3cm;
+  margin: 0.1cm 0.15cm;
+  border-radius: 0.3cm;
   font-size: var(--font-size-small);
-  color: #555;
-  border: 1px solid #e0e0e0;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  transition: all 0.3s ease;
+  cursor: default;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.resume-preview .skills-section.cloud .skill-cloud-tag:nth-child(5n) {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color, #4a90e2));
+  color: white;
+  border-color: var(--primary-color);
+  font-weight: 600;
 }
 
 .resume-preview .skills-section.cloud .skill-cloud-tag:nth-child(3n) {
-  background-color: #e8f4f8;
-  border-color: var(--primary-color);
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.resume-preview .skills-section.cloud .skill-cloud-tag:nth-child(7n) {
+  background-color: #f0fdf4;
+  border-color: #22c55e;
+  color: #166534;
+}
+
+.resume-preview .skills-section.cloud .skill-cloud-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Skills Grid Layout (Wide) Template */
+.resume-preview .skills-wide .skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr));
+  gap: 0.4cm;
+  margin: 0.3cm 0;
+}
+
+.resume-preview .skills-wide .skill-category-wide {
+  margin-bottom: 0.3cm;
+}
+
+.resume-preview .skills-wide .skill-category-wide h3 {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  margin-bottom: 0.2cm;
   color: var(--primary-color);
+}
+
+.resume-preview .skills-wide .tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15cm;
+}
+
+.resume-preview .skills-wide .cvtag-wide {
+  background: var(--secondary-color, #f8f9fa);
+  color: var(--text-color, #333);
+  padding: 0.15cm 0.25cm;
+  border-radius: 0.2cm;
+  font-size: var(--font-size-small);
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.resume-preview .skills-wide .cvtag-wide:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Skills Inline Layout (Wide2) Template */
+.resume-preview .skills-wide2 .skills-list {
+  margin: 0.2cm 0;
+}
+
+.resume-preview .skills-wide2 .skill-line {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.25cm;
+  gap: 0.3cm;
+}
+
+.resume-preview .skills-wide2 .category-label {
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  min-width: 3cm;
+  flex-shrink: 0;
+}
+
+.resume-preview .skills-wide2 .tags-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15cm;
+  flex: 1;
+}
+
+.resume-preview .skills-wide2 .skill-tag {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.15cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  border: 1px solid #d1d5db;
+  white-space: nowrap;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+.resume-preview .skills-wide2 .skill-tag:nth-child(odd) {
+  background: #eff6ff;
+  color: #1e40af;
+  border-color: #c7d2fe;
+}
+
+/* Skills Columns Layout Template */
+.resume-preview .skills-section.columns .skills-columns-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.5cm, 1fr));
+  gap: 0.5cm;
+  margin: 0.3cm 0;
+}
+
+.resume-preview .skills-section.columns .skill-column {
+  background: var(--secondary-color, #f8f9fa);
+  border: 1px solid #e5e7eb;
+  border-radius: 0.2cm;
+  padding: 0.3cm;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.resume-preview .skills-section.columns .column-header {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.25cm;
+  padding-bottom: 0.1cm;
+  border-bottom: 2px solid var(--primary-color);
+  text-align: center;
+}
+
+.resume-preview .skills-section.columns .column-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cm;
+}
+
+.resume-preview .skills-section.columns .column-skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.1cm 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.resume-preview .skills-section.columns .column-skill-item:last-child {
+  border-bottom: none;
+}
+
+.resume-preview .skills-section.columns .column-skill-name {
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  font-weight: 500;
+  flex: 1;
+}
+
+.resume-preview .skills-section.columns .column-skill-indicator {
+  flex-shrink: 0;
+  margin-left: 0.2cm;
+}
+
+.resume-preview .skills-section.columns .skill-dots {
+  display: flex;
+  gap: 0.05cm;
+}
+
+.resume-preview .skills-section.columns .skill-dot {
+  width: 0.15cm;
+  height: 0.15cm;
+  border-radius: 50%;
+  background: #d1d5db;
+  transition: background-color 0.3s ease;
+}
+
+.resume-preview .skills-section.columns .skill-dot.filled {
+  background: var(--primary-color);
+  box-shadow: 0 0 0.1cm rgba(44, 90, 160, 0.3);
 }
 
 /* Text section styles - multiple variations */
@@ -941,35 +1153,6 @@
    COMMON ELEMENT STYLES - Used across multiple templates
    ============================================================================ */
 
-.organization {
-  font-weight: 600;
-  color: #374151;
-  margin: 0.1cm 0;
-  font-size: 0.35cm;
-}
-
-.dates {
-  color: #6b7280;
-  font-style: italic;
-  margin: 0.1cm 0;
-  font-size: 0.32cm;
-}
-
-.description {
-  margin: 0.2cm 0;
-  font-size: 0.35cm;
-}
-
-.details {
-  margin: 0.2cm 0;
-  padding-left: 0.5cm;
-  font-size: 0.33cm;
-}
-
-.details li {
-  margin-bottom: 0.1cm;
-}
-
 .fw-bold {
   font-weight: 600;
 }
@@ -1017,72 +1200,7 @@
   color: #4b5563;
 }
 
-/* ============================================================================
-   EDUCATION TEMPLATES
-   ============================================================================ */
 
-.education ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.education li {
-  margin-bottom: 0.4cm;
-  width: 100%;
-}
-
-.education-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.education-item {
-  margin-bottom: 0.4cm;
-}
-
-.education-item-header {
-  margin-bottom: 0.2cm;
-}
-
-.institution {
-  font-weight: 600;
-  font-size: 0.35cm;
-  margin-bottom: 0.1cm;
-}
-
-.degree {
-  font-size: 0.33cm;
-  margin-bottom: 0.1cm;
-}
-
-.location {
-  font-size: 0.3cm;
-  color: #6b7280;
-  margin-bottom: 0.1cm;
-}
-
-.gpa-inline {
-  font-size: 0.3cm;
-  color: #4b5563;
-}
-
-.education-details {
-  margin-top: 0.15cm;
-}
-
-.education-details ul {
-  margin: 0;
-  padding-left: 0.4cm;
-  font-size: 0.32cm;
-}
-
-.education-details li {
-  margin-bottom: 0.05cm;
-}
 
 /* Education Timeline Template - matching original styling */
 .resume-preview .education.timeline .education-timeline {
@@ -1252,51 +1370,7 @@
   margin-bottom: 0.05cm;
 }
 
-/* ============================================================================
-   EXPERIENCE TEMPLATES
-   ============================================================================ */
 
-.experience ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.experience li {
-  margin-bottom: 0.4cm;
-}
-
-.experience-header {
-  margin-bottom: 0.2cm;
-}
-
-.experience-header .first-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 0.1cm;
-}
-
-.experience-header .second-row {
-  font-size: 0.32cm;
-  color: #6b7280;
-  margin-bottom: 0.1cm;
-}
-
-.experience-body {
-  margin-top: 0.1cm;
-}
-
-.experience-body ul {
-  margin: 0;
-  padding-left: 0.5cm;
-}
-
-.experience-body li {
-  margin-bottom: 0.1cm;
-  font-size: 0.33cm;
-  line-height: 1.4;
-}
 
 /* Experience Timeline - Original Styling */
 .resume-preview .experience {
@@ -1395,26 +1469,7 @@
   list-style-type: disc;
 }
 
-/* Experience Minimal Template */
-.experience-minimal-list {
-  margin: 0;
-  padding: 0;
-}
 
-.experience-item-minimal {
-  margin-bottom: 0.3cm;
-}
-
-.exp-header-minimal {
-  font-size: 0.35cm;
-  margin-bottom: 0.1cm;
-}
-
-.exp-summary {
-  font-size: 0.32cm;
-  color: #4b5563;
-  margin-left: 0.2cm;
-}
 
 /* Experience Cards Template - Original Styling */
 .resume-preview .experience.cards .experience-cards-grid {
@@ -1464,206 +1519,11 @@
   margin-bottom: 0.05cm;
 }
 
-/* Experience Compact Template */
-.experience-compact {
-  margin-bottom: 0.5cm;
-  width: 100%;
-}
 
-.experience-compact-list {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
 
-.experience-item-compact {
-  margin-bottom: 0.25cm;
-  width: 100%;
-  box-sizing: border-box;
-}
 
-/* Experience Sidebar Template */
-.experience-sidebar .experience-sidebar-list {
-  margin: 0;
-  padding: 0;
-}
 
-.experience-sidebar-item {
-  margin-bottom: 0.3cm;
-  padding-bottom: 0.2cm;
-  border-bottom: 1px solid #e5e7eb;
-}
 
-.experience-sidebar-item:last-child {
-  border-bottom: none;
-}
-
-.sidebar-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05cm;
-  margin-bottom: 0.1cm;
-}
-
-.sidebar-title {
-  font-weight: 600;
-  font-size: 0.32cm;
-  color: #374151;
-}
-
-.sidebar-company {
-  font-size: 0.3cm;
-  color: #6b7280;
-}
-
-.sidebar-dates {
-  font-size: 0.28cm;
-  color: #9ca3af;
-  font-style: italic;
-}
-
-.sidebar-summary {
-  font-size: 0.3cm;
-  line-height: 1.3;
-  color: #4b5563;
-}
-
-/* ============================================================================
-   SKILLS TEMPLATES
-   ============================================================================ */
-
-.skills-section {
-  margin-bottom: 0.6cm;
-}
-
-.skill-category {
-  margin-bottom: 0.3cm;
-}
-
-.category-name {
-  font-size: 0.38cm;
-  font-weight: 600;
-  margin-bottom: 0.15cm;
-  color: #374151;
-}
-
-.skills-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.15cm;
-}
-
-.skill-tag {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.1cm 0.2cm;
-  border-radius: 0.1cm;
-  font-size: 0.3cm;
-  white-space: nowrap;
-}
-
-/* Skills Detailed Template */
-.skills-detailed .skill-category-detailed {
-  margin-bottom: 0.4cm;
-}
-
-.skills-detailed .category-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 0.1cm;
-}
-
-.skills-detailed .proficiency {
-  font-size: 0.28cm;
-  color: #6b7280;
-  font-style: italic;
-}
-
-.skills-detailed .skills-description {
-  font-size: 0.32cm;
-  color: #4b5563;
-  margin-top: 0.05cm;
-}
-
-/* Skills Compact Template */
-.skills-compact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4cm;
-}
-
-.skills-compact .skill-group {
-  flex: 1;
-  min-width: 0;
-}
-
-.skills-compact .category-name {
-  font-size: 0.32cm;
-  margin-bottom: 0.1cm;
-}
-
-.skills-compact .skills-list {
-  font-size: 0.28cm;
-  line-height: 1.3;
-}
-
-/* ============================================================================
-   PROJECTS TEMPLATES
-   ============================================================================ */
-
-.projects ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.projects li {
-  margin-bottom: 0.4cm;
-}
-
-.project-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 0.1cm;
-}
-
-.project-name {
-  font-weight: bold;
-  font-size: 0.35cm;
-  color: #111827;
-}
-
-.project-dates {
-  color: #6b7280;
-  font-style: italic;
-  font-size: 0.3cm;
-}
-
-.project-description {
-  margin: 0.15cm 0;
-  font-size: 0.33cm;
-  line-height: 1.3;
-}
-
-.project-technologies {
-  margin: 0.1cm 0;
-  font-size: 0.3cm;
-  color: #4b5563;
-  font-style: italic;
-}
-
-.project-links {
-  margin: 0.1cm 0;
-  font-size: 0.3cm;
-}
-
-.project-links a {
-  color: #2563eb;
-  text-decoration: none;
-  margin-right: 0.3cm;
-}
 
 /* ============================================================================
    PERSONAL INFO / CONTACT TEMPLATES
@@ -1786,175 +1646,13 @@
   margin-bottom: 0.05cm;
 }
 
-/* ============================================================================
-   NAME TEMPLATES
-   ============================================================================ */
 
-.name-section {
-  text-align: center;
-  margin-bottom: 0.4cm;
-}
 
-.name-section h1 {
-  font-size: 0.8cm;
-  margin: 0;
-  color: #111827;
-  font-weight: bold;
-  letter-spacing: 0.05cm;
-}
 
-.name-subtitle {
-  font-size: 0.4cm;
-  color: #6b7280;
-  margin-top: 0.1cm;
-  font-style: italic;
-}
 
-/* Name Large Template */
-.name-large h1 {
-  font-size: 1cm;
-  margin-bottom: 0.2cm;
-}
 
-.name-large .name-subtitle {
-  font-size: 0.45cm;
-}
 
-/* Name Minimal Template */
-.name-minimal {
-  text-align: left;
-}
 
-.name-minimal h1 {
-  font-size: 0.6cm;
-  margin-bottom: 0.1cm;
-}
-
-.name-minimal .name-subtitle {
-  font-size: 0.35cm;
-}
-
-/* ============================================================================
-   VOLUNTEER EXPERIENCE TEMPLATES
-   ============================================================================ */
-
-.volunteer ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.volunteer li {
-  margin-bottom: 0.4cm;
-}
-
-.volunteer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 0.1cm;
-}
-
-.volunteer-role {
-  font-weight: bold;
-  font-size: 0.35cm;
-  color: #111827;
-}
-
-.volunteer-organization {
-  font-weight: 600;
-  font-size: 0.33cm;
-  color: #374151;
-  margin: 0.05cm 0;
-}
-
-.volunteer-dates {
-  color: #6b7280;
-  font-style: italic;
-  font-size: 0.3cm;
-}
-
-.volunteer-description {
-  margin: 0.15cm 0;
-  font-size: 0.32cm;
-}
-
-/* ============================================================================
-   CERTIFICATIONS TEMPLATES
-   ============================================================================ */
-
-.certifications ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.certifications li {
-  margin-bottom: 0.3cm;
-}
-
-.certification-name {
-  font-weight: bold;
-  font-size: 0.35cm;
-  color: #111827;
-  margin-bottom: 0.05cm;
-}
-
-.certification-issuer {
-  font-size: 0.32cm;
-  color: #374151;
-  margin-bottom: 0.05cm;
-}
-
-.certification-date {
-  font-size: 0.3cm;
-  color: #6b7280;
-  font-style: italic;
-}
-
-.certification-id {
-  font-size: 0.28cm;
-  color: #9ca3af;
-  margin-top: 0.05cm;
-}
-
-/* ============================================================================
-   REFERENCES TEMPLATES
-   ============================================================================ */
-
-.references ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.references li {
-  margin-bottom: 0.4cm;
-}
-
-.reference-name {
-  font-weight: bold;
-  font-size: 0.35cm;
-  color: #111827;
-  margin-bottom: 0.05cm;
-}
-
-.reference-title {
-  font-size: 0.32cm;
-  color: #374151;
-  margin-bottom: 0.05cm;
-}
-
-.reference-company {
-  font-size: 0.3cm;
-  color: #6b7280;
-  margin-bottom: 0.1cm;
-}
-
-.reference-contact {
-  font-size: 0.3cm;
-  color: #4b5563;
-}
 
 /* ============================================================================
    UTILITY CLASSES - Helper styles for templates
@@ -1971,12 +1669,6 @@
   display: inline-block;
 }
 
-.continuation {
-  font-style: italic;
-  color: #6b7280;
-  font-weight: normal;
-}
-
 /* Links in resume content */
 .section a {
   color: #2563eb;
@@ -1987,17 +1679,147 @@
   text-decoration: underline;
 }
 
+/* ============================================================================
+   SKILLS EDITOR STYLES - Interactive editing components
+   ============================================================================ */
+
+.skill-bubble-editor {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.4cm;
+  padding: 0.2cm;
+  margin: 0.1cm;
+  min-width: 6cm;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.skill-bubble-editor:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+}
+
+.skill-bubble-container {
+  display: flex;
+  align-items: center;
+  gap: 0.2cm;
+  margin-bottom: 0.15cm;
+}
+
+.skill-bubble-input {
+  flex: 1;
+  padding: 0.15cm 0.25cm;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 0.3cm;
+  font-size: 0.32cm;
+  font-weight: 500;
+  color: #374151;
+  min-width: 0;
+  transition: background-color 0.2s;
+}
+
+.skill-bubble-input:focus {
+  outline: none;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.skill-bubble-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 0.6cm;
+  height: 0.6cm;
+  font-size: 0.3cm;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.skill-bubble-delete:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.skill-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3cm;
+}
+
+.skill-slider {
+  flex: 1;
+  height: 0.2cm;
+  background: #e5e7eb;
+  border-radius: 0.1cm;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.skill-slider:hover {
+  background: #d1d5db;
+}
+
+.skill-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.5cm;
+  height: 0.5cm;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.2s;
+}
+
+.skill-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+
+.skill-slider::-moz-range-thumb {
+  width: 0.5cm;
+  height: 0.5cm;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.2s;
+}
+
+.skill-value-display {
+  background: #3b82f6;
+  color: white;
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.2cm;
+  font-size: 0.3cm;
+  font-weight: 600;
+  min-width: 1.2cm;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive layout for skills editor */
+.skills-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2cm;
+  margin-top: 0.3cm;
+}
+
 /* Print-specific styles */
 @media print {
   .section {
     page-break-inside: avoid;
-  }
-  
-  .experience-header,
-  .education-item-header,
-  .project-header,
-  .volunteer-header {
-    page-break-after: avoid;
   }
 }
 
