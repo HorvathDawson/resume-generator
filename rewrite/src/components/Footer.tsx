@@ -143,9 +143,7 @@ const ModernFooter = () => (
     <div className="footer-content">
       <div className="footer-line"></div>
       <div className="footer-text">
-        <span className="footer-accent">•</span>
-        <span className="footer-message">Professional Portfolio</span>
-        <span className="footer-accent">•</span>
+        <span className="footer-accent">●</span>
       </div>
       <div className="footer-gradient"></div>
     </div>

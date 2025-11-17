@@ -193,8 +193,21 @@
   #resume-preview .a4-page {
     width: 21cm !important;
     min-height: 29.7cm !important;
+    height: 29.7cm !important;
     margin: 0 !important;
     box-shadow: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  /* Footer positioning for print */
+  #resume-preview .a4-page .footer-container,
+  #resume-preview .a4-page > div[style*="position: absolute"] {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 10 !important;
   }
 }
 

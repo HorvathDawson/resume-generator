@@ -236,11 +236,19 @@ export function PreviewPanel({
                     transformOrigin: 'top left'
                   }}
                 >
-                  <div className="a4-page resume-page">
+                  <div 
+                    className="a4-page resume-page"
+                    style={{
+                      position: 'relative',
+                      minHeight: '29.7cm',
+                      overflow: 'hidden'
+                    }}
+                  >
                     <div 
                       className="page-content"
                       style={{
-                        paddingBottom: page?.footer ? `calc(var(--page-margin) + ${page.footer.height})` : undefined
+                        paddingBottom: page?.footer ? `calc(var(--page-margin) + ${page.footer.height})` : undefined,
+                        minHeight: page?.footer ? `calc(29.7cm - ${page.footer.height})` : '29.7cm'
                       }}
                     >
                       {/* Render layout rows for this page */}
@@ -431,9 +439,21 @@ export function PreviewPanel({
                         return null;
                       })}
                     </div>
-                    {/* Render footer if configured for this page */}
+                    {/* Render footer if configured for this page - positioned absolutely at bottom */}
                     {page?.footer && (
-                      <Footer config={page.footer} />
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: page.footer.height,
+                          backgroundColor: page.footer.backgroundColor || 'transparent',
+                          color: page.footer.textColor || 'inherit'
+                        }}
+                      >
+                        <Footer config={page.footer} />
+                      </div>
                     )}
                   </div>
                 </div>
