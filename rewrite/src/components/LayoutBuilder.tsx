@@ -1651,6 +1651,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         }`}
                         draggable={true}
                         onDragStart={(e) => handleDragStart(e, section.id)}
+                        onDragEnd={() => {
+                          console.log('🔚 SIDEBAR SECTION DRAG END - Resetting state');
+                          setDraggedSection(null);
+                          setDragOverTarget(null);
+                        }}
                         title={
                           (section as any).isUsed ?
                             `${section.title} is already used in layout (drag to add another instance)` :
@@ -1719,6 +1724,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                     className="layout-button-item"
                     draggable={true}
                     onDragStart={(e) => handleLayoutButtonDragStart(e, 'columns')}
+                    onDragEnd={() => {
+                      console.log('🔚 LAYOUT BUTTON DRAG END - Resetting state');
+                      setDraggedLayoutButton(null);
+                      setDragOverTarget(null);
+                    }}
                   >
                     <div className="layout-button-preview">
                       <div className="layout-preview-columns">
@@ -1733,6 +1743,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                     className="layout-button-item"
                     draggable={true}
                     onDragStart={(e) => handleLayoutButtonDragStart(e, 'wholePage')}
+                    onDragEnd={() => {
+                      console.log('🔚 LAYOUT BUTTON DRAG END - Resetting state');
+                      setDraggedLayoutButton(null);
+                      setDragOverTarget(null);
+                    }}
                   >
                     <div className="layout-button-preview">
                       <div className="layout-preview-whole">
@@ -1836,6 +1851,11 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   className="layout-row-builder"
                   draggable
                   onDragStart={(e) => handleRowDragStart(e, rowIndex)}
+                  onDragEnd={() => {
+                    console.log('🔚 ROW DRAG END - Resetting all drag states');
+                    setDraggedRow(null);
+                    setDragOverTarget(null);
+                  }}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, rowIndex)}
                 >
