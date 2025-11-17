@@ -1,4 +1,3 @@
-import React from 'react';
 import './ImportConfirmationDialog.css';
 
 interface ImportConfirmationDialogProps {

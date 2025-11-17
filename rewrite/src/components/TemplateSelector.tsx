@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Section } from '../types/resume';
-import { TEMPLATE_REGISTRY, type TemplateOption } from './templates/TemplateRegistry';
+import { TEMPLATE_REGISTRY } from './templates/TemplateRegistry';
 
 interface TemplateSelectorProps {
   section: Section;

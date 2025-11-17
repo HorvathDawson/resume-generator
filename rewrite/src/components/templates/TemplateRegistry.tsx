@@ -1027,7 +1027,7 @@ export const PersonalInfoTemplates = {
     id: 'personal-info-standard',
     name: 'Standard Contact',
     description: 'Vertical contact information',
-    component: ({ section, personalInfo }: { section: any; personalInfo: any }) => (
+    component: ({ section: _section, personalInfo }: { section: any; personalInfo: any }) => (
       <div className="contact-info">
         <ul>
           {personalInfo?.email && (
@@ -1075,7 +1075,7 @@ export const PersonalInfoTemplates = {
     id: 'personal-info-wide',
     name: 'Horizontal Contact',
     description: 'Horizontal contact information line',
-    component: ({ section, personalInfo }: { section: any; personalInfo: any }) => (
+    component: ({ section: _section, personalInfo }: { section: any; personalInfo: any }) => (
       <div className="contact-info-wide">
         <div className="contact-line">
           {personalInfo?.email && (

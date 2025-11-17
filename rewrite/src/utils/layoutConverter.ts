@@ -1,4 +1,14 @@
-import type { FlexLayoutConfig, FlexPageLayout, ColumnPair, WholePageRow } from '../types/layout';
+import type { FlexLayoutConfig, FlexPageLayout, ColumnPair, WholePageRow, SectionReference } from '../types/layout';
+
+// Helper function to convert old string[] to new SectionReference[]
+function mapSectionsToReferences(sectionIds: string[]): SectionReference[] {
+  if (!sectionIds) return [];
+  return sectionIds.map(id => ({
+    id: id, // Use section ID as the reference ID for simplicity
+    type: 'section', // Assume all old sections are "base" sections
+    sectionId: id,
+  }));
+}
 
 // Convert old layout format to new flexible layout format
 export function convertToFlexLayout(oldResumeData: any): FlexLayoutConfig {
@@ -27,14 +37,14 @@ export function convertToFlexLayout(oldResumeData: any): FlexLayoutConfig {
         left: {
           id: `left-${index}`,
           width: leftWidth,
-          sections: page.leftColumn || [],
+          sections: mapSectionsToReferences(page.leftColumn || []),
           backgroundColor: pageStyle?.leftColumn?.backgroundColor,
           textColor: pageStyle?.leftColumn?.textColor,
         },
         right: {
           id: `right-${index}`,
           width: rightWidth,
-          sections: page.rightColumn || [],
+          sections: mapSectionsToReferences(page.rightColumn || []),
           backgroundColor: pageStyle?.rightColumn?.backgroundColor,
           textColor: pageStyle?.rightColumn?.textColor,
         }
@@ -46,7 +56,7 @@ export function convertToFlexLayout(oldResumeData: any): FlexLayoutConfig {
     if (page.wholePage?.length > 0) {
       const wholePageRow: WholePageRow = {
         id: `wholepage-${index}`,
-        sections: page.wholePage,
+        sections: mapSectionsToReferences(page.wholePage),
         backgroundColor: pageStyle?.backgroundColor || pageStyle?.rightColumn?.backgroundColor,
         textColor: pageStyle?.textColor || pageStyle?.rightColumn?.textColor,
       };
@@ -71,6 +81,7 @@ export function convertToFlexLayout(oldResumeData: any): FlexLayoutConfig {
 
   return {
     pages,
+    sectionInstances: [], // Added missing property
     globalStyles: {
       fontSizes: globalStyles?.fontSizes || {
         h1: '1.3cm',
@@ -104,7 +115,7 @@ export function createLayoutTemplate(
     case 'single-column':
       return {
         id: 'wholepage-row',
-        sections,
+        sections: mapSectionsToReferences(sections),
       } as WholePageRow;
 
     case 'two-column-equal':
@@ -113,12 +124,12 @@ export function createLayoutTemplate(
         left: {
           id: 'left-col',
           width: 50,
-          sections: sections.slice(0, Math.ceil(sections.length / 2)),
+          sections: mapSectionsToReferences(sections.slice(0, Math.ceil(sections.length / 2))),
         },
         right: {
           id: 'right-col',
           width: 50,
-          sections: sections.slice(Math.ceil(sections.length / 2)),
+          sections: mapSectionsToReferences(sections.slice(Math.ceil(sections.length / 2))),
         }
       } as ColumnPair;
 
@@ -129,12 +140,12 @@ export function createLayoutTemplate(
         left: {
           id: 'left-col',
           width: 70,
-          sections: sections.slice(0, Math.ceil(sections.length * 0.7)),
+          sections: mapSectionsToReferences(sections.slice(0, Math.ceil(sections.length * 0.7))),
         },
         right: {
           id: 'right-col',
           width: 30,
-          sections: sections.slice(Math.ceil(sections.length * 0.7)),
+          sections: mapSectionsToReferences(sections.slice(Math.ceil(sections.length * 0.7))),
         }
       } as ColumnPair;
 
@@ -145,12 +156,12 @@ export function createLayoutTemplate(
         left: {
           id: 'left-col',
           width: 30,
-          sections: sections.slice(0, Math.ceil(sections.length * 0.3)),
+          sections: mapSectionsToReferences(sections.slice(0, Math.ceil(sections.length * 0.3))),
         },
         right: {
           id: 'right-col',
           width: 70,
-          sections: sections.slice(Math.ceil(sections.length * 0.3)),
+          sections: mapSectionsToReferences(sections.slice(Math.ceil(sections.length * 0.3))),
         }
       } as ColumnPair;
 
@@ -176,12 +187,12 @@ export function createCustomMixedLayout(
       left: {
         id: 'row-1-left',
         width: 30,
-        sections: firstRowSections,
+        sections: mapSectionsToReferences(firstRowSections),
       },
       right: {
         id: 'row-1-right', 
         width: 70,
-        sections: secondRowSections,
+        sections: mapSectionsToReferences(secondRowSections),
       }
     });
   }
@@ -193,12 +204,12 @@ export function createCustomMixedLayout(
       left: {
         id: 'row-2-left',
         width: 70,
-        sections: thirdRowSections.slice(0, Math.ceil(thirdRowSections.length * 0.7)),
+        sections: mapSectionsToReferences(thirdRowSections.slice(0, Math.ceil(thirdRowSections.length * 0.7))),
       },
       right: {
         id: 'row-2-right',
         width: 30,
-        sections: thirdRowSections.slice(Math.ceil(thirdRowSections.length * 0.7)),
+        sections: mapSectionsToReferences(thirdRowSections.slice(Math.ceil(thirdRowSections.length * 0.7))),
       }
     });
   }
