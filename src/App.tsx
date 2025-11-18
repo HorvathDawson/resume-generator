@@ -8,6 +8,102 @@ import { loadResumeData } from './utils/dataLoaderNew';
 import { generatePDF } from './utils/pdfGenerator';
 import './App.css';
 
+// Print-specific styles for the print preview window
+const PRINT_RESUME_STYLES = `
+/* Print Resume Styles - Optimized for print preview windows */
+
+/* Print-specific overrides for print preview window */
+body {
+  background: white !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove the preview panel wrapper */
+.preview-panel {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Make resume preview take full window without overriding content styles */
+#resume-preview {
+  zoom: 1 !important;
+  transform: none !important;
+  width: 100% !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Ensure pages stack vertically with no gaps */
+.resume-page {
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  display: block !important;
+  width: 21cm !important;
+  box-sizing: border-box !important;
+}
+
+/* Remove margins only from specific wrapper containers, not content */
+.resume-preview-wrapper,
+.page-scale-wrapper,
+.page-wrapper,
+.preview-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Hide any empty elements that might be causing extra pages */
+.resume-page:empty {
+  display: none !important;
+}
+
+/* Ensure footers don't create overflow */
+.page-footer,
+footer {
+  position: absolute !important;
+  bottom: 0 !important;
+  overflow: hidden !important;
+}
+
+
+
+/* Print media queries */
+@media print {
+  @page {
+    margin: 0;
+    padding: 0;
+    size: A4;
+  }
+  
+  body { 
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .resume-page { 
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 21cm !important;
+  }
+  
+  /* Remove any gaps or spacing */
+  * {
+    box-sizing: border-box !important;
+  }
+}
+`;
+
 function App() {
   // Main application state - everything derives from these data types
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
@@ -142,98 +238,7 @@ function App() {
           <style>
             ${cssRules}
             
-            /* Print-specific overrides */
-            body {
-              background: white !important;
-              margin: 0;
-              padding: 0;
-            }
-            
-            /* Remove the preview panel wrapper */
-            .preview-panel {
-              width: 100% !important;
-              height: 100% !important;
-              overflow: visible !important;
-              border: none !important;
-              padding: 0 !important;
-            }
-            
-            /* Make resume preview take full window */
-            #resume-preview {
-              zoom: 1 !important;
-              transform: none !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              width: 100% !important;
-              height: 100% !important;
-              overflow: visible !important;
-            }
-            
-            /* Ensure pages stack vertically with no gaps */
-            .resume-page {
-              margin: 0 auto !important;
-              padding: 0 !important;
-              box-shadow: none !important;
-              border: none !important;
-              display: block !important;
-              width: 21cm !important;
-              box-sizing: border-box !important;
-            }
-            
-            /* Let browser handle all page breaks naturally - no forced breaks */
-            
-            /* Hide any empty elements that might be causing extra pages */
-            .resume-page:empty {
-              display: none !important;
-            }
-            
-            /* Ensure footers don't create overflow */
-            .page-footer,
-            footer {
-              position: absolute !important;
-              bottom: 0 !important;
-              overflow: hidden !important;
-            }
-            
-            /* Remove specific margins that cause page overflow */
-            .resume-preview-wrapper,
-            .page-scale-wrapper,
-            .page-wrapper,
-            .preview-container {
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-            }
-            
-            /* Print media queries */
-            @media print {
-              @page {
-                margin: 0;
-                padding: 0;
-                size: A4;
-              }
-              
-              body { 
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-              }
-              
-              .resume-page { 
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-                width: 21cm !important;
-              }
-              
-              /* Remove any gaps or spacing */
-              * {
-                box-sizing: border-box !important;
-              }
-            }
+            ${PRINT_RESUME_STYLES}
           </style>
         </head>
         <body>
