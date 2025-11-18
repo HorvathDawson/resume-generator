@@ -179,9 +179,11 @@ export const EducationTemplates = {
             <div key={index} className="timeline-item">
               <div className="timeline-content">
                 <div className="timeline-date">{item.dates}</div>
-                <div className="timeline-institution">{item.institution || item.organization}</div>
                 <div className="timeline-degree">
                   {item.degree}
+                </div>
+                <div className="timeline-institution">
+                  {item.institution || item.organization}
                   {item.gpa && (
                     <span className="timeline-gpa-inline"> • <strong>GPA:</strong> {item.gpa}</span>
                   )}
