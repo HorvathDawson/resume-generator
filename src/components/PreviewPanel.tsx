@@ -191,19 +191,26 @@ export function PreviewPanel({
               '--accent-color': resumeData?.layout?.globalStyles?.colorScheme?.accent || '#4a90e2',
               '--secondary-color': resumeData?.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa',
               '--text-color': resumeData?.layout?.globalStyles?.colorScheme?.text || '#333333',
+              '--text-dark': resumeData?.layout?.globalStyles?.colorScheme?.textDark || '#111827',
+              '--secondary-text': '#6b7280',
+              '--text-muted': resumeData?.layout?.globalStyles?.colorScheme?.textMuted || '#9ca3af',
+              '--text-lighter': resumeData?.layout?.globalStyles?.colorScheme?.textLighter || '#d1d5db',
+              '--success-color': resumeData?.layout?.globalStyles?.colorScheme?.successColor || '#059669',
+              '--success-background': resumeData?.layout?.globalStyles?.colorScheme?.successBackground || '#ecfdf5',
+              '--hover-background': resumeData?.layout?.globalStyles?.colorScheme?.hoverBackground || '#ffffff',
+              '--border-light': resumeData?.layout?.globalStyles?.colorScheme?.borderLight || '#e9ecef',
+              '--border-subtle': resumeData?.layout?.globalStyles?.colorScheme?.borderSubtle || '#f3f4f6',
+              '--card-background': resumeData?.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa',
               '--section-margin': resumeData?.layout?.globalStyles?.spacing?.sectionMargin || '0.5cm',
               '--item-margin': resumeData?.layout?.globalStyles?.spacing?.itemMargin || '0.3cm',
-              '--page-margin': resumeData?.layout?.globalStyles?.spacing?.pageMargin || '1.27cm'
+              '--page-margin': resumeData?.layout?.globalStyles?.spacing?.pageMargin || '1.27cm',
+              '--font-size-pub-modern-title': '0.38cm'
             } as React.CSSProperties}
           >
             {resumeData?.layout?.pages?.map((page: any, pageIndex: number) => (
               <div 
                 key={pageIndex} 
                 className="page-wrapper"
-                style={{ 
-                  width: 'fit-content',
-                  minWidth: 'fit-content',
-                }}
               >
                 <div 
                   className="page-number"
