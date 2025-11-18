@@ -69,6 +69,15 @@ export interface FlexLayoutConfig {
       secondary: string;
       text: string;
       accent: string;
+      // Extended color scheme
+      textDark?: string;
+      textMuted?: string;
+      textLighter?: string;
+      successColor?: string;
+      successBackground?: string;
+      hoverBackground?: string;
+      borderLight?: string;
+      borderSubtle?: string;
     };
     spacing: {
       sectionMargin: string;

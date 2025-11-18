@@ -88,7 +88,15 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
       primary: '#2c5aa0',
       secondary: '#f8f9fa',
       text: '#333333',
-      accent: '#4a90e2'
+      accent: '#4a90e2',
+      textDark: '#111827',
+      textMuted: '#9ca3af',
+      textLighter: '#d1d5db',
+      successColor: '#059669',
+      successBackground: '#ecfdf5',
+      hoverBackground: '#ffffff',
+      borderLight: '#e9ecef',
+      borderSubtle: '#f3f4f6'
     },
     spacing: {
       sectionMargin: '0.5cm',
@@ -291,6 +299,49 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
               onChange={(e) => updateSpacing('itemMargin', e.target.value)}
               className="compact-input"
               placeholder="0.3cm"
+            />
+          </div>
+        </div>
+
+        {/* Advanced Colors Row */}
+        <div className="compact-row">
+          <div className="compact-group">
+            <label>Text Dark</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.textDark || '#111827'}
+              onChange={(e) => updateColorScheme('textDark', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+          
+          <div className="compact-group">
+            <label>Text Muted</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.textMuted || '#9ca3af'}
+              onChange={(e) => updateColorScheme('textMuted', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+          
+          <div className="compact-group">
+            <label>Success</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.successColor || '#059669'}
+              onChange={(e) => updateColorScheme('successColor', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+          
+          <div className="compact-group">
+            <label>Border</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.borderLight || '#e9ecef'}
+              onChange={(e) => updateColorScheme('borderLight', e.target.value)}
+              className="compact-color"
             />
           </div>
         </div>
