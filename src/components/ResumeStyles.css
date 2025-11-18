@@ -88,16 +88,22 @@
   box-sizing: border-box;
 }
 
-/* Print Overrides */
+/* ============================================================================
+   PRINT STYLES - Only print-specific overrides (fonts/spacing use regular CSS variables)
+   ============================================================================ */
+
 @media print {
-  /* Hide UI elements */
-  #resume-preview .page-number,
-  #resume-preview .page-scale-wrapper {
+
+  /* Hide UI elements in print */
+  #resume-preview .page-number {
     display: none !important;
+  }
+
+  #resume-preview .page-scale-wrapper {
     transform: none !important;
   }
 
-  /* Page Physics */
+  /* Ensure proper A4 page sizing for print */
   #resume-preview .a4-page {
     box-shadow: none !important;
     position: relative !important;
@@ -105,19 +111,11 @@
     page-break-after: always;
   }
 
+  /* Don't add page break after the last page */
   #resume-preview .a4-page:last-child {
     page-break-after: avoid;
   }
 
-  /* Footer Positioning */
-  #resume-preview .a4-page .footer-container,
-  #resume-preview .a4-page > div[style*="position: absolute"] {
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 10 !important;
-  }
   
   @page {
     margin: 0;
