@@ -1,0 +1,254 @@
+{
+  "resumeData": {
+    "id": "eron-macartney-gis-resume-2024",
+    "name": "Eron Macartney GIS Resume",
+    "personalInfo": {
+      "fullName": "Eron Macartney",
+      "email": "eronmac08@gmail.com",
+      "phone": "(206) 445-4396",
+      "location": "Vancouver, BC V5N 4H6"
+    },
+    "sections": [
+      {
+        "id": "name-001",
+        "type": "name",
+        "title": "Name",
+        "templateId": "name-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "name-item-001",
+            "title": "Eron Macartney",
+            "content": {
+              "fullName": "Eron Macartney"
+            }
+          }
+        ]
+      },
+      {
+        "id": "personal-info-001",
+        "title": "Contact Information",
+        "type": "personal_info",
+        "templateId": "personal-info-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "contact-001",
+            "title": "Contact Information",
+            "personalInfo": {
+              "fullName": "Eron Macartney",
+              "email": "eronmac08@gmail.com",
+              "phone": "(206) 445-4396",
+              "location": "Vancouver, BC V5N 4H6"
+            }
+          }
+        ]
+      },
+      {
+        "id": "education-001",
+        "title": "Education",
+        "type": "education",
+        "templateId": "education-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "edu-001",
+            "title": "Master of Geomatics for Environmental Management",
+            "organization": "University of British Columbia",
+            "degree": "Master of Geomatics for Environmental Management",
+            "fieldOfStudy": "Geomatics for Environmental Management",
+            "location": "",
+            "dates": "April 2025",
+            "details": []
+          },
+          {
+            "id": "edu-002",
+            "title": "Bachelor of Science in Marine Ecology",
+            "organization": "Western Washington University",
+            "degree": "Bachelor of Science in Marine Ecology",
+            "fieldOfStudy": "Marine Ecology",
+            "location": "",
+            "dates": "December 2018",
+            "gpa": "3.81/4.0",
+            "details": []
+          }
+        ]
+      },
+      {
+        "id": "projects-001",
+        "title": "Projects",
+        "type": "experience",
+        "templateId": "experience-detailed",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "project-001",
+            "title": "Predictive Modeling of Pacific Herring Spawning",
+            "organization": "UBC, Faculty of Forestry",
+            "dates": "Academic Project",
+            "description": "Applied GIS and statistical analysis to predict spawning sites and timing, aiding in conservation efforts in the Howe Sound, BC.",
+            "details": [
+              "Applied GIS and statistical analysis to predict spawning sites and timing, aiding in conservation efforts in the Howe Sound, BC."
+            ]
+          },
+          {
+            "id": "project-002",
+            "title": "Coral Reef Health Assessment",
+            "organization": "Academic Project",
+            "dates": "Academic Project",
+            "description": "Conducted spatial analysis of coral reef data to evaluate ecosystem health and inform marine conservation strategies in the Indo-Pacific.",
+            "details": [
+              "Conducted spatial analysis of coral reef data to evaluate ecosystem health and inform marine conservation strategies in the Indo-Pacific."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "experience-001",
+        "title": "Experience",
+        "type": "experience",
+        "templateId": "experience-detailed",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "exp-001",
+            "title": "Biological Science Technician 2",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "Bellingham, WA",
+            "dates": "March 2023 – August 2024",
+            "details": [
+              "Utilized ArcGIS Pro to create potential salmon spawning maps for non-surveyed areas",
+              "Mapped over 2,500 fish redds using ArcGIS Pro, R, and Excel, providing critical spatial data for seven fish species.",
+              "Analyzed maps and graphs created with R and ArcGIS to determine current and future salmon/steelhead runs to set local recreational fishing seasons and regulations.",
+              "Collected and analyzed biological samples, including species identification, DNA, scales, lengths, weights, sex, otoliths, and coded wire tags (CWTs)."
+            ]
+          },
+          {
+            "id": "exp-002",
+            "title": "Biological Science Technician 2",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "La Conner, WA",
+            "dates": "March 2022 – February 2023",
+            "details": [
+              "Utilized GIS tools to assess biodiversity and create heat maps of white crappie.",
+              "Operated and maintained boats for creel surveys on local lakes.",
+              "Managed and analyzed spatial data to support fisheries management decisions.",
+              "Produced detailed maps and reports for stakeholders and regulatory agencies."
+            ]
+          },
+          {
+            "id": "exp-003",
+            "title": "Biological Science Technician 2",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "Twisp, WA",
+            "dates": "August 2021 – December 2021",
+            "details": [
+              "Monitored and operated screw traps to assess juvenile salmonid outmigration, utilizing GIS and R for data analysis.",
+              "Managed juvenile PIT tagging files, conducting queries in PTAGIS and Access databases.",
+              "Performed quality assurance and control on collected data."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "skills-001",
+        "title": "Skills",
+        "type": "skills",
+        "templateId": "skills-categorized",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "skills-tech",
+            "title": "Skills",
+            "categories": [
+              {
+                "name": "GIS Software",
+                "skills": [
+                  "ArcGIS Pro",
+                  "QGIS",
+                  "GIS Platforms"
+                ]
+              },
+              {
+                "name": "Programming & Data Analysis",
+                "skills": [
+                  "Python",
+                  "R (for spatial data analysis and automation)",
+                  "SQL Databases",
+                  "Microsoft Access",
+                  "Excel"
+                ]
+              },
+              {
+                "name": "Remote Sensing & Cartography",
+                "skills": [
+                  "Acquiring and processing Remote Sensing Data (including LiDAR)",
+                  "Analyzing Remote Sensing Data",
+                  "Cartography (Creating detailed and accurate maps)"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "awards-001",
+        "title": "Awards",
+        "type": "list",
+        "templateId": "list-simple",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "award-001",
+            "title": "Benjamin A. Gilman International Scholarship",
+            "content": "Benjamin A. Gilman International Scholarship"
+          },
+          {
+            "id": "award-002",
+            "title": "IIE Generation Study Abroad Scholarship",
+            "content": "IIE Generation Study Abroad Scholarship"
+          },
+          {
+            "id": "award-003",
+            "title": "Dean's Honors List",
+            "content": "Dean's Honors List"
+          }
+        ]
+      },
+      {
+        "id": "references-001",
+        "title": "References",
+        "type": "references",
+        "templateId": "references-minimal",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "ref-001",
+            "title": "Available upon request.",
+            "name": "Available upon request.",
+            "jobTitle": "",
+            "organization": "",
+            "email": "",
+            "phone": "",
+            "relationship": "",
+            "details": []
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "version": "2.0.0",
+      "createdAt": "2024-12-19T00:00:00.000Z",
+      "updatedAt": "2024-12-19T00:00:00.000Z",
+      "author": "Resume Builder",
+      "description": "Eron Macartney's GIS-focused resume highlighting geomatics, spatial analysis, and environmental management expertise",
+      "tags": [
+        "resume",
+        "gis",
+        "geomatics",
+        "environmental-management",
+        "spatial-analysis"
+      ]
+    }
+  }
+}

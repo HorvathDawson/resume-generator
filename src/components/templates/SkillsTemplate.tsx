@@ -38,14 +38,14 @@ export interface TemplateOption {
 }
 
 export const SkillsTemplates = {
-  categorized: {
-    id: 'skills-categorized',
-    name: 'Categorized Skills',
-    description: 'Skills organized by category',
+  mini: {
+    id: 'skills-mini',
+    name: 'Mini Tags',
+    description: 'Extra small skill badges for space efficiency',
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-section categorized">
+        <div className="section skills-mini">
           <h2>{section.title}</h2>
           <div className="skills-content">
             {categories.map((category: any, index: number) => (
@@ -55,69 +55,7 @@ export const SkillsTemplates = {
                   {category.skills.map((skill: any, skillIndex: number) => {
                     const skillName = typeof skill === 'string' ? skill : skill.name || skill;
                     return (
-                      <span key={skillIndex} className="skill-tag">
-                        {skillName}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-  },
-  
-  wide: {
-    id: 'skills-wide',
-    name: 'Grid Layout',
-    description: 'Skills in a responsive grid layout',
-    component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
-      return (
-        <div className="section skills-wide">
-          <h2>{section.title}</h2>
-          <div className="skills-grid">
-            {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-category-wide">
-                <h3>{category.name}</h3>
-                <div className="tags-grid">
-                  {category.skills.map((skill: any, skillIndex: number) => {
-                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
-                    return (
-                      <span key={skillIndex} className="cvtag-wide">
-                        {skillName}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-  },
-  
-  wide2: {
-    id: 'skills-wide2',
-    name: 'Inline Layout',
-    description: 'Skills in horizontal lines by category',
-    component: ({ section }: { section: Section }) => {
-      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
-      return (
-        <div className="section skills-wide2">
-          <h2>{section.title}</h2>
-          <div className="skills-list">
-            {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-line">
-                <span className="category-label">{category.name}:</span>
-                <div className="tags-inline">
-                  {category.skills.map((skill: any, skillIndex: number) => {
-                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
-                    return (
-                      <span key={skillIndex} className="skill-tag">
+                      <span key={skillIndex} className="skill-tag-mini">
                         {skillName}
                       </span>
                     );
@@ -131,30 +69,33 @@ export const SkillsTemplates = {
     }
   },
 
-  compact: {
-    id: 'skills-compact',
-    name: 'Compact',
-    description: 'Ultra-compact skills layout with minimal spacing',
+  simple: {
+    id: 'skills-simple',
+    name: 'Simple List',
+    description: 'Clean text-only layout with comma separation',
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-compact" style={{ marginBottom: '0.3cm' }}>
+        <div className="section skills-simple" style={{ marginBottom: '0.3cm' }}>
           <h2 style={{ marginBottom: '0.2cm' }}>{section.title}</h2>
-          <div className="skills-compact-content" style={{ lineHeight: '1.3' }}>
+          <div className="skills-simple-content" style={{ lineHeight: '1.4' }}>
             {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-category-compact" style={{ 
-                marginBottom: '0.1cm', 
-                fontSize: '0.32cm' 
+              <div key={index} className="skill-category-simple" style={{ 
+                marginBottom: '0.15cm', 
+                fontSize: '0.33cm' 
               }}>
                 <strong style={{ 
                   fontWeight: '600', 
-                  color: 'var(--primary-color, #2c5aa0)' 
+                  color: 'var(--primary-color, #2c5aa0)',
+                  marginRight: '0.2cm'
                 }}>
                   {category.name}:
-                </strong>{' '}
-                {category.skills.map((skill: any) => 
-                  typeof skill === 'string' ? skill : skill.name || skill
-                ).join(', ')}
+                </strong>
+                <span style={{ color: '#4b5563' }}>
+                  {category.skills.map((skill: any) => 
+                    typeof skill === 'string' ? skill : skill.name || skill
+                  ).join(', ')}
+                </span>
               </div>
             ))}
           </div>
@@ -190,7 +131,8 @@ export const SkillsTemplates = {
                 </span>
                 <span style={{ 
                   fontSize: '0.32cm', 
-                  lineHeight: '1.4' 
+                  lineHeight: '1.4',
+                  color: '#4b5563'
                 }}>
                   {category.skills.map((skill: any) => 
                     typeof skill === 'string' ? skill : skill.name || skill
@@ -204,27 +146,49 @@ export const SkillsTemplates = {
     }
   },
 
-  columns: {
-    id: 'skills-columns',
-    name: 'Columns Layout',
-    description: 'Clean columns of skills by category',
+  clean: {
+    id: 'skills-clean',
+    name: 'Clean Minimal',
+    description: 'Ultra-clean layout with subtle spacing',
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-section columns">
-          <h2>{section.title}</h2>
-          <div className="skills-columns-grid">
+        <div className="section skills-clean" style={{ marginBottom: '0.4cm' }}>
+          <h2 style={{ 
+            marginBottom: '0.3cm',
+            fontSize: 'var(--font-size-h2)',
+            fontWeight: '600',
+            color: '#111827'
+          }}>
+            {section.title}
+          </h2>
+          <div className="skills-clean-content">
             {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-column-simple">
-                <h3 className="column-title">{category.name}</h3>
-                <ul className="column-skill-list">
-                  {category.skills.map((skill: any, skillIndex: number) => {
-                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
-                    return (
-                      <li key={skillIndex} className="column-skill">{skillName}</li>
-                    );
-                  })}
-                </ul>
+              <div key={index} style={{ 
+                marginBottom: '0.2cm',
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: '0.4cm'
+              }}>
+                <span style={{ 
+                  fontWeight: '500', 
+                  color: '#374151',
+                  fontSize: '0.33cm',
+                  minWidth: '2.5cm',
+                  flexShrink: 0
+                }}>
+                  {category.name}
+                </span>
+                <span style={{ 
+                  fontSize: '0.32cm',
+                  color: '#6b7280',
+                  lineHeight: '1.5',
+                  flex: 1
+                }}>
+                  {category.skills.map((skill: any) => 
+                    typeof skill === 'string' ? skill : skill.name || skill
+                  ).join(' · ')}
+                </span>
               </div>
             ))}
           </div>
@@ -233,39 +197,40 @@ export const SkillsTemplates = {
     }
   },
 
-  proficiency: {
-    id: 'skills-proficiency',
-    name: 'Proficiency Dots',
-    description: 'Skills with dot-based proficiency indicators',
+  lines: {
+    id: 'skills-lines',
+    name: 'Clean Lines',
+    description: 'Skills separated by subtle lines - modern and minimal',
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-section proficiency">
+        <div className="section skills-lines">
           <h2>{section.title}</h2>
-          <div className="skills-proficiency-list">
+          <div className="skills-lines-content">
             {categories.map((category: any, index: number) => (
-              <div key={index} className="proficiency-category">
-                <h3 className="proficiency-title">{category.name}</h3>
-                <div className="proficiency-skills">
-                  {category.skills.map((skill: any, skillIndex: number) => {
-                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
-                    const skillProficiency = typeof skill === 'object' && skill.proficiency ? skill.proficiency : 85;
-                    const filledDots = Math.ceil(skillProficiency / 20);
-                    
-                    return (
-                      <div key={skillIndex} className="proficiency-item">
-                        <span className="proficiency-name">{skillName}</span>
-                        <div className="proficiency-dots">
-                          {[1, 2, 3, 4, 5].map(dot => (
-                            <div 
-                              key={dot} 
-                              className={`dot ${dot <= filledDots ? 'filled' : 'empty'}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div key={index} className="skill-line-group" style={{ 
+                marginBottom: '0.25cm',
+                paddingBottom: '0.15cm',
+                borderBottom: index < categories.length - 1 ? '1px solid #e5e7eb' : 'none'
+              }}>
+                <h3 style={{ 
+                  fontSize: '0.38cm',
+                  fontWeight: '600', 
+                  color: 'var(--primary-color, #2c5aa0)',
+                  marginBottom: '0.1cm',
+                  letterSpacing: '0.02cm'
+                }}>
+                  {category.name}
+                </h3>
+                <div style={{ 
+                  fontSize: '0.32cm',
+                  color: '#4b5563',
+                  lineHeight: '1.5',
+                  fontWeight: '400'
+                }}>
+                  {category.skills.map((skill: any) => 
+                    typeof skill === 'string' ? skill : skill.name || skill
+                  ).join(' • ')}
                 </div>
               </div>
             ))}
@@ -274,36 +239,51 @@ export const SkillsTemplates = {
       );
     }
   },
-  
-  bars: {
-    id: 'skills-bars',
-    name: 'Progress Bars',
-    description: 'Skills with progress indicators',
+
+  modern: {
+    id: 'skills-modern',
+    name: 'Modern Minimal',
+    description: 'Ultra-clean modern layout with subtle typography',
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-section bars">
-          <h2>{section.title}</h2>
-          <div className="skills-bars">
+        <div className="section skills-modern" style={{ marginBottom: '0.4cm' }}>
+          <h2 style={{ 
+            marginBottom: '0.3cm',
+            fontSize: 'var(--font-size-h2)',
+            fontWeight: '700',
+            letterSpacing: '0.02cm'
+          }}>
+            {section.title}
+          </h2>
+          <div className="skills-modern-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(8cm, 1fr))',
+            gap: '0.3cm'
+          }}>
             {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-category-bars">
-                <h3 className="category-name">{category.name}</h3>
-                <div className="skills-bar-list">
-                  {category.skills.slice(0, 6).map((skill: any, skillIndex: number) => {
-                    // Handle both string skills and skill objects with proficiency
-                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
-                    const proficiency = typeof skill === 'object' && skill.proficiency ? skill.proficiency : (85 + (skillIndex * 3) % 15);
-                    
-                    return (
-                      <div key={skillIndex} className="skill-bar-item">
-                        <span className="skill-name">{skillName}</span>
-                        <div className="skill-progress">
-                          <div className="skill-bar" style={{ width: `${proficiency}%` }}></div>
-                        </div>
-                        <span className="skill-percentage">{proficiency}%</span>
-                      </div>
-                    );
-                  })}
+              <div key={index} style={{ 
+                marginBottom: '0.2cm'
+              }}>
+                <div style={{ 
+                  fontSize: '0.28cm',
+                  fontWeight: '600', 
+                  color: '#111827',
+                  marginBottom: '0.08cm',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05cm'
+                }}>
+                  {category.name}
+                </div>
+                <div style={{ 
+                  fontSize: '0.33cm',
+                  color: '#6b7280',
+                  lineHeight: '1.6',
+                  fontWeight: '400'
+                }}>
+                  {category.skills.map((skill: any) => 
+                    typeof skill === 'string' ? skill : skill.name || skill
+                  ).join(', ')}
                 </div>
               </div>
             ))}
@@ -312,11 +292,11 @@ export const SkillsTemplates = {
       );
     }
   },
-  
+
   cloud: {
     id: 'skills-cloud',
     name: 'Skills Cloud',
-    description: 'Tag cloud style skills',
+    description: 'Tag cloud style skills with clean monochrome design',
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       const allSkills = categories.flatMap((cat: any) => cat.skills.map((skill: any) => 
@@ -329,20 +309,78 @@ export const SkillsTemplates = {
           <div className="skills-cloud">
             {allSkills.map((skill: string, index: number) => {
               // Create varied font sizes for cloud effect
-              const fontSizeMultiplier = 0.7 + (index % 5) * 0.15; // Varies from 0.7 to 1.3
+              const fontSizeMultiplier = 0.8 + (index % 4) * 0.1; // Varies from 0.8 to 1.1 (less dramatic)
               return (
                 <span 
                   key={index} 
-                  className="skill-cloud-tag"
+                  className="skill-cloud-tag-compact"
                   style={{ 
                     fontSize: `${fontSizeMultiplier}em`,
-                    fontWeight: index % 3 === 0 ? '600' : '400'
+                    fontWeight: index % 4 === 0 ? '600' : '400'
                   }}
                 >
                   {skill}
                 </span>
               );
             })}
+          </div>
+        </div>
+      );
+    }
+  },
+
+  sleek: {
+    id: 'skills-sleek',
+    name: 'Sleek Minimalist',
+    description: 'Ultra-modern layout with perfect typography balance',
+    component: ({ section }: { section: Section }) => {
+      const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
+      return (
+        <div className="section skills-sleek" style={{ marginBottom: '0.4cm' }}>
+          <h2 style={{ 
+            marginBottom: '0.3cm',
+            fontSize: 'var(--font-size-h2)',
+            fontWeight: '700',
+            color: '#111827',
+            letterSpacing: '-0.01cm'
+          }}>
+            {section.title}
+          </h2>
+          <div className="skills-sleek-content">
+            {categories.map((category: any, index: number) => (
+              <div key={index} style={{ 
+                marginBottom: '0.25cm',
+                paddingLeft: '0.1cm',
+                borderLeft: '2px solid #e5e7eb'
+              }}>
+                <div style={{ 
+                  fontWeight: '600', 
+                  color: '#1f2937',
+                  fontSize: '0.32cm',
+                  marginBottom: '0.05cm',
+                  textTransform: 'capitalize'
+                }}>
+                  {category.name}
+                </div>
+                <div style={{ 
+                  fontSize: '0.31cm',
+                  color: '#6b7280',
+                  lineHeight: '1.5',
+                  fontWeight: '400',
+                  paddingLeft: '0.05cm'
+                }}>
+                  {category.skills.map((skill: any, skillIndex: number) => {
+                    const skillName = typeof skill === 'string' ? skill : skill.name || skill;
+                    return (
+                      <span key={skillIndex} style={{ marginRight: '0.3cm' }}>
+                        {skillName}
+                        {skillIndex < category.skills.length - 1 && <span style={{ color: '#d1d5db', margin: '0 0.1cm' }}>|</span>}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       );

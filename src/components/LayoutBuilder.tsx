@@ -341,16 +341,19 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         actualSectionId = createPaddingSection();
       }
 
+      // Create proper section reference object
+      const sectionReference = createSectionReference(actualSectionId);
+      
       // Add section to new location
       if (targetColumnIndex !== undefined) {
         // Drop in specific column
         if (updatedRows[targetRowIndex]?.columns?.[targetColumnIndex]) {
-          updatedRows[targetRowIndex].columns![targetColumnIndex].sections.push(actualSectionId);
+          (updatedRows[targetRowIndex].columns![targetColumnIndex].sections as any).push(sectionReference);
         }
       } else {
         // Drop in whole page row
         if (updatedRows[targetRowIndex]?.sections) {
-          updatedRows[targetRowIndex].sections!.push(actualSectionId);
+          (updatedRows[targetRowIndex].sections! as any).push(sectionReference);
         }
       }
 
@@ -712,6 +715,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         }
         
         // Regular move (not swap) - Remove from source and add to target
+        // First, get the section reference object from the source
+        let sectionReference;
+        if (fromColumnIndex !== undefined) {
+          const sourceCol = updatedRows[fromRowIndex].columns![fromColumnIndex];
+          sectionReference = sourceCol.sections.find(s => {
+            const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+            return refSectionId === sectionId;
+          });
+        } else {
+          sectionReference = updatedRows[fromRowIndex].sections!.find(s => {
+            const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+            return refSectionId === sectionId;
+          });
+        }
+        
+        // If we can't find the section reference, create a new one (fallback)
+        if (!sectionReference) {
+          sectionReference = createSectionReference(sectionId);
+        }
+        
         // Remove from source
         if (fromColumnIndex !== undefined) {
           const sourceCol = updatedRows[fromRowIndex].columns![fromColumnIndex];
@@ -728,22 +751,22 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           });
         }
         
-        // Add to target position
+        // Add to target position using the preserved section reference
         if (targetColumnIndex !== undefined) {
           // Add to column
           const targetCol = updatedRows[targetRowIndex].columns![targetColumnIndex];
           if (insertIndex !== undefined && insertIndex >= 0) {
-            targetCol.sections.splice(insertIndex, 0, sectionId);
+            (targetCol.sections as any).splice(insertIndex, 0, sectionReference);
           } else {
-            targetCol.sections.push(sectionId);
+            (targetCol.sections as any).push(sectionReference);
           }
         } else {
           // Add to whole page row
           const targetSections = updatedRows[targetRowIndex].sections!;
           if (insertIndex !== undefined && insertIndex >= 0) {
-            targetSections.splice(insertIndex, 0, sectionId);
+            (targetSections as any).splice(insertIndex, 0, sectionReference);
           } else {
-            targetSections.push(sectionId);
+            (targetSections as any).push(sectionReference);
           }
         }
       }

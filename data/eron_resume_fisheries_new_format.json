@@ -1,0 +1,343 @@
+{
+  "resumeData": {
+    "id": "eron-macartney-fisheries-resume-2024",
+    "name": "Eron Macartney Fisheries Resume",
+    "personalInfo": {
+      "fullName": "Eron Macartney",
+      "email": "eronmac08@gmail.com",
+      "phone": "(206) 445-4396",
+      "location": "1477 East Broadway, Vancouver, BC V5N 1V8"
+    },
+    "sections": [
+      {
+        "id": "name-001",
+        "type": "name",
+        "title": "Name",
+        "templateId": "name-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "name-item-001",
+            "title": "Eron Macartney",
+            "content": {
+              "fullName": "Eron Macartney"
+            }
+          }
+        ]
+      },
+      {
+        "id": "personal-info-001",
+        "title": "Contact Information",
+        "type": "personal_info",
+        "templateId": "personal-info-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "contact-001",
+            "title": "Contact Information",
+            "personalInfo": {
+              "fullName": "Eron Macartney",
+              "email": "eronmac08@gmail.com",
+              "phone": "(206) 445-4396",
+              "location": "1477 East Broadway, Vancouver, BC V5N 1V8"
+            }
+          }
+        ]
+      },
+      {
+        "id": "education-001",
+        "title": "Education",
+        "type": "education",
+        "templateId": "education-standard",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "edu-001",
+            "title": "Masters of Geomatics for Environmental Management",
+            "organization": "University of British Columbia",
+            "degree": "Masters of Geomatics for Environmental Management",
+            "fieldOfStudy": "Geomatics for Environmental Management",
+            "location": "Vancouver, BC",
+            "dates": "April, 2025",
+            "details": [
+              "Created predictive models to anticipate the timing and location of Pacific herring spawns throughout the Howe Sound in British Columbia."
+            ]
+          },
+          {
+            "id": "edu-002",
+            "title": "Bachelor of Science in Marine Ecology",
+            "organization": "Western Washington University",
+            "degree": "Bachelor of Science in Marine Ecology",
+            "fieldOfStudy": "Marine Ecology",
+            "location": "",
+            "dates": "December, 2018",
+            "gpa": "3.81/4.0",
+            "details": [
+              "Conducted two thesis research papers on the effects of plastic microfibers on mussel filtration rates, and deep water nitrogen inputs into Bellingham Bay"
+            ]
+          },
+          {
+            "id": "edu-003",
+            "title": "Marine and Coastal Ecology of the Indo-Pacific",
+            "organization": "Wildlands Studies Internship",
+            "degree": "Marine and Coastal Ecology of the Indo-Pacific",
+            "fieldOfStudy": "Marine and Coastal Ecology",
+            "location": "",
+            "dates": "Spring, 2018",
+            "details": [
+              "Surveyed coral reef organism diversity and health of protected and non-protected reefs by means of snorkeling and diving. Analyzed data to complete health assessments.",
+              "Coordinated with local communities to reconcile marine conservation with the local commercial and subsistence fishing culture."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "experience-001",
+        "title": "Experience",
+        "type": "experience",
+        "templateId": "experience-detailed",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "exp-001",
+            "title": "Biological Science Technician 2, Full Time $25(US)/HR",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "Bellingham, WA.",
+            "dates": "March 2023 – August 2024",
+            "details": [
+              "Created potential spawning ground habitat maps using ArcGIS Pro for areas not currently surveyed using existing spawning ground data.",
+              "Conducted comprehensive salmon and steelhead spawning ground, fish abundance and presence surveys by walking or rafting streams and rivers",
+              "Identified, counted and marked over 1,500 redds using ArcGIS Pro, R and excel to create spatial maps representing spawning ground locations for seven species of fish",
+              "Utilized maps and graphs created with R and ArcGIS to determine current and future salmon/steelhead runs in order to set local recreational fishing seasons and regulations",
+              "Collected biological samples from live and dead salmonids including species type, DNA, scales, lengths, weights, sex, otoliths and CWT's"
+            ]
+          },
+          {
+            "id": "exp-002",
+            "title": "Biological Science Technician 2, Full Time $22(US)/HR",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "La Conner, WA.",
+            "dates": "March 2022 – February 2023",
+            "details": [
+              "Conducted standard lake surveys via boat electrofishing, gillnets and fyke nets on Washington lakes to determine biodiversity",
+              "Independently worked on field research in diverse and unpredictable terrain and conditions",
+              "Transported, floy tagged and released mature rainbow trout for recreational fishing",
+              "Independently maintained, trailered, launched and operated boats 19ft. and 26ft long to conduct creel surveys on local lakes",
+              "Identified and biosampled warm water species including walleye, kokanee, rainbow, brown trout, cutthroat, yellow perch, burbot, whitefish, bullhead, crappie, rockbass, bass including sex, length, marks, scales, GSI, otoliths, and genetic samples",
+              "Extracted stomach samples from yellow perch, rock bass and walleye to determine salmonid predation rates",
+              "Conducted creel surveys to obtain efficacy of liberalized regulations",
+              "Captured white crappie vie fyke nets and transported to reintroduce self-sustaining population for recreational fishery",
+              "Transported and Spawned adult chum salmon"
+            ]
+          },
+          {
+            "id": "exp-003",
+            "title": "Biological Science Technician 2 - Smolt Trapping, Full Time $22(US)/HR",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "Twisp, WA.",
+            "dates": "November 2021 – December 2021",
+            "details": [
+              "Determine overall outmigration of salmonid smolt populations to calculate mortality rates associated with dams to predict future adult returns",
+              "Captured, identified, biosampled and PIT-tagged juvenile/adult ESA-listed salmonids and fish species in North Central Washington rivers via rotary screw trap",
+              "Assisted with in-stream installation, removal, and repair of juvenile screw trap",
+              "Monitored and operated screw trap based on real-time observations and forecasted environmental conditions, including flood events",
+              "Entered, managed and uploaded juvenile PIT tagging files into P4 to conduct queries in PTAGIS and Access databases",
+              "Performed quality assurance and quality control checks on collected data"
+            ]
+          },
+          {
+            "id": "exp-004",
+            "title": "Biological Science Technician 2 - Creeler, Full Time $22(US)/HR",
+            "organization": "Washington Department of Fish and Wildlife",
+            "location": "Twisp, WA.",
+            "dates": "August 2021 – October 2021",
+            "details": [
+              "Biosampled summer Chinook including sex, length, marks, scales, and genetic samples",
+              "Dissected and read coded wire tags collected from Columbia River creel surveys to determine origin of fish",
+              "Conducted creel surveys to obtain catch number and effort at Columbia and Methow River fishing locations",
+              "Accurately recorded and entered all data associated with surveys of the fishery",
+              "Identified freshwater and anadromous fish species in eastern Washington caught in screw trap, including but not limited to spring/summer Chinook, rainbow/steelhead trout, Coho, Sockeye, whitefish, Bull trout, Westslope cutthroat, etc",
+              "Aided in lake rehabilitation including the application of rotenone to eliminate invasive species"
+            ]
+          },
+          {
+            "id": "exp-005",
+            "title": "Biological Science Technician, Full Time $14(US)/HR",
+            "organization": "US Fish and Wildlife Service",
+            "location": "Winthrop, WA.",
+            "dates": "March 2021 – June 2021",
+            "details": [
+              "Created fish presence maps via ArcGIS to aid in collection of steelhead broodstock",
+              "Identified, PIT-tagged, Floy-tagged, and biosampled adult steelhead trout",
+              "Collected adult steelhead broodstock via weir traps, hatchery outfalls, and angling",
+              "Conducted steelhead spawning ground surveys",
+              "Sampled juvenile salmonids via backpack electrofishing with the Yakama tribe.",
+              "Performed gonadosomatic index (GSI) sampling of hatchery spring Chinook and steelhead after volitional releases to determine sexual maturity",
+              "Gained extensive knowledge of P4, PTAGIS, HPR PIT Tag readers and CWT detectors",
+              "Aided in live-spawning of steelhead and transfer to the kelt reconditioning program"
+            ]
+          },
+          {
+            "id": "exp-006",
+            "title": "Commercial Salmon Fisherman - Deck Boss / Relief Captain, Full Time 30K(US)/YR",
+            "organization": "Snag Fisheries/Silver Bay Seafoods",
+            "location": "Bristol Bay, AK",
+            "dates": "June – August 2005-2021",
+            "details": [
+              "Communicated with biologists to create an interface between fishermen and scientists",
+              "Enforced sustainable regulations within crew",
+              "Ran and performed maintenance on hydraulic, electrical, and mechanical machinery as well as repairing fishing nets",
+              "Managed a crew in a fast paced and unpredictable environment",
+              "Planned daily fishing operations by identifying the best fishing grounds and assessing the current weather, tides and sea conditions",
+              "Recruited, evaluated and hired crewmen for fishing seasons"
+            ]
+          },
+          {
+            "id": "exp-007",
+            "title": "Commercial Crabber -Deck Boss, Full Time 10K(US)/YR",
+            "organization": "Whitlock and Sons Fisheries INC.",
+            "location": "Puget Sound/Salish Sea, WA.",
+            "dates": "October – April 2016-2021",
+            "details": [
+              "Advocated with local board of fisheries and tribal members for a fair and sustainable quota",
+              "Proficient with navigational equipment",
+              "Analyzed weather and habitat conditions to create maps predicting crab movement and presence",
+              "Identified and measured catch to determine whether they meet legal size requirements and released all bycatch",
+              "Worked as part of an efficient team in close quarters for extended periods of time"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "skills-001",
+        "title": "Skills",
+        "type": "skills",
+        "templateId": "skills-categorized",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "skills-tech",
+            "title": "Skills",
+            "categories": [
+              {
+                "name": "Proficiencies",
+                "skills": [
+                  "ArcGIS",
+                  "R",
+                  "Python",
+                  "Access",
+                  "Excel",
+                  "Navigational and Boating Skills"
+                ]
+              },
+              {
+                "name": "Field Expertise",
+                "skills": [
+                  "Salmonid/Crab Life Cycles and Identification",
+                  "Habitat Evaluation and Redd Identification",
+                  "Field Data Collection and Analysis"
+                ]
+              },
+              {
+                "name": "Core Competencies",
+                "skills": [
+                  "Scientific Writing",
+                  "Ability to work in diverse weather conditions and environments",
+                  "Efficient Team Member",
+                  "Self-motivated worker and leader"
+                ]
+              },
+              {
+                "name": "Certifications",
+                "skills": [
+                  "CPR and First AID Certified",
+                  "Dive certified"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "awards-001",
+        "title": "Awards",
+        "type": "list",
+        "templateId": "list-simple",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "award-001",
+            "title": "BENJAMIN A. GILMAN INTERNATIONAL SCHOLARSHIP",
+            "content": "BENJAMIN A. GILMAN INTERNATIONAL SCHOLARSHIP"
+          },
+          {
+            "id": "award-002",
+            "title": "IIE GENERATION STUDY ABROAD SCHOLARSHIP",
+            "content": "IIE GENERATION STUDY ABROAD SCHOLARSHIP"
+          },
+          {
+            "id": "award-003",
+            "title": "DEAN'S HONORS LIST",
+            "content": "DEAN'S HONORS LIST"
+          }
+        ]
+      },
+      {
+        "id": "references-001",
+        "title": "References",
+        "type": "references",
+        "templateId": "references-minimal",
+        "isVisible": true,
+        "items": [
+          {
+            "id": "ref-001",
+            "title": "Michael Humling",
+            "name": "Michael Humling",
+            "jobTitle": "District Fisheries Biologist",
+            "organization": "USDA",
+            "email": "MICHAEL.HUMLING@USDA.GOV",
+            "phone": "(509) 423-0533",
+            "relationship": "Professional Reference",
+            "details": []
+          },
+          {
+            "id": "ref-002",
+            "title": "Ryan Fortier",
+            "name": "Ryan Fortier",
+            "jobTitle": "District Fisheries Biologist",
+            "organization": "WDFW",
+            "email": "RYAN.FORTIER@DFW.WA.GOV",
+            "phone": "(509) 720-6424",
+            "relationship": "Professional Reference",
+            "details": []
+          },
+          {
+            "id": "ref-003",
+            "title": "Justin Spinelli",
+            "name": "Justin Spinelli",
+            "jobTitle": "Warm Water Biologist",
+            "organization": "WDFW",
+            "email": "JUSTIN.SPINELLI@DFW.WA.GOV",
+            "phone": "(425) 739-1024",
+            "relationship": "Professional Reference",
+            "details": []
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "version": "2.0.0",
+      "createdAt": "2024-12-19T00:00:00.000Z",
+      "updatedAt": "2024-12-19T00:00:00.000Z",
+      "author": "Resume Builder",
+      "description": "Eron Macartney's fisheries-focused resume highlighting extensive experience in biological science, commercial fishing, and marine ecology",
+      "tags": [
+        "resume",
+        "fisheries",
+        "marine-ecology",
+        "biological-science",
+        "commercial-fishing"
+      ]
+    }
+  }
+}

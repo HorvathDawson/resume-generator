@@ -716,15 +716,16 @@
   line-height: 1.6;
 }
 
+/* Standard skill tags - kept minimal and clean */
 .resume-preview .skills-section .skill-tag {
   background-color: #f8f9fa;
-  padding: 0.12cm 0.25cm;
-  border-radius: 0.15cm;
-  font-size: calc(var(--font-size-small) * 0.95);
+  padding: 0.06cm 0.15cm;
+  border-radius: 0.1cm;
+  font-size: calc(var(--font-size-small) * 0.9);
   color: #374151;
   border: 1px solid #d1d5db;
-  margin: 0.05cm;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  margin: 0.03cm;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.04);
   white-space: nowrap;
   font-weight: 500;
 }
@@ -801,39 +802,55 @@
 .resume-preview .skills-section.cloud .skill-cloud-tag {
   display: inline-block;
   background-color: #f8f9fa;
-  padding: 0.15cm 0.3cm;
-  margin: 0.1cm 0.15cm;
-  border-radius: 0.3cm;
+  padding: 0.1cm 0.2cm;
+  margin: 0.08cm 0.1cm;
+  border-radius: 0.2cm;
   font-size: var(--font-size-small);
   color: #374151;
   border: 1px solid #d1d5db;
   transition: all 0.3s ease;
   cursor: default;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.resume-preview .skills-section.cloud .skill-cloud-tag:nth-child(5n) {
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color, #4a90e2));
-  color: white;
-  border-color: var(--primary-color);
-  font-weight: 600;
-}
-
-.resume-preview .skills-section.cloud .skill-cloud-tag:nth-child(3n) {
-  background-color: #eff6ff;
-  border-color: #3b82f6;
-  color: #1e40af;
-}
-
-.resume-preview .skills-section.cloud .skill-cloud-tag:nth-child(7n) {
-  background-color: #f0fdf4;
-  border-color: #22c55e;
-  color: #166534;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
 
 .resume-preview .skills-section.cloud .skill-cloud-tag:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+/* Mini Skills Tag Styles - Only badge style kept */
+.resume-preview .skills-mini .skill-tag-mini {
+  background-color: #f8f9fa;
+  padding: 0.04cm 0.12cm;
+  border-radius: 0.08cm;
+  font-size: calc(var(--font-size-small) * 0.82);
+  color: #374151;
+  border: 1px solid #d1d5db;
+  margin: 0.02cm;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.03);
+  white-space: nowrap;
+  font-weight: 500;
+  display: inline-block;
+}
+
+/* Compact Cloud Tags - Clean monochrome style */
+.resume-preview .skills-section.cloud .skill-cloud-tag-compact {
+  display: inline-block;
+  background-color: #f8f9fa;
+  padding: 0.1cm 0.2cm;
+  margin: 0.08cm 0.1cm;
+  border-radius: 0.2cm;
+  font-size: var(--font-size-small);
+  color: #374151;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+  cursor: default;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.resume-preview .skills-section.cloud .skill-cloud-tag-compact:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 /* Skills Grid Layout (Wide) Template */
@@ -864,8 +881,8 @@
 .resume-preview .skills-wide .cvtag-wide {
   background: var(--secondary-color, #f8f9fa);
   color: var(--text-color, #333);
-  padding: 0.15cm 0.25cm;
-  border-radius: 0.2cm;
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.15cm;
   font-size: var(--font-size-small);
   border: 1px solid #e0e0e0;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -909,8 +926,8 @@
 .resume-preview .skills-wide2 .skill-tag {
   background: #f3f4f6;
   color: #374151;
-  padding: 0.1cm 0.2cm;
-  border-radius: 0.15cm;
+  padding: 0.07cm 0.15cm;
+  border-radius: 0.12cm;
   font-size: calc(var(--font-size-small) * 0.9);
   border: 1px solid #d1d5db;
   white-space: nowrap;
