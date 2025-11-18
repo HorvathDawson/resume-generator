@@ -40,7 +40,7 @@ export const TEMPLATE_REGISTRY: TemplateRegistry = {
   experience: Object.values(ExperienceTemplates), 
   skills: Object.values(SkillsTemplates),
   name: Object.values(NameTemplates),
-  'personal-info': Object.values(PersonalInfoTemplates),
+  personal_info: Object.values(PersonalInfoTemplates),
   padding: Object.values(PaddingTemplates),
   references: Object.values(ReferencesTemplates),
   awards: Object.values(AwardsTemplates),

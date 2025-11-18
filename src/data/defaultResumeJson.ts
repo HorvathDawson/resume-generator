@@ -457,23 +457,6 @@ export const defaultResumeJson = {
         ]
       }
     ],
-    "sectionTemplates": {
-      "name-001": "name-standard",
-      "personal-info-001": "contact-header",
-      "summary-001": "text-paragraph",
-      "experience-001": "experience-detailed",
-      "projects-001": "experience-detailed",
-      "education-001": "education-standard",
-      "skills-001": "skills-categorized",
-      "certifications-001": "list-detailed",
-      "volunteer-001": "experience-detailed",
-      "publications-001": "publications-standard",
-      "awards-001": "awards-standard",
-      "languages-001": "list-simple",
-      "references-001": "references-standard",
-      "padding-001": "padding-standard",
-      "custom-001": "text-basic"
-    },
     "layout": {
       "pages": [
         {
@@ -486,11 +469,13 @@ export const defaultResumeJson = {
               "sections": [
                 {
                   "sectionId": "name-001",
-                  "instanceId": "instance-name-001"
+                  "instanceId": "instance-name-001",
+                  "template": "name-standard"
                 },
                 {
                   "sectionId": "personal-info-001",
-                  "instanceId": "instance-personal-001"
+                  "instanceId": "instance-personal-001",
+                  "template": "contact-header"
                 }
               ],
               "sectionItemOrders": {}
@@ -501,7 +486,8 @@ export const defaultResumeJson = {
               "sections": [
                 {
                   "sectionId": "summary-001",
-                  "instanceId": "instance-summary-001"
+                  "instanceId": "instance-summary-001",
+                  "template": "text-paragraph"
                 }
               ],
               "sectionItemOrders": {}
@@ -515,19 +501,23 @@ export const defaultResumeJson = {
                   "sections": [
                     {
                       "sectionId": "education-001",
-                      "instanceId": "instance-education-001"
+                      "instanceId": "instance-education-001",
+                      "template": "education-standard"
                     },
                     {
                       "sectionId": "skills-001",
-                      "instanceId": "instance-skills-001"
+                      "instanceId": "instance-skills-001",
+                      "template": "skills-categorized"
                     },
                     {
                       "sectionId": "certifications-001",
-                      "instanceId": "instance-certifications-001"
+                      "instanceId": "instance-certifications-001",
+                      "template": "list-detailed"
                     },
                     {
                       "sectionId": "languages-001",
-                      "instanceId": "instance-languages-001"
+                      "instanceId": "instance-languages-001",
+                      "template": "list-simple"
                     }
                   ],
                   "sectionItemOrders": {}
@@ -537,7 +527,8 @@ export const defaultResumeJson = {
                   "sections": [
                     {
                       "sectionId": "experience-001",
-                      "instanceId": "instance-experience-001"
+                      "instanceId": "instance-experience-001",
+                      "template": "experience-detailed"
                     }
                   ],
                   "sectionItemOrders": {}
@@ -556,7 +547,8 @@ export const defaultResumeJson = {
               "sections": [
                 {
                   "sectionId": "projects-001",
-                  "instanceId": "instance-projects-001"
+                  "instanceId": "instance-projects-001",
+                  "template": "experience-detailed"
                 }
               ],
               "sectionItemOrders": {}
@@ -570,11 +562,13 @@ export const defaultResumeJson = {
                   "sections": [
                     {
                       "sectionId": "volunteer-001",
-                      "instanceId": "instance-volunteer-001"
+                      "instanceId": "instance-volunteer-001",
+                      "template": "experience-detailed"
                     },
                     {
                       "sectionId": "awards-001",
-                      "instanceId": "instance-awards-001"
+                      "instanceId": "instance-awards-001",
+                      "template": "awards-standard"
                     }
                   ],
                   "sectionItemOrders": {}
@@ -584,11 +578,13 @@ export const defaultResumeJson = {
                   "sections": [
                     {
                       "sectionId": "publications-001",
-                      "instanceId": "instance-publications-001"
+                      "instanceId": "instance-publications-001",
+                      "template": "publications-standard"
                     },
                     {
                       "sectionId": "custom-001",
-                      "instanceId": "instance-custom-001"
+                      "instanceId": "instance-custom-001",
+                      "template": "text-basic"
                     }
                   ],
                   "sectionItemOrders": {}
@@ -601,7 +597,8 @@ export const defaultResumeJson = {
               "sections": [
                 {
                   "sectionId": "references-001",
-                  "instanceId": "instance-references-001"
+                  "instanceId": "instance-references-001",
+                  "template": "references-standard"
                 }
               ],
               "sectionItemOrders": {}

@@ -1104,12 +1104,17 @@
 /* Padding section styles for vertical spacing */
 .resume-preview .padding-section {
   width: 100%;
-  margin: 0;
+  margin: 0 !important;  /* Override any section margin */
   padding: 0;
   display: block;
   background: transparent;
   border: none;
   /* Height is set inline via the component */
+}
+
+/* Also override for padding sections outside resume-preview context */
+.padding-section {
+  margin: 0 !important;
 }
 
 /* ============================================================================

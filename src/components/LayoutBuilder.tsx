@@ -122,27 +122,36 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     });
   });
   
-  // Show ALL sections from resume data, marking used ones
+  // Show ALL sections from resume data, marking used ones (except padding sections)
   const availableResumeSection = resumeData.sections?.map(s => ({ 
     id: s.id, 
     title: s.title, 
     type: s.type,
     isAvailable: true,
-    isUsed: usedSectionIds.has(s.id)
+    isUsed: s.type === 'padding' ? false : usedSectionIds.has(s.id)  // Padding sections never show "in use"
   })) || [];
   
-  // Only show sections that actually exist in resume data
+  // Split sections into non-padding and padding sections, then sort appropriately
+  const nonPaddingSections = availableResumeSection.filter(s => s.type !== 'padding');
+  const paddingSections = availableResumeSection.filter(s => s.type === 'padding');
+  
+  // Add create-padding option if no padding sections exist
+  const createPaddingOption = !paddingSections.length ? [{
+    id: 'create-padding',
+    title: 'Add Spacing',
+    type: 'padding' as const,
+    isAvailable: true,
+    isUsed: false
+  }] : [];
+  
+  // Only show sections that actually exist in resume data, with padding sections at the bottom
   const availableSections = [
-    // Show actual sections from resume data
-    ...availableResumeSection,
-    
-    // Always add padding option if not already available
-    ...(!availableResumeSection.some(s => s.type === 'padding') ? [{
-      id: 'create-padding',
-      title: 'Add Spacing',
-      type: 'padding' as const,
-      isAvailable: true
-    }] : [])
+    // Show non-padding sections first
+    ...nonPaddingSections,
+    // Then padding sections
+    ...paddingSections,
+    // Then create-padding option if needed
+    ...createPaddingOption
   ];
 
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
@@ -273,12 +282,10 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   // Template selector state
   const [templateSelector, setTemplateSelector] = useState<{
     sectionId: string;
+    instanceId?: string;
     sectionType: string;
     position: { x: number; y: number };
   } | null>(null);
-  const [sectionTemplates, setSectionTemplates] = useState<Record<string, string>>(
-    resumeData.sectionTemplates || {}
-  );
   const [draggedLayoutButton, setDraggedLayoutButton] = useState<'columns' | 'wholePage' | null>(null);
 
   // Handle layout button drag start
@@ -509,21 +516,24 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         actualSectionId = createPaddingSection();
       }
       
+      // Create proper section reference object
+      const sectionReference = createSectionReference(actualSectionId);
+      
       if (targetColumnIndex !== undefined) {
         // Add to column
         const targetCol = updatedRows[targetRowIndex].columns![targetColumnIndex];
         if (insertIndex !== undefined && insertIndex >= 0) {
-          targetCol.sections.splice(insertIndex, 0, actualSectionId);
+          (targetCol.sections as any).splice(insertIndex, 0, sectionReference);
         } else {
-          targetCol.sections.push(actualSectionId);
+          (targetCol.sections as any).push(sectionReference);
         }
       } else {
         // Add to whole page row
         const targetSections = updatedRows[targetRowIndex].sections!;
         if (insertIndex !== undefined && insertIndex >= 0) {
-          targetSections.splice(insertIndex, 0, actualSectionId);
+          (targetSections as any).splice(insertIndex, 0, sectionReference);
         } else {
-          targetSections.push(actualSectionId);
+          (targetSections as any).push(sectionReference);
         }
       }
       
@@ -809,18 +819,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return null;
   };
 
-  // Update temp section when template changes
-  const updateTempSection = (sectionId: string, updates: any) => {
-    if (tempSections[sectionId]) {
-      setTempSections(prev => ({
-        ...prev,
-        [sectionId]: {
-          ...prev[sectionId],
-          ...updates
-        }
-      }));
-    }
-  };
+
 
   // Create a new padding section
   const createPaddingSection = (): string => {
@@ -829,8 +828,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     // Generate unique ID for the padding section
     const paddingId = `padding-${Date.now()}`;
     
-    // Get the selected template for the create-padding section, or default to medium
-    const selectedTemplateId = sectionTemplates['create-padding'] || 'padding-medium';
+    // Default to medium padding template
+    const selectedTemplateId = 'padding-medium';
     
     // Map template IDs to heights and titles
     const templateInfo: { [key: string]: { height: string; title: string } } = {
@@ -1482,7 +1481,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   };
 
   // Template selection handlers
-  const handleSectionRightClick = (e: React.MouseEvent, sectionId: string) => {
+  const handleSectionRightClick = (e: React.MouseEvent, sectionId: string, instanceId?: string) => {
     e.preventDefault();
     
     const section = findSection(sectionId);
@@ -1494,101 +1493,139 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     console.log('🔧 Opening template selector for section:', section);
     setTemplateSelector({
       sectionId,
+      instanceId,
       sectionType: section.type,
       position: { x: e.clientX, y: e.clientY }
     });
   };
 
-  const handleTemplateChange = (sectionId: string, templateId: string) => {
-    // Special handling for create-padding virtual section
+  const handleTemplateChange = (sectionId: string, templateId: string, instanceId?: string) => {
+    // Special handling for create-padding virtual section (should not happen with new structure)
     if (sectionId === 'create-padding') {
-
-      const newSectionTemplates = {
-        ...sectionTemplates,
-        [sectionId]: templateId
-      };
-      setSectionTemplates(newSectionTemplates);
+      console.warn('create-padding should not reach template change handler');
       setTemplateSelector(null);
       return;
     }
     
-    const newSectionTemplates = {
-      ...sectionTemplates,
-      [sectionId]: templateId
-    };
-    
-    setSectionTemplates(newSectionTemplates);
-    
-    // For padding sections, update the height in customFields
-    const section = findSection(sectionId);
-    if (section?.type === 'padding') {
-      const heightMap: { [key: string]: string } = {
-        'padding-extra-small': '0.25cm',
-        'padding-small': '0.5cm',
-        'padding-medium': '1cm',
-        'padding-large': '1.5cm',
-        'padding-extra-large': '2cm',
-        'padding-xxl': '3cm'
-      };
-      
-      const newHeight = heightMap[templateId] || '1cm';
-      const templateDisplayNames: { [key: string]: string } = {
-        'padding-extra-small': 'Spacing (0.25cm)',
-        'padding-small': 'Spacing (0.5cm)',
-        'padding-medium': 'Spacing (1cm)',
-        'padding-large': 'Spacing (1.5cm)',
-        'padding-extra-large': 'Spacing (2cm)',
-        'padding-xxl': 'Spacing (3cm)'
-      };
-      
-      // Update the section data
-      const updatedSections = (resumeData.sections || []).map(s => 
-        s.id === sectionId 
-          ? {
-              ...s,
-              title: templateDisplayNames[templateId] || s.title,
-              templateId,
-              customFields: {
-                ...s.customFields,
-                height: newHeight
-              }
-            }
-          : s
-      );
-      
- 
-      
-      // Also update temp section if it exists
-      updateTempSection(sectionId, {
-        title: templateDisplayNames[templateId] || section.title,
-        templateId,
-        customFields: {
-          ...section.customFields,
-          height: newHeight
-        }
-      });
-      
-      // Update resume data with both template change and section update
-      if (onResumeDataChange) {
-        onResumeDataChange({
-          ...resumeData,
-          sections: updatedSections,
-          sectionTemplates: newSectionTemplates
-        });
-      }
-    } else {
-      // For non-padding sections, just update template mapping
-      if (onResumeDataChange) {
-        onResumeDataChange({
-          ...resumeData,
-          sectionTemplates: newSectionTemplates
-        });
-      }
+    // Require instanceId for proper template management
+    if (!instanceId) {
+      console.warn('Template change called without instanceId - this should not happen');
+      setTemplateSelector(null);
+      return;
     }
+
+    // Update the template in the layout structure for the specific instance
+    const updatedLayout = { ...resumeData.layout };
+    let templateUpdated = false;
+
+    // Helper function to update section template in a sections array
+    const updateSectionTemplate = (sections: any[]) => {
+      return sections.map(sectionRef => {
+        if (sectionRef.instanceId === instanceId) {
+          templateUpdated = true;
+          return { ...sectionRef, template: templateId };
+        }
+        return sectionRef;
+      });
+    };
+
+    // Update templates in all pages, rows, and columns
+    if (updatedLayout.pages) {
+      updatedLayout.pages = updatedLayout.pages.map((page: any) => ({
+        ...page,
+        rows: page.rows.map((row: any) => {
+          if (row.type === 'wholePage' && row.sections) {
+            return {
+              ...row,
+              sections: updateSectionTemplate(row.sections)
+            };
+          } else if (row.type === 'columns' && row.columns) {
+            return {
+              ...row,
+              columns: row.columns.map((column: any) => ({
+                ...column,
+                sections: updateSectionTemplate(column.sections)
+              }))
+            };
+          }
+          return row;
+        })
+      }));
+    }
+
+    // Update resume data with the new layout
+    if (onResumeDataChange && templateUpdated) {
+      onResumeDataChange({
+        ...resumeData,
+        layout: updatedLayout
+      });
+    }
+
+    setTemplateSelector(null);
   };
 
   const handleCloseTemplateSelector = () => {
     setTemplateSelector(null);
+  };
+
+  // Helper function to create a proper section reference with instanceId and default template
+  const createSectionReference = (sectionId: string) => {
+    // Generate unique instance ID
+    const instanceId = `instance-${sectionId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Find the section to determine its type and default template
+    const section = findSection(sectionId);
+    let defaultTemplate = 'default';
+    
+    if (section) {
+      // Use the section's existing templateId if available
+      defaultTemplate = section.templateId || getDefaultTemplateForSectionType(section.type);
+    }
+    
+    return {
+      sectionId,
+      instanceId,
+      template: defaultTemplate
+    };
+  };
+
+  // Helper function to get default template for section type
+  const getDefaultTemplateForSectionType = (sectionType: string) => {
+    const defaultTemplates: { [key: string]: string } = {
+      'name': 'name-standard',
+      'personal_info': 'contact-header',
+      'text': 'text-paragraph',
+      'experience': 'experience-detailed',
+      'education': 'education-standard',
+      'skills': 'skills-categorized',
+      'list': 'list-simple',
+      'publications': 'publications-standard',
+      'awards': 'awards-standard',
+      'references': 'references-standard',
+      'padding': 'padding-medium'
+    };
+    return defaultTemplates[sectionType] || 'default';
+  };
+
+  // Helper function to find the current template for a specific instance
+  const findInstanceTemplate = (instanceId: string) => {
+    if (!instanceId || !resumeData.layout?.pages) return undefined;
+    
+    for (const page of resumeData.layout.pages) {
+      for (const row of page.rows) {
+        const rowData = row as any; // Cast to any to handle the union type
+        if (rowData.type === 'wholePage' && rowData.sections) {
+          const section = rowData.sections.find((s: any) => s.instanceId === instanceId);
+          if (section) return section.template;
+        } else if (rowData.type === 'columns' && rowData.columns) {
+          for (const column of rowData.columns) {
+            const section = column.sections.find((s: any) => s.instanceId === instanceId);
+            if (section) return section.template;
+          }
+        }
+      }
+    }
+    return undefined;
   };
 
   return (
@@ -2079,16 +2116,25 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                     setDragOverTarget(null);
                                   }}
                                   onDrop={(e) => handleSectionDrop(e, rowIndex, columnIndex, sectionIndex, true)}
-                                  onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
+                                  onContextMenu={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
                                 >
                                 <span className="section-title">
                                   {(() => {
                                     const debugSection = findSection(sectionId);
-                                    if (sectionId.startsWith('padding-')) {
-                                      console.log('📝 Rendering section title for:', sectionId);
-                                      console.log('📝 Found section:', debugSection);
-                                      console.log('📝 Section title:', debugSection?.title);
+                                    
+                                    // For padding sections, derive title from instance template
+                                    if (debugSection?.type === 'padding' && sectionRef.template) {
+                                      const templateDisplayNames: { [key: string]: string } = {
+                                        'padding-extra-small': 'Spacing (0.25cm)',
+                                        'padding-small': 'Spacing (0.5cm)',
+                                        'padding-medium': 'Spacing (1cm)',
+                                        'padding-large': 'Spacing (1.5cm)',
+                                        'padding-extra-large': 'Spacing (2cm)',
+                                        'padding-xxl': 'Spacing (3cm)'
+                                      };
+                                      return templateDisplayNames[sectionRef.template] || debugSection.title;
                                     }
+                                    
                                     return debugSection?.title || sectionId;
                                   })()}
                                 </span>
@@ -2103,7 +2149,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   </button>
                                   <button
                                     className="template-button"
-                                    onClick={(e) => handleSectionRightClick(e, sectionId)}
+                                    onClick={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
                                     title="Select template"
                                   >
                                     ⚙
@@ -2305,16 +2351,25 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   setDragOverTarget(null);
                                 }}
                                 onDrop={(e) => handleSectionDrop(e, rowIndex, undefined, sectionIndex, true)}
-                                onContextMenu={(e) => handleSectionRightClick(e, sectionId)}
+                                onContextMenu={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
                               >
                               <span className="section-title">
                                 {(() => {
                                   const debugSection = findSection(sectionId);
-                                  if (sectionId.startsWith('padding-')) {
-                                    console.log('📝 Whole page rendering section title for:', sectionId);
-                                    console.log('📝 Found section:', debugSection);
-                                    console.log('📝 Section title:', debugSection?.title);
+                                  
+                                  // For padding sections, derive title from instance template
+                                  if (debugSection?.type === 'padding' && sectionRef.template) {
+                                    const templateDisplayNames: { [key: string]: string } = {
+                                      'padding-extra-small': 'Spacing (0.25cm)',
+                                      'padding-small': 'Spacing (0.5cm)',
+                                      'padding-medium': 'Spacing (1cm)',
+                                      'padding-large': 'Spacing (1.5cm)',
+                                      'padding-extra-large': 'Spacing (2cm)',
+                                      'padding-xxl': 'Spacing (3cm)'
+                                    };
+                                    return templateDisplayNames[sectionRef.template] || debugSection.title;
                                   }
+                                  
                                   return debugSection?.title || sectionId;
                                 })()}
                               </span>
@@ -2329,7 +2384,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 </button>
                                 <button
                                   className="template-button"
-                                  onClick={(e) => handleSectionRightClick(e, sectionId)}
+                                  onClick={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
                                   title="Select template"
                                 >
                                   ⚙
@@ -2496,8 +2551,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       {templateSelector && (
         <SectionTemplateSelector
           sectionId={templateSelector.sectionId}
+          instanceId={templateSelector.instanceId}
           sectionType={templateSelector.sectionType}
-          currentTemplateId={sectionTemplates[templateSelector.sectionId]}
+          currentTemplateId={templateSelector.instanceId ? findInstanceTemplate(templateSelector.instanceId) : undefined}
           onTemplateChange={handleTemplateChange}
           onClose={handleCloseTemplateSelector}
           position={templateSelector.position}

@@ -294,8 +294,8 @@ export function PreviewPanel({
                                       if (sectionId.startsWith('padding-')) {
                                         // If padding section not found, render a placeholder with template-based height
                                         if (!section) {
-                                          // Try to get the height from template mappings
-                                          const templateId = resumeData.sectionTemplates?.[sectionId] || 'padding-medium';
+                                          // Try to get the height from template in layout or fallback
+                                          const templateId = sectionRef.template || 'padding-medium';
                                           const heightMap: { [key: string]: string } = {
                                             'padding-extra-small': '0.25cm',
                                             'padding-small': '0.5cm',
@@ -320,8 +320,8 @@ export function PreviewPanel({
                                       // Apply item reordering based on layout
                                       const reorderedSection = applySectionItemOrder(section, rowIndex, colIndex);
                                       const availableTemplates = TEMPLATE_REGISTRY[reorderedSection.type] || [];
-                                      // Check for template override first, then fallback to section.templateId
-                                      const templateId = resumeData.sectionTemplates?.[sectionId] || reorderedSection.templateId;
+                                      // Check for template in layout first, then fallback to section.templateId
+                                      const templateId = sectionRef.template || reorderedSection.templateId;
                                       const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
                                       if (selectedTemplate) {
                                         const TemplateComponent = selectedTemplate.component;
@@ -383,8 +383,8 @@ export function PreviewPanel({
                                   if (sectionId.startsWith('padding-')) {
                                     // If padding section not found, render a placeholder with template-based height
                                     if (!section) {
-                                      // Try to get the height from template mappings
-                                      const templateId = resumeData.sectionTemplates?.[sectionId] || 'padding-medium';
+                                      // Try to get the height from template in layout or fallback
+                                      const templateId = sectionRef.template || 'padding-medium';
                                       const heightMap: { [key: string]: string } = {
                                         'padding-extra-small': '0.25cm',
                                         'padding-small': '0.5cm',
@@ -409,8 +409,8 @@ export function PreviewPanel({
                                   // Apply item reordering based on layout for whole page sections
                                   const reorderedSection = applySectionItemOrder(section, rowIndex, undefined);
                                   const availableTemplates = TEMPLATE_REGISTRY[reorderedSection.type] || [];
-                                  // Check for template override first, then fallback to section.templateId
-                                  const templateId = resumeData.sectionTemplates?.[sectionId] || reorderedSection.templateId;
+                                  // Check for template in layout first, then fallback to section.templateId
+                                  const templateId = sectionRef.template || reorderedSection.templateId;
                                   const selectedTemplate = availableTemplates.find(t => t.id === templateId) || availableTemplates[0];
                                   if (selectedTemplate) {
                                     const TemplateComponent = selectedTemplate.component;

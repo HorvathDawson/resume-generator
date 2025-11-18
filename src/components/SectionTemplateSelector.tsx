@@ -4,15 +4,17 @@ import './SectionTemplateSelector.css';
 
 interface SectionTemplateSelectorProps {
   sectionId: string;
+  instanceId?: string;
   sectionType: string;
   currentTemplateId?: string;
-  onTemplateChange: (sectionId: string, templateId: string) => void;
+  onTemplateChange: (sectionId: string, templateId: string, instanceId?: string) => void;
   onClose: () => void;
   position: { x: number; y: number };
 }
 
 export const SectionTemplateSelector: React.FC<SectionTemplateSelectorProps> = ({
   sectionId,
+  instanceId,
   sectionType,
   currentTemplateId,
   onTemplateChange,
@@ -89,7 +91,7 @@ export const SectionTemplateSelector: React.FC<SectionTemplateSelectorProps> = (
   };
 
   const handleTemplateSelect = (templateId: string) => {
-    onTemplateChange(sectionId, templateId);
+    onTemplateChange(sectionId, templateId, instanceId);
     handleClose();
   };
 
