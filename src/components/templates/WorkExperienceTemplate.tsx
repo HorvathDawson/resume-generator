@@ -189,35 +189,23 @@ export const ExperienceTemplates = {
     description: 'Ultra-compact experience with minimal spacing',
     component: ({ section }: { section: Section }) => (
       <div className="section experience-compact">
-        <h2 style={{ marginBottom: '0.25cm' }}>{section.title}</h2>
+        <h2>{section.title}</h2>
         <div className="experience-compact-list">
           {section.items?.map((item, index) => (
-            <div key={index} className="experience-item-compact" style={{ 
-              marginBottom: '0.2cm',
-              fontSize: '0.32cm'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                marginBottom: '0.05cm'
-              }}>
-                <strong style={{ color: 'var(--primary-color, #2c5aa0)' }}>
+            <div key={index} className="experience-item-compact">
+              <div>
+                <strong>
                   {item.title}
                 </strong>
-                <span style={{ fontSize: '0.3cm', opacity: '0.8' }}>
+                <span>
                   {item.dates}
                 </span>
               </div>
-              <div style={{ 
-                fontStyle: 'italic', 
-                marginBottom: '0.05cm',
-                fontSize: '0.31cm'
-              }}>
+              <div>
                 {item.organization} {item.location && `• ${item.location}`}
               </div>
               {item.details && item.details.length > 0 && (
-                <div style={{ fontSize: '0.3cm', lineHeight: '1.3' }}>
+                <div>
                   {item.details.slice(0, 2).join(' • ')}
                 </div>
               )}
@@ -237,42 +225,21 @@ export const ExperienceTemplates = {
         <h2>{section.title}</h2>
         <div className="experience-sidebar-list">
           {section.items?.map((item, index) => (
-            <div key={index} style={{ 
-              display: 'flex',
-              marginBottom: '0.4cm',
-              gap: '0.5cm'
-            }}>
-              <div style={{ 
-                minWidth: '2.5cm',
-                fontSize: '0.3cm',
-                color: 'var(--primary-color, #2c5aa0)',
-                fontWeight: '600',
-                textAlign: 'right'
-              }}>
+            <div key={index}>
+              <div>
                 {item.dates}
               </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ 
-                  marginBottom: '0.1cm',
-                  fontSize: '0.38cm'
-                }}>
+              <div>
+                <h3>
                   {item.title}
                 </h3>
-                <div style={{ 
-                  fontStyle: 'italic',
-                  marginBottom: '0.15cm',
-                  fontSize: '0.33cm'
-                }}>
+                <div>
                   {item.organization} {item.location && `• ${item.location}`}
                 </div>
                 {item.details && item.details.length > 0 && (
-                  <ul style={{ 
-                    marginLeft: '0.5cm',
-                    fontSize: '0.32cm',
-                    lineHeight: '1.4'
-                  }}>
+                  <ul>
                     {item.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} style={{ marginBottom: '0.1cm' }}>
+                      <li key={detailIndex}>
                         {detail}
                       </li>
                     ))}
@@ -295,45 +262,24 @@ export const ExperienceTemplates = {
         <h2>{section.title}</h2>
         <div className="experience-focused-list">
           {section.items?.map((item, index) => (
-            <div key={index} style={{ marginBottom: '0.5cm' }}>
-              <div style={{ 
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                marginBottom: '0.1cm'
-              }}>
-                <h3 style={{ 
-                  color: 'var(--primary-color, #2c5aa0)',
-                  fontSize: '0.4cm'
-                }}>
+            <div key={index}>
+              <div>
+                <h3>
                   {item.title}
                 </h3>
-                <span style={{ 
-                  fontWeight: '600',
-                  fontSize: '0.32cm'
-                }}>
+                <span>
                   {item.dates}
                 </span>
               </div>
-              <div style={{ 
-                marginBottom: '0.2cm',
-                fontSize: '0.34cm',
-                fontWeight: '500'
-              }}>
+              <div>
                 {item.organization} {item.location && `• ${item.location}`}
               </div>
               {item.details && item.details.length > 0 && (
-                <div style={{ 
-                  backgroundColor: 'var(--secondary-color, #f8f9fa)',
-                  padding: '0.2cm',
-                  borderRadius: '0.1cm',
-                  fontSize: '0.32cm',
-                  lineHeight: '1.4'
-                }}>
+                <div>
                   <strong>Key Achievements:</strong>
-                  <ul style={{ marginTop: '0.1cm', marginLeft: '0.5cm' }}>
+                  <ul>
                     {item.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} style={{ marginBottom: '0.05cm' }}>
+                      <li key={detailIndex}>
                         {detail}
                       </li>
                     ))}
@@ -356,55 +302,22 @@ export const ExperienceTemplates = {
         <h2>{section.title}</h2>
         <div className="experience-modern-list">
           {section.items?.map((item, index) => (
-            <div key={index} style={{ 
-              marginBottom: '0.6cm',
-              paddingLeft: '0.3cm',
-              borderLeft: '0.05cm solid var(--primary-color, #4a90e2)'
-            }}>
-              <div style={{ 
-                display: 'grid',
-                gridTemplateColumns: '1fr auto',
-                gap: '0.5cm',
-                alignItems: 'baseline',
-                marginBottom: '0.1cm'
-              }}>
-                <h3 style={{ 
-                  fontSize: '0.38cm',
-                  fontWeight: '700',
-                  color: 'var(--text-color, #333)'
-                }}>
+            <div key={index}>
+              <div>
+                <h3>
                   {item.title}
                 </h3>
-                <div style={{ 
-                  backgroundColor: 'var(--primary-color, #4a90e2)',
-                  color: 'white',
-                  padding: '0.05cm 0.2cm',
-                  borderRadius: '0.3cm',
-                  fontSize: '0.28cm',
-                  fontWeight: '600'
-                }}>
+                <div>
                   {item.dates}
                 </div>
               </div>
-              <div style={{ 
-                fontSize: '0.34cm',
-                fontWeight: '500',
-                color: 'var(--primary-color, #2c5aa0)',
-                marginBottom: '0.15cm'
-              }}>
+              <div>
                 {item.organization} {item.location && `• ${item.location}`}
               </div>
               {item.details && item.details.length > 0 && (
-                <ul style={{ 
-                  fontSize: '0.32cm',
-                  lineHeight: '1.5',
-                  marginLeft: '0.4cm'
-                }}>
+                <ul>
                   {item.details.map((detail, detailIndex) => (
-                    <li key={detailIndex} style={{ 
-                      marginBottom: '0.1cm',
-                      position: 'relative'
-                    }}>
+                    <li key={detailIndex}>
                       {detail}
                     </li>
                   ))}

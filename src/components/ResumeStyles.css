@@ -321,16 +321,18 @@
 /* Icons & Text in Contact */
 .resume-preview .contact-info ul li .icons,
 .icons {
-  width: 0.4cm;
+  min-width: 0.5cm;
+  width: 0.5cm;
   text-align: center;
   color: var(--primary-color);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Fix #4: Ensure icons have enough space and line-height */
-  line-height: 0.4cm;
-  overflow: visible; /* Prevent cutting off due to `overflow: hidden` on parent */
+  /* Fix icon cutoff: Ensure icons have enough space and proper line-height */
+  line-height: 1;
+  overflow: visible;
+  margin-right: 0.1cm;
 }
 
 .resume-preview .contact-info ul li .icons i,
@@ -338,9 +340,10 @@
 .resume-preview .icons .fa,
 .resume-preview .icons .fas, 
 .resume-preview .icons .fab {
-  font-size: 0.35cm;
-  line-height: 0.4cm;
+  font-size: 0.4cm;
+  line-height: 1;
   display: inline-block;
+  vertical-align: middle;
 }
 
 .resume-preview .contact-info ul li .words,
@@ -444,7 +447,7 @@
   font-size: var(--font-size-h3); font-weight: 700; color: #111827; line-height: 1.2; margin-bottom: 0.05cm; letter-spacing: -0.01cm;
 }
 .resume-preview .education.standard-modern .institution-modern {
-  font-size: var(--font-size-body); font-weight: 500; color: #374151; line-height: 1.3;
+  font-size: var(--font-size-body); font-weight: 500; color: var(--text-color, #4b5563); line-height: 1.3;
 }
 .resume-preview .education.standard-modern .education-meta-info { text-align: right; min-width: 2.5cm; }
 .resume-preview .education.standard-modern .dates-modern {
@@ -474,7 +477,7 @@
 .resume-preview .education.clean-modern .education-clean-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.08cm; }
 .resume-preview .education.clean-modern .degree-clean { font-size: var(--font-size-h3); font-weight: 600; color: #111827; line-height: 1.2; }
 .resume-preview .education.clean-modern .dates-clean { font-size: var(--font-size-small); font-weight: 500; color: var(--primary-color); }
-.resume-preview .education.clean-modern .institution-clean { font-size: var(--font-size-body); color: #374151; margin-bottom: 0.08cm; font-weight: 500; }
+.resume-preview .education.clean-modern .institution-clean { font-size: var(--font-size-body); color: var(--text-color, #4b5563); margin-bottom: 0.08cm; font-weight: 500; }
 .resume-preview .education.clean-modern .education-clean-meta { display: flex; gap: 0.3cm; align-items: center; margin-bottom: 0.1cm; }
 .resume-preview .education.clean-modern .location-clean,
 .resume-preview .education.clean-modern .gpa-clean { font-size: calc(var(--font-size-small) * 0.9); opacity: 0.7; }
@@ -539,7 +542,7 @@
 .resume-preview .education.sidebar .sidebar-dates { font-size: var(--font-size-small); color: var(--primary-color); font-weight: bold; }
 .resume-preview .education.sidebar .education-content-column { flex: 1; }
 .resume-preview .education.sidebar .sidebar-degree { font-weight: bold; font-size: var(--font-size-body); margin-bottom: 0.05cm; }
-.resume-preview .education.sidebar .sidebar-institution { font-size: var(--font-size-small); color: #374151; margin-bottom: 0.03cm; }
+.resume-preview .education.sidebar .sidebar-institution { font-size: var(--font-size-small); color: var(--text-color, #4b5563); margin-bottom: 0.03cm; }
 .resume-preview .education.sidebar .sidebar-details {
   margin: 0;
   padding: 0;
@@ -586,13 +589,13 @@
 .resume-preview .education.badge .badge-degree {
   background: var(--primary-color); color: white; padding: 0.05cm 0.15cm; border-radius: 0.1cm; font-size: var(--font-size-small); font-weight: bold;
 }
-.resume-preview .education.badge .badge-institution { font-size: var(--font-size-small); font-weight: bold; color: #374151; }
+.resume-preview .education.badge .badge-institution { font-size: var(--font-size-small); font-weight: bold; color: var(--text-color, #4b5563); }
 .resume-preview .education.badge .badge-dates { font-size: var(--font-size-small); color: #6b7280; font-style: italic; }
 .resume-preview .education.badge .badge-location { font-size: var(--font-size-small);}
 .resume-preview .education.badge .badge-gpa { font-size: var(--font-size-small); margin:0; margin-bottom: 0.1cm;}
 .resume-preview .education.badge .badge-details { margin-top: 0.05cm; display: flex; flex-wrap: wrap; gap: 0.1cm; }
 .badge-detail, .resume-preview .education.badge .badge-detail {
-  background: #f3f4f6; color: #374151; padding: 0.02cm 0.1cm; border-radius: 0.05cm; font-size: calc(var(--font-size-small) * 0.9); margin-right: 0.1cm; margin-bottom: 0.05cm; display: inline-block;
+  background: #f3f4f6; color: var(--text-color, #4b5563); padding: 0.02cm 0.1cm; border-radius: 0.05cm; font-size: calc(var(--font-size-small) * 0.9); margin-right: 0.1cm; margin-bottom: 0.05cm; display: inline-block;
 }
 
 /* --- Compact/Minimal/Wide Education Variations (Fix #5) --- */
@@ -600,7 +603,7 @@
 .resume-preview .education.compact .education-compact-list { margin: 0.2cm 0; }
 .resume-preview .education.compact .education-item-compact { margin-bottom: 0.3cm; font-size: var(--font-size-small); }
 .resume-preview .education.compact .education-details-compact {
-  margin-top: 0.1cm; font-size: calc(var(--font-size-small) * 0.9); color: #374151;
+  margin-top: 0.1cm; font-size: calc(var(--font-size-small) * 0.9); color: var(--text-color, #4b5563);
 }
 
 .resume-preview .education.minimal .education-minimal-list { margin: 0.1cm 0; }
@@ -648,7 +651,7 @@
 
 .resume-preview .education-wide .institution {
   font-size: var(--font-size-small);
-  color: #374151;
+  color: var(--text-color, #4b5563);
   font-weight: 600;
 }
 
@@ -731,7 +734,7 @@
 .resume-preview .experience.minimal .experience-minimal-list { margin: 0.2cm 0; }
 .resume-preview .experience.minimal .experience-item-minimal { margin-bottom: 0.4cm; }
 .resume-preview .experience.minimal .exp-header-minimal { font-size: var(--font-size-small); margin-bottom: 0.1cm; }
-.resume-preview .experience.minimal .exp-summary { font-size: calc(var(--font-size-small) * 0.9); color: #374151; margin-top: 0.1cm; }
+.resume-preview .experience.minimal .exp-summary { font-size: calc(var(--font-size-small) * 0.9); color: var(--text-color, #4b5563); margin-top: 0.1cm; }
 
 /* Timeline Experience */
 .resume-preview .experience > ul { list-style-type: none; padding: 0; margin: 0 0 0.25cm 0; }
@@ -757,11 +760,201 @@
 .resume-preview .experience.cards .card-dates {
   font-size: calc(var(--font-size-small) * 0.9); color: #6b7280; font-weight: 500; white-space: nowrap; margin-left: 0.2cm;
 }
-.resume-preview .experience.cards .card-company { font-size: var(--font-size-small); color: #374151; font-weight: 600; margin: 0; }
+.resume-preview .experience.cards .card-company { font-size: var(--font-size-small); color: var(--text-color, #4b5563); font-weight: 600; margin: 0; }
 .resume-preview .experience.cards .card-detail {
   font-size: calc(var(--font-size-small) * 0.95); color: #4b5563; line-height: 1.3; margin-bottom: 0.08cm; position: relative; padding-left: 0.25cm;
 }
 .resume-preview .experience.cards .card-detail:before { content: '•'; color: var(--primary-color); position: absolute; left: 0; font-weight: bold; }
+
+/* Compact Experience Template */
+.resume-preview .experience-compact h2 {
+  margin-bottom: 0.25cm;
+}
+
+
+
+.resume-preview .experience-compact .experience-item-compact {
+  margin-bottom: 0.2cm;
+  font-size: 0.32cm;
+}
+
+.resume-preview .experience-compact .experience-item-compact > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.05cm;
+}
+
+.resume-preview .experience-compact .experience-item-compact > div:first-child strong {
+  color: var(--primary-color, #2c5aa0);
+}
+
+.resume-preview .experience-compact .experience-item-compact > div:first-child span {
+  font-size: 0.3cm;
+  opacity: 0.8;
+}
+
+.resume-preview .experience-compact .experience-item-compact > div:nth-child(2) {
+  font-style: italic;
+  margin-bottom: 0.05cm;
+  font-size: 0.31cm;
+}
+
+.resume-preview .experience-compact .experience-item-compact > div:last-child {
+  font-size: 0.3cm;
+  line-height: 1.3;
+}
+
+/* Sidebar Experience Template */
+.resume-preview .experience-sidebar h2 {
+  margin-bottom: 0.25cm;
+}
+
+
+
+.resume-preview .experience-sidebar .experience-sidebar-list > div {
+  display: flex;
+  margin-bottom: 0.4cm;
+  gap: 0.5cm;
+}
+
+.resume-preview .experience-sidebar .experience-sidebar-list > div > div:first-child {
+  min-width: 2.5cm;
+  font-size: 0.3cm;
+  color: var(--primary-color, #2c5aa0);
+  font-weight: 600;
+  text-align: right;
+}
+
+.resume-preview .experience-sidebar .experience-sidebar-list > div > div:last-child {
+  flex: 1;
+}
+
+.resume-preview .experience-sidebar .experience-sidebar-list h3 {
+  margin-bottom: 0.1cm;
+  font-size: 0.38cm;
+}
+
+.resume-preview .experience-sidebar .experience-sidebar-list > div > div:last-child > div {
+  font-style: italic;
+  margin-bottom: 0.15cm;
+  font-size: 0.33cm;
+}
+
+.resume-preview .experience-sidebar .experience-sidebar-list ul {
+  margin-left: 0.5cm;
+  font-size: 0.32cm;
+  line-height: 1.4;
+}
+
+.resume-preview .experience-sidebar .experience-sidebar-list ul li {
+  margin-bottom: 0.1cm;
+}
+
+/* Achievement Focused Experience Template */
+.resume-preview .experience-focused h2 {
+  margin-bottom: 0.25cm;
+}
+
+
+
+.resume-preview .experience-focused .experience-focused-list > div {
+  margin-bottom: 0.5cm;
+}
+
+.resume-preview .experience-focused .experience-focused-list > div > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .experience-focused .experience-focused-list h3 {
+  color: var(--primary-color, #2c5aa0);
+  font-size: 0.4cm;
+}
+
+.resume-preview .experience-focused .experience-focused-list > div > div:first-child span {
+  font-weight: 600;
+  font-size: 0.32cm;
+}
+
+.resume-preview .experience-focused .experience-focused-list > div > div:nth-child(2) {
+  margin-bottom: 0.2cm;
+  font-size: 0.34cm;
+  font-weight: 500;
+}
+
+.resume-preview .experience-focused .experience-focused-list > div > div:last-child {
+  background-color: var(--secondary-color, #f8f9fa);
+  padding: 0.2cm;
+  border-radius: 0.1cm;
+  font-size: 0.32cm;
+  line-height: 1.4;
+}
+
+.resume-preview .experience-focused .experience-focused-list > div > div:last-child ul {
+  margin-top: 0.1cm;
+  margin-left: 0.5cm;
+}
+
+.resume-preview .experience-focused .experience-focused-list > div > div:last-child ul li {
+  margin-bottom: 0.05cm;
+}
+
+/* Modern Clean Experience Template */
+.resume-preview .experience-modern h2 {
+  margin-bottom: 0.25cm;
+}
+
+
+
+.resume-preview .experience-modern .experience-modern-list > div {
+  margin-bottom: 0.6cm;
+  padding-left: 0.3cm;
+  border-left: 0.05cm solid var(--primary-color, #4a90e2);
+}
+
+.resume-preview .experience-modern .experience-modern-list > div > div:first-child {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5cm;
+  align-items: baseline;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .experience-modern .experience-modern-list h3 {
+  font-size: 0.38cm;
+  font-weight: 700;
+  color: var(--text-color, #333);
+}
+
+.resume-preview .experience-modern .experience-modern-list > div > div:first-child > div {
+  background-color: var(--primary-color, #4a90e2);
+  color: white;
+  padding: 0.05cm 0.2cm;
+  border-radius: 0.3cm;
+  font-size: 0.28cm;
+  font-weight: 600;
+}
+
+.resume-preview .experience-modern .experience-modern-list > div > div:nth-child(2) {
+  font-size: 0.34cm;
+  font-weight: 500;
+  color: var(--primary-color, #2c5aa0);
+  margin-bottom: 0.15cm;
+}
+
+.resume-preview .experience-modern .experience-modern-list ul {
+  font-size: 0.32cm;
+  line-height: 1.5;
+  margin-left: 0.4cm;
+}
+
+.resume-preview .experience-modern .experience-modern-list ul li {
+  margin-bottom: 0.1cm;
+  position: relative;
+}
 
 /* ============================================================================
    8. SKILLS SECTION TEMPLATES
@@ -777,9 +970,10 @@
 /* Standard & Mini Tags */
 .resume-preview .skills-section .skill-tag,
 .resume-preview .skills-mini .skill-tag-mini {
-  background-color: #f8f9fa; padding: 0.06cm 0.15cm; border-radius: 0.1cm; color: #374151;
+  background-color: #f8f9fa; padding: 0.06cm 0.15cm; border-radius: 0.1cm; color: var(--text-color, #4b5563);
   border: 1px solid #d1d5db; margin: 0.03cm; box-shadow: 0 1px 1px rgba(0,0,0,0.04);
-  white-space: nowrap; font-weight: 500; display: inline-block;
+  font-weight: 500; display: inline-block;
+  word-wrap: break-word; overflow-wrap: break-word;
 }
 .resume-preview .skills-section .skill-tag { font-size: calc(var(--font-size-small) * 0.9); }
 .resume-preview .skills-mini .skill-tag-mini { font-size: calc(var(--font-size-small) * 0.82); padding: 0.04cm 0.12cm; border-radius: 0.08cm; }
@@ -800,7 +994,7 @@
 .resume-preview .skills-section.cloud .skill-cloud-tag,
 .resume-preview .skills-section.cloud .skill-cloud-tag-compact {
   display: inline-block; background-color: #f8f9fa; padding: 0.1cm 0.2cm; margin: 0.08cm 0.1cm;
-  border-radius: 0.2cm; font-size: var(--font-size-small); color: #374151; border: 1px solid #d1d5db;
+  border-radius: 0.2cm; font-size: var(--font-size-small); color: var(--text-color, #4b5563); border: 1px solid #d1d5db;
   transition: all 0.3s ease; cursor: default; box-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
 .resume-preview .skills-section.cloud .skill-cloud-tag:hover,
@@ -810,12 +1004,13 @@
 .resume-preview .skills-wide .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr)); gap: 0.4cm; margin: 0.3cm 0; }
 .resume-preview .skills-wide .cvtag-wide {
   background: var(--secondary-color); color: var(--text-color); padding: 0.1cm 0.2cm; border-radius: 0.15cm;
-  font-size: var(--font-size-small); border: 1px solid #e0e0e0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: nowrap;
+  font-size: var(--font-size-small); border: 1px solid #e0e0e0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  word-wrap: break-word; overflow-wrap: break-word;
 }
 .resume-preview .skills-wide .cvtag-wide:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
 /* Inline Layout (Wide2) */
-.resume-preview .skills-wide2 .skill-line { display: flex; align-items: flex-start; margin-bottom: 0.25cm; gap: 0.3cm; }
+.resume-preview .skills-wide2 .skill-line { display: flex; align-items: flex-start; margin-bottom: 0.25cm; gap: 0.3cm; flex-wrap: wrap; }
 .resume-preview .skills-wide2 .category-label { font-weight: 600; font-size: var(--font-size-small); color: var(--primary-color); min-width: 3cm; flex-shrink: 0; }
 .resume-preview .skills-wide2 .skill-tag:nth-child(odd) { background: #eff6ff; color: #1e40af; border-color: #c7d2fe; }
 
@@ -833,6 +1028,229 @@
 .resume-preview .skills-section.proficiency .dot { width: 0.12cm; height: 0.12cm; border-radius: 50%; border: 0.03cm solid #d1d5db; }
 .resume-preview .skills-section.proficiency .dot.filled { background: var(--primary-color); border-color: var(--primary-color); }
 .resume-preview .skills-section.proficiency .dot.empty { background: transparent; }
+
+/* Simple List Template */
+.resume-preview .skills-simple {
+  margin-bottom: 0.3cm;
+}
+
+.resume-preview .skills-simple h2 {
+  margin-bottom: 0.2cm;
+}
+
+.resume-preview .skills-simple .skills-simple-content {
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.resume-preview .skills-simple .skill-category-simple {
+  margin-bottom: 0.15cm;
+  font-size: 0.33cm;
+}
+
+.resume-preview .skills-simple .skill-category-simple strong {
+  font-weight: 600;
+  color: var(--primary-color, #2c5aa0);
+  margin-right: 0.2cm;
+}
+
+.resume-preview .skills-simple .skill-category-simple span {
+  color: var(--text-color, #4b5563);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Minimal Dots Template */
+.resume-preview .skills-minimal h2 {
+  margin-bottom: 0.25cm;
+}
+
+
+
+.resume-preview .skills-minimal .skill-category-minimal {
+  display: flex;
+  margin-bottom: 0.15cm;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.resume-preview .skills-minimal .skill-category-minimal span:first-child {
+  font-weight: 600;
+  color: var(--primary-color, #2c5aa0);
+  min-width: 3cm;
+  margin-right: 0.3cm;
+  font-size: 0.33cm;
+}
+
+.resume-preview .skills-minimal .skill-category-minimal span:last-child {
+  font-size: 0.32cm;
+  line-height: 1.4;
+  color: var(--text-color, #4b5563);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Clean Minimal Template */
+.resume-preview .skills-clean {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .skills-clean h2 {
+  margin-bottom: 0.3cm;
+  font-size: var(--font-size-h2);
+  font-weight: 600;
+  color: #111827;
+}
+
+
+
+.resume-preview .skills-clean .skills-clean-content > div {
+  margin-bottom: 0.2cm;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4cm;
+  flex-wrap: wrap;
+}
+
+.resume-preview .skills-clean .skills-clean-content > div span:first-child {
+  font-weight: 500;
+  color: var(--text-color, #4b5563);
+  font-size: 0.33cm;
+  min-width: 2.5cm;
+  flex-shrink: 0;
+}
+
+.resume-preview .skills-clean .skills-clean-content > div span:last-child {
+  font-size: 0.32cm;
+  color: #6b7280;
+  line-height: 1.5;
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Clean Lines Template */
+.resume-preview .skills-lines h2 {
+  margin-bottom: 0.25cm;
+}
+
+
+
+.resume-preview .skills-lines .skill-line-group {
+  margin-bottom: 0.25cm;
+  padding-bottom: 0.15cm;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.resume-preview .skills-lines .skill-line-group:last-child {
+  border-bottom: none;
+}
+
+.resume-preview .skills-lines .skill-line-group h3 {
+  font-size: 0.38cm;
+  font-weight: 600;
+  color: var(--primary-color, #2c5aa0);
+  margin-bottom: 0.1cm;
+  letter-spacing: 0.02cm;
+}
+
+.resume-preview .skills-lines .skill-line-group > div {
+  font-size: 0.32cm;
+  color: var(--text-color, #4b5563);
+  line-height: 1.5;
+  font-weight: 400;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Modern Minimal Template */
+.resume-preview .skills-modern {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .skills-modern h2 {
+  margin-bottom: 0.3cm;
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  letter-spacing: 0.02cm;
+}
+
+.resume-preview .skills-modern .skills-modern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr));
+  gap: 0.3cm;
+}
+
+.resume-preview .skills-modern .skills-modern-grid > div {
+  margin-bottom: 0.2cm;
+}
+
+.resume-preview .skills-modern .skills-modern-grid > div > div:first-child {
+  font-size: 0.28cm;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.08cm;
+  text-transform: uppercase;
+  letter-spacing: 0.05cm;
+}
+
+.resume-preview .skills-modern .skills-modern-grid > div > div:last-child {
+  font-size: 0.33cm;
+  color: #6b7280;
+  line-height: 1.6;
+  font-weight: 400;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Sleek Minimalist Template */
+.resume-preview .skills-sleek {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .skills-sleek h2 {
+  margin-bottom: 0.3cm;
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01cm;
+}
+
+
+
+.resume-preview .skills-sleek .skills-sleek-content > div {
+  margin-bottom: 0.25cm;
+  padding-left: 0.1cm;
+  border-left: 2px solid #e5e7eb;
+}
+
+.resume-preview .skills-sleek .skills-sleek-content > div > div:first-child {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.32cm;
+  margin-bottom: 0.05cm;
+  text-transform: capitalize;
+}
+
+.resume-preview .skills-sleek .skills-sleek-content > div > div:last-child {
+  font-size: 0.31cm;
+  color: #6b7280;
+  line-height: 1.5;
+  font-weight: 400;
+  padding-left: 0.05cm;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.resume-preview .skills-sleek .skills-sleek-content > div > div:last-child span {
+  margin-right: 0.3cm;
+}
+
+.resume-preview .skills-sleek .skills-sleek-content > div > div:last-child span span {
+  color: #d1d5db;
+  margin: 0 0.1cm;
+}
 
 /* ============================================================================
    9. PUBLICATIONS TEMPLATES (Fix #7: Modern, Elegant, Academic)
@@ -1011,31 +1429,3 @@
 .footer-fish, .footer-salmon { background: transparent; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
 .footer-fish svg, .footer-salmon svg { width: 100%; height: 100%; }
 
-/* ============================================================================
-   11. SKILLS EDITOR (Interactive Components)
-   ============================================================================ */
-
-.skill-bubble-editor {
-  display: flex; flex-direction: column; background: white; border: 1px solid #e5e7eb; border-radius: 0.4cm; padding: 0.2cm; margin: 0.1cm;
-  min-width: 6cm; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s ease;
-}
-.skill-bubble-editor:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.15); transform: translateY(-1px); }
-.skill-bubble-container { display: flex; align-items: center; gap: 0.2cm; margin-bottom: 0.15cm; }
-.skill-bubble-input {
-  flex: 1; padding: 0.15cm 0.25cm; border: none; background: #f8f9fa; border-radius: 0.3cm; font-size: 0.32cm; font-weight: 500; color: #374151; min-width: 0; transition: background-color 0.2s;
-}
-.skill-bubble-input:focus { outline: none; background: #e0f2fe; color: #0369a1; }
-.skill-bubble-delete {
-  background: #ef4444; color: white; border: none; border-radius: 50%; width: 0.6cm; height: 0.6cm; font-size: 0.3cm;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
-}
-.skill-bubble-delete:hover { background: #dc2626; transform: scale(1.1); }
-.skill-slider {
-  flex: 1; height: 0.2cm; background: #e5e7eb; border-radius: 0.1cm; outline: none; appearance: none; cursor: pointer; transition: background 0.2s;
-}
-.skill-slider::-webkit-slider-thumb, .skill-slider::-moz-range-thumb {
-  appearance: none; width: 0.5cm; height: 0.5cm; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s;
-}
-.skill-value-display {
-  background: #3b82f6; color: white; padding: 0.1cm 0.2cm; border-radius: 0.2cm; font-size: 0.3cm; font-weight: 600; min-width: 1.2cm; text-align: center; box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
-}

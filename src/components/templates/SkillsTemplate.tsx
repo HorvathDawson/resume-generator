@@ -76,22 +76,15 @@ export const SkillsTemplates = {
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-simple" style={{ marginBottom: '0.3cm' }}>
-          <h2 style={{ marginBottom: '0.2cm' }}>{section.title}</h2>
-          <div className="skills-simple-content" style={{ lineHeight: '1.4' }}>
+        <div className="section skills-simple">
+          <h2>{section.title}</h2>
+          <div className="skills-simple-content">
             {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-category-simple" style={{ 
-                marginBottom: '0.15cm', 
-                fontSize: '0.33cm' 
-              }}>
-                <strong style={{ 
-                  fontWeight: '600', 
-                  color: 'var(--primary-color, #2c5aa0)',
-                  marginRight: '0.2cm'
-                }}>
+              <div key={index} className="skill-category-simple">
+                <strong>
                   {category.name}:
                 </strong>
-                <span style={{ color: '#4b5563' }}>
+                <span>
                   {category.skills.map((skill: any) => 
                     typeof skill === 'string' ? skill : skill.name || skill
                   ).join(', ')}
@@ -112,28 +105,14 @@ export const SkillsTemplates = {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
         <div className="section skills-minimal">
-          <h2 style={{ marginBottom: '0.25cm' }}>{section.title}</h2>
+          <h2>{section.title}</h2>
           <div className="skills-minimal-content">
             {categories.map((category: any, index: number) => (
-              <div key={index} className="skill-category-minimal" style={{ 
-                display: 'flex', 
-                marginBottom: '0.15cm', 
-                alignItems: 'baseline' 
-              }}>
-                <span style={{ 
-                  fontWeight: '600', 
-                  color: 'var(--primary-color, #2c5aa0)',
-                  minWidth: '3cm',
-                  marginRight: '0.3cm',
-                  fontSize: '0.33cm'
-                }}>
+              <div key={index} className="skill-category-minimal">
+                <span>
                   {category.name}
                 </span>
-                <span style={{ 
-                  fontSize: '0.32cm', 
-                  lineHeight: '1.4',
-                  color: '#4b5563'
-                }}>
+                <span>
                   {category.skills.map((skill: any) => 
                     typeof skill === 'string' ? skill : skill.name || skill
                   ).join(' • ')}
@@ -153,38 +132,15 @@ export const SkillsTemplates = {
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-clean" style={{ marginBottom: '0.4cm' }}>
-          <h2 style={{ 
-            marginBottom: '0.3cm',
-            fontSize: 'var(--font-size-h2)',
-            fontWeight: '600',
-            color: '#111827'
-          }}>
-            {section.title}
-          </h2>
+        <div className="section skills-clean">
+          <h2>{section.title}</h2>
           <div className="skills-clean-content">
             {categories.map((category: any, index: number) => (
-              <div key={index} style={{ 
-                marginBottom: '0.2cm',
-                display: 'flex',
-                alignItems: 'baseline',
-                gap: '0.4cm'
-              }}>
-                <span style={{ 
-                  fontWeight: '500', 
-                  color: '#374151',
-                  fontSize: '0.33cm',
-                  minWidth: '2.5cm',
-                  flexShrink: 0
-                }}>
+              <div key={index}>
+                <span>
                   {category.name}
                 </span>
-                <span style={{ 
-                  fontSize: '0.32cm',
-                  color: '#6b7280',
-                  lineHeight: '1.5',
-                  flex: 1
-                }}>
+                <span>
                   {category.skills.map((skill: any) => 
                     typeof skill === 'string' ? skill : skill.name || skill
                   ).join(' · ')}
@@ -209,25 +165,12 @@ export const SkillsTemplates = {
           <div className="skills-lines-content">
             {categories.map((category: any, index: number) => (
               <div key={index} className="skill-line-group" style={{ 
-                marginBottom: '0.25cm',
-                paddingBottom: '0.15cm',
                 borderBottom: index < categories.length - 1 ? '1px solid #e5e7eb' : 'none'
               }}>
-                <h3 style={{ 
-                  fontSize: '0.38cm',
-                  fontWeight: '600', 
-                  color: 'var(--primary-color, #2c5aa0)',
-                  marginBottom: '0.1cm',
-                  letterSpacing: '0.02cm'
-                }}>
+                <h3>
                   {category.name}
                 </h3>
-                <div style={{ 
-                  fontSize: '0.32cm',
-                  color: '#4b5563',
-                  lineHeight: '1.5',
-                  fontWeight: '400'
-                }}>
+                <div>
                   {category.skills.map((skill: any) => 
                     typeof skill === 'string' ? skill : skill.name || skill
                   ).join(' • ')}
@@ -247,40 +190,15 @@ export const SkillsTemplates = {
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-modern" style={{ marginBottom: '0.4cm' }}>
-          <h2 style={{ 
-            marginBottom: '0.3cm',
-            fontSize: 'var(--font-size-h2)',
-            fontWeight: '700',
-            letterSpacing: '0.02cm'
-          }}>
-            {section.title}
-          </h2>
-          <div className="skills-modern-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(8cm, 1fr))',
-            gap: '0.3cm'
-          }}>
+        <div className="section skills-modern">
+          <h2>{section.title}</h2>
+          <div className="skills-modern-grid">
             {categories.map((category: any, index: number) => (
-              <div key={index} style={{ 
-                marginBottom: '0.2cm'
-              }}>
-                <div style={{ 
-                  fontSize: '0.28cm',
-                  fontWeight: '600', 
-                  color: '#111827',
-                  marginBottom: '0.08cm',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05cm'
-                }}>
+              <div key={index}>
+                <div>
                   {category.name}
                 </div>
-                <div style={{ 
-                  fontSize: '0.33cm',
-                  color: '#6b7280',
-                  lineHeight: '1.6',
-                  fontWeight: '400'
-                }}>
+                <div>
                   {category.skills.map((skill: any) => 
                     typeof skill === 'string' ? skill : skill.name || skill
                   ).join(', ')}
@@ -336,45 +254,21 @@ export const SkillsTemplates = {
     component: ({ section }: { section: Section }) => {
       const categories = (section as any).categories || section.customFields?.categories || section.items?.[0]?.categories || [];
       return (
-        <div className="section skills-sleek" style={{ marginBottom: '0.4cm' }}>
-          <h2 style={{ 
-            marginBottom: '0.3cm',
-            fontSize: 'var(--font-size-h2)',
-            fontWeight: '700',
-            color: '#111827',
-            letterSpacing: '-0.01cm'
-          }}>
-            {section.title}
-          </h2>
+        <div className="section skills-sleek">
+          <h2>{section.title}</h2>
           <div className="skills-sleek-content">
             {categories.map((category: any, index: number) => (
-              <div key={index} style={{ 
-                marginBottom: '0.25cm',
-                paddingLeft: '0.1cm',
-                borderLeft: '2px solid #e5e7eb'
-              }}>
-                <div style={{ 
-                  fontWeight: '600', 
-                  color: '#1f2937',
-                  fontSize: '0.32cm',
-                  marginBottom: '0.05cm',
-                  textTransform: 'capitalize'
-                }}>
+              <div key={index}>
+                <div>
                   {category.name}
                 </div>
-                <div style={{ 
-                  fontSize: '0.31cm',
-                  color: '#6b7280',
-                  lineHeight: '1.5',
-                  fontWeight: '400',
-                  paddingLeft: '0.05cm'
-                }}>
+                <div>
                   {category.skills.map((skill: any, skillIndex: number) => {
                     const skillName = typeof skill === 'string' ? skill : skill.name || skill;
                     return (
-                      <span key={skillIndex} style={{ marginRight: '0.3cm' }}>
+                      <span key={skillIndex}>
                         {skillName}
-                        {skillIndex < category.skills.length - 1 && <span style={{ color: '#d1d5db', margin: '0 0.1cm' }}>|</span>}
+                        {skillIndex < category.skills.length - 1 && <span>|</span>}
                       </span>
                     );
                   })}
