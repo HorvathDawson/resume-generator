@@ -8,18 +8,16 @@ import { loadResumeData } from './utils/dataLoaderNew';
 import { generatePDF } from './utils/pdfGenerator';
 import './App.css';
 
-// Print-specific styles for the print preview window
-const PRINT_RESUME_STYLES = `
-/* Print Resume Styles - Optimized for print preview windows */
-
-/* Print-specific overrides for print preview window */
+// Print window styles - essential overrides while preserving ResumeStyles.css content styles
+const PRINT_WINDOW_STYLES = `
+/* Print window setup - maintain consistency with main preview */
 body {
   background: white !important;
   margin: 0;
   padding: 0;
 }
 
-/* Remove the preview panel wrapper */
+/* Remove preview panel wrapper for print */
 .preview-panel {
   width: 100% !important;
   height: 100% !important;
@@ -28,7 +26,7 @@ body {
   padding: 0 !important;
 }
 
-/* Make resume preview take full window without overriding content styles */
+/* Reset any transforms/zoom for print */
 #resume-preview {
   zoom: 1 !important;
   transform: none !important;
@@ -37,28 +35,27 @@ body {
   overflow: visible !important;
 }
 
-/* Ensure pages stack vertically with no gaps */
-.resume-page {
+/* Ensure pages stack vertically with no gaps - but let ResumeStyles.css handle content */
+.resume-page,
+.a4-page {
   margin: 0 auto !important;
   padding: 0 !important;
   box-shadow: none !important;
   border: none !important;
   display: block !important;
-  width: 21cm !important;
   box-sizing: border-box !important;
 }
 
-/* Remove margins only from specific wrapper containers, not content */
-.resume-preview-wrapper,
-.page-scale-wrapper,
+/* Remove wrapper margins but preserve content margins */
+.preview-container,
 .page-wrapper,
-.preview-container {
+.page-scale-wrapper {
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
 }
 
-/* Hide any empty elements that might be causing extra pages */
+/* Hide empty elements that might cause extra pages */
 .resume-page:empty {
   display: none !important;
 }
@@ -71,9 +68,7 @@ footer {
   overflow: hidden !important;
 }
 
-
-
-/* Print media queries */
+/* Print media queries - minimal additions to what ResumeStyles.css already has */
 @media print {
   @page {
     margin: 0;
@@ -87,19 +82,6 @@ footer {
     background: white !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-  }
-  
-  .resume-page { 
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    width: 21cm !important;
-  }
-  
-  /* Remove any gaps or spacing */
-  * {
-    box-sizing: border-box !important;
   }
 }
 `;
@@ -238,7 +220,7 @@ function App() {
           <style>
             ${cssRules}
             
-            ${PRINT_RESUME_STYLES}
+            ${PRINT_WINDOW_STYLES}
           </style>
         </head>
         <body>

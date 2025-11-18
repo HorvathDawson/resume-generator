@@ -130,15 +130,7 @@
   transform-origin: top center !important;
 }
 
-/* Ensure pages maintain exact A4 dimensions */
-.page-scale-wrapper .resume-page,
-.page-scale-wrapper .a4-page {
-  width: 21cm !important;
-  height: 29.7cm !important;
-  display: block;
-  position: relative;
-  box-sizing: border-box;
-}
+
 
 /* Footer positioning styles */
 .resume-page .footer-container {

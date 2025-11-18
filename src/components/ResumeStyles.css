@@ -116,6 +116,23 @@
 }
 
 /* ============================================================================
+   A4 PAGE DIMENSIONS - Base styles for all viewing modes
+   ============================================================================ */
+
+/* Base A4 page dimensions for both screen and print */
+.resume-page,
+.a4-page {
+  width: 21cm !important;
+  height: 29.65cm !important;
+  min-height: 29.59cm !important;
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+  background: white;
+  overflow: hidden;
+}
+
+/* ============================================================================
    PRINT STYLES - Only print-specific overrides (fonts/spacing use regular CSS variables)
    ============================================================================ */
 
@@ -130,8 +147,9 @@
     page-break-after: avoid;
   }
 
+  /* Allow sections to be split across pages if needed */
   #resume-preview .section {
-    page-break-inside: avoid;
+    page-break-inside: auto;
   }
 
   /* Hide UI elements in print */
@@ -145,9 +163,6 @@
 
   /* Ensure proper A4 page sizing for print */
   #resume-preview .a4-page {
-    width: 21cm !important;
-    min-height: 29.699cm !important;
-    height: 29.699cm !important;
     margin: 0 !important;
     box-shadow: none !important;
     position: relative !important;
@@ -163,11 +178,6 @@
     left: 0 !important;
     right: 0 !important;
     z-index: 10 !important;
-  }
-
-  
-  .section {
-    page-break-inside: avoid;
   }
 }
 

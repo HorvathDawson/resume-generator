@@ -28,8 +28,10 @@ body {
   overflow: visible !important;
 }
 
-/* Remove any wrapper margins that cause overflow */
-#resume-preview * {
+/* Remove wrapper margins that cause overflow - but preserve content margins */
+#resume-preview .page-scale-wrapper,
+#resume-preview .page-wrapper,
+#resume-preview .preview-container {
   margin-bottom: 0 !important;
 }
 
