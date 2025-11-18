@@ -615,12 +615,19 @@ export const defaultResumeJson = {
           "small": "0.3cm",
           "caption": "0.25cm"
         },
-        "fontFamily": "sans-serif",
+        "fontFamily": "Roboto, sans-serif",
         "colorScheme": {
           "primary": "#2c5aa0",
           "secondary": "#f8f9fa",
           "text": "#333333",
-          "accent": "#87ceeb"
+          "accent": "#4a90e2",
+          "textDark": "#111827",
+          "textMuted": "#6b7280",
+          "successColor": "#059669",
+          "successBackground": "#ecfdf5",
+          "hoverBackground": "#ffffff",
+          "borderLight": "#e9ecef",
+          "borderSubtle": "#f3f4f6"
         },
         "spacing": {
           "sectionMargin": "0.6cm",
