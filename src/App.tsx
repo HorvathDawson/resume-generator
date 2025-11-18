@@ -24,6 +24,7 @@ body {
   overflow: visible !important;
   border: none !important;
   padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Reset any transforms/zoom for print */
@@ -33,18 +34,8 @@ body {
   width: 100% !important;
   height: auto !important;
   overflow: visible !important;
-}
-
-/* Ensure pages stack vertically with no gaps - but let ResumeStyles.css handle content and page breaks */
-.resume-page,
-.a4-page {
-  margin: 0 auto !important;
   padding: 0 !important;
-  box-shadow: none !important;
-  border: none !important;
-  display: block !important;
-  box-sizing: border-box !important;
-  /* Don't override page-break rules - let ResumeStyles.css handle them */
+  margin: 0 !important;
 }
 
 /* Remove wrapper margins but preserve content margins */
@@ -54,28 +45,6 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-}
-
-/* Hide empty elements that might cause extra pages */
-.resume-page:empty {
-  display: none !important;
-}
-
-/* Print media queries - minimal additions to what ResumeStyles.css already has */
-@media print {
-  @page {
-    margin: 0;
-    padding: 0;
-    size: A4;
-  }
-  
-  body { 
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
 }
 `;
 

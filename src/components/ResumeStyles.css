@@ -137,13 +137,6 @@
    ============================================================================ */
 
 @media print {
-  
-  /* Page breaks handled by the actual page elements, not wrappers */
-
-  /* Allow sections to be split across pages if needed */
-  #resume-preview .section {
-    page-break-inside: auto;
-  }
 
   /* Hide UI elements in print */
   #resume-preview .page-number {
@@ -156,7 +149,6 @@
 
   /* Ensure proper A4 page sizing for print */
   #resume-preview .a4-page {
-    margin: 0 !important;
     box-shadow: none !important;
     position: relative !important;
     overflow: hidden !important;
@@ -176,6 +168,20 @@
     left: 0 !important;
     right: 0 !important;
     z-index: 10 !important;
+  }
+  
+  @page {
+    margin: 0;
+    padding: 0;
+    size: A4;
+  }
+  
+  body { 
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
 
