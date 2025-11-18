@@ -112,6 +112,7 @@
    ============================================================================ */
 
 @media print {
+  
   /* Page breaks for proper printing */
   #resume-preview .page-wrapper {
     page-break-after: always;

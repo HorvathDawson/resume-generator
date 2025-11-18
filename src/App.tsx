@@ -169,11 +169,6 @@ function App() {
               overflow: visible !important;
             }
             
-            /* Remove any wrapper margins that cause overflow */
-            #resume-preview * {
-              margin-bottom: 0 !important;
-            }
-            
             /* Ensure pages stack vertically with no gaps */
             .resume-page {
               margin: 0 auto !important;
