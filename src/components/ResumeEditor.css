@@ -124,3 +124,108 @@
   display: flex;
   flex-direction: column;
 }
+
+
+/* ============================================================================
+   11. SKILLS EDITOR (Interactive Components)
+   ============================================================================ */
+
+.skill-bubble-editor {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.4cm;
+  padding: 0.2cm;
+  margin: 0.1cm;
+  min-width: 6cm;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.skill-bubble-editor:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.skill-bubble-container {
+  display: flex;
+  align-items: center;
+  gap: 0.2cm;
+  margin-bottom: 0.15cm;
+}
+
+.skill-bubble-input {
+  flex: 1;
+  padding: 0.15cm 0.25cm;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 0.3cm;
+  font-size: 0.32cm;
+  font-weight: 500;
+  color: #374151;
+  min-width: 0;
+  transition: background-color 0.2s;
+}
+
+.skill-bubble-input:focus {
+  outline: none;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.skill-bubble-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 0.6cm;
+  height: 0.6cm;
+  font-size: 0.3cm;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.skill-bubble-delete:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.skill-slider {
+  flex: 1;
+  height: 0.2cm;
+  background: #e5e7eb;
+  border-radius: 0.1cm;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.skill-slider::-webkit-slider-thumb,
+.skill-slider::-moz-range-thumb {
+  appearance: none;
+  width: 0.5cm;
+  height: 0.5cm;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.skill-value-display {
+  background: #3b82f6;
+  color: white;
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.2cm;
+  font-size: 0.3cm;
+  font-weight: 600;
+  min-width: 1.2cm;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+}

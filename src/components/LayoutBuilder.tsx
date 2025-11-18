@@ -1062,7 +1062,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return section as any; // Type cast for now - will need proper type alignment later
   };
 
-  // Sidebar-based combine function - works for both sections in layout and not in layout
+  // Sidebar-based combine function - automatically finds and removes split sections from layout
   const handleCombineFromSidebar = (baseId: string, splitSectionIds: string[]) => {
     if (!onResumeDataChange || splitSectionIds.length < 2) return;
 
@@ -1105,17 +1105,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       sections: updatedSections
     };
 
-    // Check if any of the split sections are currently in the layout
-    const layoutSectionIds = getAllLayoutSectionIds();
-    const splitSectionsInLayout = splitSectionIds.filter(id => layoutSectionIds.includes(id));
-    
-    // If no split sections are in layout, just update resume data without layout changes
-    if (splitSectionsInLayout.length === 0) {
-      onResumeDataChange(newResumeData);
-      return;
-    }
-
-    // If split sections are in layout, update layout to replace them with combined section 
+    // Update layout - remove all split sections from layout (don't add base section automatically)
     const currentPages = getPages();
     
     const updatedPages = currentPages.map(page => ({
@@ -1177,12 +1167,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       ...newResumeData,
       layout: {
         ...newResumeData.layout,
-        pages: updatedPages as any
+        pages: updatedPages as any // Type assertion for now
       }
     };
-
+    
     onResumeDataChange(completeUpdatedResumeData);
-  };  // Helper function to convert percentage string to number
+  };
+
+  // Helper function to convert percentage string to number
   const parsePercentage = (widthStr: string): number => {
     const match = widthStr.match(/^(\d+)%?$/);
     return match ? parseInt(match[1], 10) : 50;
@@ -1575,12 +1567,12 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return [...new Set(allSectionIds)]; // Remove duplicates
   };
 
-  // Helper function to detect ALL split sections that can be combined (including those not in layout)
-  const getAllSplitSections = () => {
-    const allSectionIds = (resumeData.sections || []).map(s => s.id);
+  // Helper function to detect split sections that can be combined
+  const getSplitSectionsInLayout = () => {
+    const layoutSectionIds = getAllLayoutSectionIds();
     const splitGroups: { [baseId: string]: string[] } = {};
     
-    allSectionIds.forEach(sectionId => {
+    layoutSectionIds.forEach(sectionId => {
       const match = sectionId.match(/^(.+)_split_\d+$/);
       if (match) {
         const baseId = match[1];
@@ -1762,12 +1754,12 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
             </div>
 
             {/* Combinable split sections */}
-            {getAllSplitSections().length > 0 && (
+            {getSplitSectionsInLayout().length > 0 && (
               <>
                 <h4 className="split-sections-header">Split Sections</h4>
                 <p className="section-tip">Click combine to merge split sections back together</p>
                 <div className="split-sections-list">
-                  {getAllSplitSections().map(([baseId, splitSectionIds]) => {
+                  {getSplitSectionsInLayout().map(([baseId, splitSectionIds]) => {
                     const baseSectionTitle = resumeData.sections?.find(s => s.id === splitSectionIds[0])?.title?.replace(/ \((Part \d+|cont)\)$/, '') || baseId;
                     return (
                       <div key={baseId} className="split-section-group">
