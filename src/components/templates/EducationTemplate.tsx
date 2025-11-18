@@ -57,39 +57,41 @@ export interface TemplateOption {
 export const EducationTemplates = {
   standard: {
     id: 'education-standard',
-    name: 'Standard Layout',
-    description: 'Traditional education format',
+    name: 'Modern Standard',
+    description: 'Clean, modern flat design with optimal spacing',
     component: ({ section }: { section: Section }) => (
-      <div className="section education standard">
+      <div className="section education standard-modern">
         <h2>{section.title}</h2>
-        <ul className="education-list">
+        <div className="education-list-modern">
           {section.items?.map((item, index) => (
-            <li key={index} className="education-item">
-              <div className="education-item-header">
-                <div className="institution fw-bold">{item.institution || item.organization}</div>
-                <div className="degree">
-                  {item.degree}
-                  {item.gpa && (
-                    <span className="gpa-inline"> • <strong>GPA:</strong> {item.gpa}</span>
-                  )}
+            <div key={index} className="education-item-modern">
+              <div className="education-header-modern">
+                <div className="education-main-info">
+                  <div className="degree-modern">{item.degree}</div>
+                  <div className="institution-modern">{item.institution || item.organization}</div>
                 </div>
-                <div className="location small-text">{item.location}</div>
-                <div className="dates small-text">
-                  <i className="fa fa-calendar"></i> {item.dates}
+                <div className="education-meta-info">
+                  <div className="dates-modern">{item.dates}</div>
+                  {item.location && (
+                    <div className="location-modern">{item.location}</div>
+                  )}
+                  {item.gpa && (
+                    <div className="gpa-modern">GPA: {item.gpa}</div>
+                  )}
                 </div>
               </div>
               {item.details && item.details.length > 0 && (
-                <div className="education-details">
-                  <ul>
-                    {item.details.map((detail, detailIndex) => (
-                      <li key={detailIndex}>{detail}</li>
-                    ))}
-                  </ul>
+                <div className="education-details-modern">
+                  {item.details.map((detail, detailIndex) => (
+                    <div key={detailIndex} className="detail-item-modern">
+                      {detail}
+                    </div>
+                  ))}
                 </div>
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     )
   },
@@ -175,7 +177,6 @@ export const EducationTemplates = {
         <div className="education-timeline">
           {section.items?.map((item, index) => (
             <div key={index} className="timeline-item">
-              <div className="timeline-marker"></div>
               <div className="timeline-content">
                 <div className="timeline-date">{item.dates}</div>
                 <div className="timeline-institution">{item.institution || item.organization}</div>
@@ -218,6 +219,90 @@ export const EducationTemplates = {
               {item.details && item.details.length > 0 && (
                 <div className="education-details-minimal">
                   {item.details.join(' • ')}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  },
+
+  clean: {
+    id: 'education-clean',
+    name: 'Clean Modern',
+    description: 'Streamlined modern layout with subtle accents',
+    component: ({ section }: { section: Section }) => (
+      <div className="section education clean-modern">
+        <h2>{section.title}</h2>
+        <div className="education-clean-list">
+          {section.items?.map((item, index) => (
+            <div key={index} className="education-item-clean">
+              <div className="education-clean-header">
+                <div className="degree-clean">{item.degree}</div>
+                <div className="dates-clean">{item.dates}</div>
+              </div>
+              <div className="institution-clean">{item.institution || item.organization}</div>
+              <div className="education-clean-meta">
+                {item.location && (
+                  <span className="location-clean">{item.location}</span>
+                )}
+                {item.gpa && (
+                  <span className="gpa-clean">GPA: {item.gpa}</span>
+                )}
+              </div>
+              {item.details && item.details.length > 0 && (
+                <div className="education-details-clean">
+                  {item.details.map((detail, detailIndex) => (
+                    <div key={detailIndex} className="detail-clean">
+                      {detail}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  },
+
+  sleek: {
+    id: 'education-sleek',
+    name: 'Sleek Flat',
+    description: 'Ultra-modern flat design with perfect typography',
+    component: ({ section }: { section: Section }) => (
+      <div className="section education sleek-flat">
+        <h2>{section.title}</h2>
+        <div className="education-sleek-list">
+          {section.items?.map((item, index) => (
+            <div key={index} className="education-item-sleek">
+              <div className="education-sleek-main">
+                <div className="degree-sleek">{item.degree}</div>
+                <div className="institution-sleek">{item.institution || item.organization}</div>
+                <div className="education-sleek-footer">
+                  <span className="dates-sleek">{item.dates}</span>
+                  {item.location && (
+                    <>
+                      <span className="separator-sleek">|</span>
+                      <span className="location-sleek">{item.location}</span>
+                    </>
+                  )}
+                  {item.gpa && (
+                    <>
+                      <span className="separator-sleek">|</span>
+                      <span className="gpa-sleek">GPA {item.gpa}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              {item.details && item.details.length > 0 && (
+                <div className="education-details-sleek">
+                  {item.details.map((detail, detailIndex) => (
+                    <div key={detailIndex} className="detail-sleek">
+                      {detail}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
