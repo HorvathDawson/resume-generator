@@ -35,7 +35,7 @@ body {
   overflow: visible !important;
 }
 
-/* Ensure pages stack vertically with no gaps - but let ResumeStyles.css handle content */
+/* Ensure pages stack vertically with no gaps - but let ResumeStyles.css handle content and page breaks */
 .resume-page,
 .a4-page {
   margin: 0 auto !important;
@@ -44,6 +44,7 @@ body {
   border: none !important;
   display: block !important;
   box-sizing: border-box !important;
+  /* Don't override page-break rules - let ResumeStyles.css handle them */
 }
 
 /* Remove wrapper margins but preserve content margins */
@@ -58,14 +59,6 @@ body {
 /* Hide empty elements that might cause extra pages */
 .resume-page:empty {
   display: none !important;
-}
-
-/* Ensure footers don't create overflow */
-.page-footer,
-footer {
-  position: absolute !important;
-  bottom: 0 !important;
-  overflow: hidden !important;
 }
 
 /* Print media queries - minimal additions to what ResumeStyles.css already has */

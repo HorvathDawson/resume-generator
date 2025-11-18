@@ -123,8 +123,8 @@
 .resume-page,
 .a4-page {
   width: 21cm !important;
-  height: 29.65cm !important;
-  min-height: 29.59cm !important;
+  height: 29.7cm !important;
+  min-height: 29.7cm !important;
   display: block;
   position: relative;
   box-sizing: border-box;
@@ -138,14 +138,7 @@
 
 @media print {
   
-  /* Page breaks for proper printing */
-  #resume-preview .page-wrapper {
-    page-break-after: always;
-  }
-
-  #resume-preview .page-wrapper:last-child {
-    page-break-after: avoid;
-  }
+  /* Page breaks handled by the actual page elements, not wrappers */
 
   /* Allow sections to be split across pages if needed */
   #resume-preview .section {
@@ -168,6 +161,11 @@
     position: relative !important;
     overflow: hidden !important;
     page-break-after: always;
+  }
+
+  /* Don't add page break after the last page */
+  #resume-preview .a4-page:last-child {
+    page-break-after: avoid;
   }
 
   /* Footer positioning for print */
