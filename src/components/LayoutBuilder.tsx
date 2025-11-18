@@ -560,24 +560,30 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       
       if (sameContainer) {
         // Handle reordering within the same container
-        let sections: string[];
+        let sections: any[];
         if (fromColumnIndex !== undefined) {
           sections = [...updatedRows[fromRowIndex].columns![fromColumnIndex].sections];
         } else {
           sections = [...updatedRows[fromRowIndex].sections!];
         }
         
-        const currentIndex = sections.indexOf(sectionId);
+        // Find current section by sectionId (handle both string and object formats)
+        const currentIndex = sections.findIndex(s => 
+          typeof s === 'string' ? s === sectionId : s.sectionId === sectionId
+        );
         let targetIndex = insertIndex !== undefined ? insertIndex : sections.length;
         
         // Handle swapping behavior when dropping directly on another section
-        if (isSwap && insertIndex !== undefined) {
-          // Find the target section at the insertIndex
-          const targetSectionId = sections[insertIndex];
-          if (targetSectionId && targetSectionId !== sectionId) {
+        if (isSwap && insertIndex !== undefined && insertIndex < sections.length) {
+          // Get the target section at the insertIndex
+          const targetSection = sections[insertIndex];
+          const currentSection = sections[currentIndex];
+          
+          if (targetSection && currentSection && 
+              (typeof targetSection === 'string' ? targetSection : targetSection.sectionId) !== sectionId) {
             // Swap the positions
-            sections[currentIndex] = targetSectionId;
-            sections[insertIndex] = sectionId;
+            sections[currentIndex] = targetSection;
+            sections[insertIndex] = currentSection;
             
             // Update the sections array
             if (fromColumnIndex !== undefined) {
@@ -609,6 +615,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           return;
         }
         
+        // Get the current section object before removing it
+        const currentSection = sections[currentIndex];
+        
         // Remove from current position
         sections.splice(currentIndex, 1);
         
@@ -618,7 +627,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         }
         
         // Insert at new position
-        sections.splice(targetIndex, 0, sectionId);
+        sections.splice(targetIndex, 0, currentSection);
         
         // Update the sections array
         if (fromColumnIndex !== undefined) {
@@ -628,6 +637,81 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         }
       } else {
         // Handle moving between different containers
+        
+        // Check if this is a swap operation
+        if (isSwap && insertIndex !== undefined) {
+          // Get target section to swap with
+          let targetSectionRef;
+          if (targetColumnIndex !== undefined) {
+            const targetCol = updatedRows[targetRowIndex].columns![targetColumnIndex];
+            targetSectionRef = targetCol.sections[insertIndex];
+          } else {
+            const targetSections = updatedRows[targetRowIndex].sections!;
+            targetSectionRef = targetSections[insertIndex];
+          }
+          
+          if (targetSectionRef) {
+            // Get the dragged section reference
+            let draggedSectionRef;
+            if (fromColumnIndex !== undefined) {
+              const sourceCol = updatedRows[fromRowIndex].columns![fromColumnIndex];
+              draggedSectionRef = sourceCol.sections.find(s => {
+                const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+                return refSectionId === sectionId;
+              });
+            } else {
+              draggedSectionRef = updatedRows[fromRowIndex].sections!.find(s => {
+                const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+                return refSectionId === sectionId;
+              });
+            }
+            
+            if (draggedSectionRef) {
+              // Perform the swap
+              // Replace target with dragged section
+              if (targetColumnIndex !== undefined) {
+                const targetCol = updatedRows[targetRowIndex].columns![targetColumnIndex];
+                targetCol.sections[insertIndex] = draggedSectionRef;
+              } else {
+                const targetSections = updatedRows[targetRowIndex].sections!;
+                targetSections[insertIndex] = draggedSectionRef;
+              }
+              
+              // Replace dragged section with target section
+              if (fromColumnIndex !== undefined) {
+                const sourceCol = updatedRows[fromRowIndex].columns![fromColumnIndex];
+                const sourceIndex = sourceCol.sections.findIndex(s => {
+                  const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+                  return refSectionId === sectionId;
+                });
+                if (sourceIndex > -1) {
+                  sourceCol.sections[sourceIndex] = targetSectionRef;
+                }
+              } else {
+                const sourceSections = updatedRows[fromRowIndex].sections!;
+                const sourceIndex = sourceSections.findIndex(s => {
+                  const refSectionId = typeof s === 'string' ? s : (s as any).sectionId;
+                  return refSectionId === sectionId;
+                });
+                if (sourceIndex > -1) {
+                  sourceSections[sourceIndex] = targetSectionRef;
+                }
+              }
+              
+              // Update state and return early
+              const newPages = [...pages];
+              newPages[currentPageIndex] = { ...currentPage, rows: updatedRows };
+              updateLayout(newPages);
+              
+              // Clear all drag state
+              setDraggedSection(null);
+              setDraggedSectionInRow(null);
+              return;
+            }
+          }
+        }
+        
+        // Regular move (not swap) - Remove from source and add to target
         // Remove from source
         if (fromColumnIndex !== undefined) {
           const sourceCol = updatedRows[fromRowIndex].columns![fromColumnIndex];
