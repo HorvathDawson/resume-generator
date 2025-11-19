@@ -621,6 +621,41 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Row Remove Button - Top Right Corner */
+.row-remove-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #6b7280;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+  user-select: none;
+}
+
+.row-remove-button:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  transform: scale(1.05);
+}
+
+.row-remove-button:active {
+  transform: scale(0.95);
+  background: #fecaca;
+}
+
 /* When sections are present, show mixed cursor but still allow row drag from headers */
 
 /* Make sections immediately draggable without hover delay */
@@ -704,6 +739,8 @@
   min-width: 40px;
 }
 
+
+
 .row-content-area {
   flex: 1;
 }
@@ -770,36 +807,86 @@
 }
 
 /* ROW DRAG COLLAPSE STYLES */
-/* When dragging rows, hide the entire row content to minimize vertical space */
+/* When dragging rows, minimize row content to reduce vertical space */
 .layout-rows.row-drag-active .row-builder {
-  display: none !important; /* Completely hide all row content */
+  height: 15px !important;
+  overflow: hidden !important;
+  opacity: 0.1 !important;
+  pointer-events: none !important;
+  transition: none; /* Remove transition to prevent interference during drag */
+}
+
+/* Also collapse columns-builder and whole-page-builder specifically */
+.layout-rows.row-drag-active .columns-builder,
+.layout-rows.row-drag-active .whole-page-builder {
+  height: 10px !important;
+  overflow: hidden !important;
+  opacity: 0.05 !important;
 }
 
 /* Make collapsed rows ultra-minimal */
 .layout-rows.row-drag-active .layout-row-builder {
   padding: 0.25rem 0.5rem;
   margin-bottom: 0.25rem;
-  min-height: 30px;
-  opacity: 0.7;
-  transition: all 0.2s ease;
+  min-height: 35px;
+  opacity: 0.8;
+  transition: none; /* Remove transition to prevent interference during drag */
+  cursor: grab !important; /* Ensure cursor remains grab */
+  pointer-events: auto !important; /* Ensure drag events work */
+}
+
+.layout-rows.row-drag-active .layout-row-builder:active {
+  cursor: grabbing !important;
+}
+
+/* Ensure draggable attribute is preserved */
+.layout-rows.row-drag-active .layout-row-builder[draggable="true"] {
+  cursor: grab !important;
 }
 
 /* Keep only essential row identification visible */
 .layout-rows.row-drag-active .row-badges-top {
   opacity: 1;
   margin-bottom: 0;
+  position: relative;
+  z-index: 10;
 }
 
-/* Add a minimal content indicator after hiding row-builder */
+/* Keep remove button visible and accessible during drag */
+.layout-rows.row-drag-active .row-remove-button {
+  opacity: 1;
+  z-index: 15;
+  pointer-events: auto;
+}
+
+/* Make position badge more prominent during drag */
+.layout-rows.row-drag-active .row-position-badge {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+  transform: scale(1.1);
+}
+
+/* Add a minimal content indicator */
 .layout-rows.row-drag-active .layout-row-builder::after {
-  content: 'Row Content Hidden During Drag';
+  content: 'Row Content Collapsed';
   display: block;
   text-align: center;
   color: #9ca3af;
   font-size: 0.6rem;
   font-style: italic;
-  padding: 0.25rem;
+  padding: 0.125rem;
   pointer-events: none;
+  position: relative;
+  z-index: 5;
+}
+
+/* Specific indicators for different row types */
+.layout-rows.row-drag-active .layout-row-builder:has(.columns-builder)::after {
+  content: 'Column Layout Collapsed';
+}
+
+.layout-rows.row-drag-active .layout-row-builder:has(.whole-page-builder)::after {
+  content: 'Full-Width Layout Collapsed';
 }
 
 /* Section Lists inside Columns/Pages */
@@ -1693,6 +1780,22 @@
   gap: 0.5rem;
   margin-bottom: 0.75rem;
   flex-wrap: wrap;
+}
+
+.row-position-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #1f2937;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+  min-width: 28px;
+  text-align: center;
+  user-select: none;
 }
 
 .row-type-badge,

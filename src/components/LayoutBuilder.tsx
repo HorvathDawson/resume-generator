@@ -313,17 +313,42 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   const handleRowDragStart = (e: React.DragEvent, rowIndex: number) => {
     // Check if the drag is originating from a section element
     const target = e.target as HTMLElement;
+    const row = currentPage.rows[rowIndex];
+    
+    console.log('🏗️ ROW DRAG START ATTEMPT:', {
+      rowIndex,
+      rowId: row?.id,
+      rowType: row?.type,
+      targetElement: target.className,
+      targetTagName: target.tagName,
+      closestSection: !!target.closest('.section-item'),
+      targetPath: target.classList.toString()
+    });
+    
     if (target.closest('.section-item')) {
       // Prevent row drag when dragging a section
+      console.log('❌ PREVENTING ROW DRAG - Section detected');
       e.preventDefault();
       e.stopPropagation();
       return;
     }
     
     // Allow row drag from row headers, badges, and empty content areas
-    console.log('🏗️ ROW DRAG START:', rowIndex);
-    setDraggedRow(rowIndex);
+    console.log('✅ ALLOWING ROW DRAG:', {
+      rowIndex,
+      rowId: row?.id,
+      rowType: row?.type,
+      totalRows: currentPage.rows.length
+    });
+    
     e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', `row-${rowIndex}-${row?.id}`);
+    
+    // Set drag state with a small delay to ensure drag operation is established
+    // This prevents CSS changes from interfering with drag initiation
+    requestAnimationFrame(() => {
+      setDraggedRow(rowIndex);
+    });
   };
 
   const handleDrop = (e: React.DragEvent, targetRowIndex: number, targetColumnIndex?: number) => {
@@ -373,7 +398,20 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       updateLayout(newPages);
       setDraggedSection(null);
     } else if (draggedRow !== null) {
-      console.log('🔄 REORDERING ROW:', { draggedRow, targetRowIndex });
+      const draggedRowData = currentPage.rows[draggedRow];
+      console.log('🔄 REORDERING ROW:', { 
+        draggedRow, 
+        targetRowIndex,
+        draggedRowId: draggedRowData?.id,
+        draggedRowType: draggedRowData?.type
+      });
+      
+      // Validate indices
+      if (draggedRow < 0 || draggedRow >= currentPage.rows.length) {
+        console.error('❌ Invalid draggedRow index:', draggedRow);
+        setDraggedRow(null);
+        return;
+      }
       
       // Reorder rows within current page
       const newRows = [...currentPage.rows];
@@ -390,13 +428,18 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       console.log('🔄 ROW REORDER RESULT:', { 
         originalIndex: draggedRow, 
         newIndex: adjustedTargetIndex,
-        totalRows: newRows.length 
+        totalRows: newRows.length,
+        movedRowId: movedRow.id,
+        movedRowType: movedRow.type
       });
       
       const newPages = [...pages];
       newPages[currentPageIndex] = { ...currentPage, rows: newRows };
       updateLayout(newPages);
+      
+      // Clear drag state immediately
       setDraggedRow(null);
+      setDragOverTarget(null);
     }
   };
 
@@ -2056,23 +2099,40 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   className="layout-row-builder"
                   draggable
                   onDragStart={(e) => handleRowDragStart(e, rowIndex)}
-                  onDragEnd={() => {
-                    console.log('🔚 ROW DRAG END - Resetting all drag states');
+                  onDragEnd={(e) => {
+                    console.log('🔚 ROW DRAG END - Resetting all drag states', {
+                      rowIndex,
+                      draggedRow,
+                      rowId: row.id,
+                      rowType: row.type
+                    });
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Force clear all drag states
                     setDraggedRow(null);
                     setDragOverTarget(null);
+                    setDraggedSection(null);
+                    setDraggedSectionInRow(null);
+                    cleanupAutoScroll();
                   }}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, rowIndex)}
                 >
+                  {/* Remove button in top right corner */}
+                  <button 
+                    className="row-remove-button"
+                    onClick={() => removeRow(rowIndex)}
+                    title="Remove this row"
+                  >
+                    ×
+                  </button>
+                  
                   {/* Top badges */}
                   <div className="row-badges-top">
-                    <button 
-                      className="btn-remove-x-badge"
-                      onClick={() => removeRow(rowIndex)}
-                      title="Remove row"
-                    >
-                      ×
-                    </button>
+                    <span className="row-position-badge" title={`Row ${rowIndex + 1} of ${currentPage.rows.length}`}>
+                      #{rowIndex + 1}
+                    </span>
                     
                     <span className="row-type-badge">{row.type}</span>
                     
@@ -2217,8 +2277,13 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
                   {/* Row Content based on type */}
                   {row.type === 'columns' && row.columns && (
-                    <div className="columns-builder">
-                      <div className="columns-container">
+                    <div className="row-builder">
+                      <div className="row-left-sidebar">
+                      </div>
+                      
+                      <div className="row-content-area">
+                        <div className="columns-builder">
+                          <div className="columns-container">
                       {row.columns.map((column: LayoutColumn, columnIndex: number) => (
                       <div
                         key={columnIndex}
@@ -2452,6 +2517,8 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         </div>
                       </div>
                       ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
