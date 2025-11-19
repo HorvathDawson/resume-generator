@@ -348,6 +348,32 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     // This prevents CSS changes from interfering with drag initiation
     requestAnimationFrame(() => {
       setDraggedRow(rowIndex);
+      
+      // Auto-scroll to keep rows visible after collapse
+      setTimeout(() => {
+        const layoutContent = document.querySelector('.layout-content-scrollable');
+        const rowElements = document.querySelectorAll('.layout-row-builder');
+        
+        if (layoutContent && rowElements.length > 0) {
+          // Calculate position to show the dragged row and some context
+          const draggedRowElement = rowElements[rowIndex] as HTMLElement;
+          if (draggedRowElement) {
+            const containerRect = layoutContent.getBoundingClientRect();
+            const rowRect = draggedRowElement.getBoundingClientRect();
+            
+            // If the row is not visible, scroll to show it
+            if (rowRect.top < containerRect.top || rowRect.bottom > containerRect.bottom) {
+              const scrollTop = layoutContent.scrollTop;
+              const targetScroll = scrollTop + (rowRect.top - containerRect.top) - 100; // 100px padding from top
+              
+              layoutContent.scrollTo({
+                top: Math.max(0, targetScroll),
+                behavior: 'smooth'
+              });
+            }
+          }
+        }
+      }, 150); // Slightly longer delay to ensure collapse is complete
     });
   };
 
