@@ -16,7 +16,7 @@
   --section-margin: 0.5cm;
   --item-margin: 0.3cm;
   --page-margin: 1.27cm;
-  
+
   /* Component Specific Colors */
   --card-background: var(--secondary-color);
   --hover-background: #ffffff;
@@ -116,14 +116,14 @@
     page-break-after: avoid;
   }
 
-  
+
   @page {
     margin: 0;
     padding: 0;
     size: A4;
   }
-  
-  body { 
+
+  body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
@@ -140,19 +140,32 @@
 #resume-preview p,
 #resume-preview span:not([class*="fa"]):not(.fa):not(.fas):not(.fab):not(.far):not(.fal):not(.fad),
 #resume-preview div:not([class*="fa"]):not(.fa):not(.fas):not(.fab):not(.far):not(.fal):not(.fad),
-#resume-preview h1, #resume-preview h2, #resume-preview h3, #resume-preview h4, #resume-preview h5, #resume-preview h6,
+#resume-preview h1,
+#resume-preview h2,
+#resume-preview h3,
+#resume-preview h4,
+#resume-preview h5,
+#resume-preview h6,
 #resume-preview li,
-#resume-preview td, #resume-preview th,
+#resume-preview td,
+#resume-preview th,
 #resume-preview a:not([class*="fa"]):not(.fa):not(.fas):not(.fab):not(.far):not(.fal):not(.fad) {
   font-family: var(--font-family) !important;
 }
 
 /* Icon Font Support */
-#resume-preview .fa, #resume-preview .fas, #resume-preview .fab, 
-#resume-preview .far, #resume-preview .fal, #resume-preview .fad,
-#resume-preview [class*="fa-"], #resume-preview .icon, #resume-preview .emoji {
+#resume-preview .fa,
+#resume-preview .fas,
+#resume-preview .fab,
+#resume-preview .far,
+#resume-preview .fal,
+#resume-preview .fad,
+#resume-preview [class*="fa-"],
+#resume-preview .icon,
+#resume-preview .emoji {
   font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "FontAwesome" !important;
-  margin-right: 0.2cm; /* Generic spacing for icons */
+  margin-right: 0.2cm;
+  /* Generic spacing for icons */
 }
 
 /* Heading Sizes & Colors */
@@ -180,7 +193,7 @@
 }
 
 /* Body Text */
-#resume-preview p, 
+#resume-preview p,
 #resume-preview li,
 #resume-preview .section .text-content div,
 #resume-preview .section .content div,
@@ -202,10 +215,13 @@
    4. COMMON UTILITIES & COMPONENTS
    ============================================================================ */
 
-.fw-bold, #resume-preview .fw-bold { font-weight: 600; }
+.fw-bold,
+#resume-preview .fw-bold {
+  font-weight: 600;
+}
 
-.small-text, 
-#resume-preview .small-text, 
+.small-text,
+#resume-preview .small-text,
 #resume-preview .dates {
   font-size: var(--font-size-small) !important;
   color: var(--text-color) !important;
@@ -241,7 +257,8 @@
 
 .resume-preview .text-section.highlighted .highlighted-content,
 .highlighted-content {
-  background-color: var(--secondary-color); /* Specific override color */
+  background-color: var(--secondary-color);
+  /* Specific override color */
   padding: 0.3cm;
   font-style: italic;
 }
@@ -258,7 +275,7 @@
   margin: 0.3cm 0;
   font-style: italic;
   position: relative;
-  font-size: 0.38cm;
+  font-size: var(--font-size-body);
   color: var(--text-color);
   text-align: left;
 }
@@ -267,7 +284,7 @@
   content: '"';
   font-size: 0.7cm;
   position: absolute;
-  left: -0.3cm;
+  left: -0.5cm;
   top: -0.2cm;
   color: var(--primary-color);
 }
@@ -286,16 +303,8 @@
   text-align: left;
 }
 
-.contact-info h1 {
-  font-size: 0.7cm;
-  margin: 0 0 0.2cm 0;
-  color: var(--text-dark);
-  font-weight: bold;
-  text-align: center;
-}
-
 /* List Styles */
-.contact-info ul, 
+.contact-info ul,
 .resume-preview .contact-info ul {
   list-style: none;
   padding: 0;
@@ -328,74 +337,73 @@
   align-items: center;
   justify-content: center;
   /* Fix icon cutoff: Ensure icons have enough space and proper line-height */
-  line-height: 1;
   overflow: visible;
-  margin-right: 0.1cm;
+  margin-right: 0.0cm;
   /* Additional padding to prevent cutoff */
-  padding: 0.05cm;
+  padding: 0.0cm;
   box-sizing: border-box;
 }
 
 .resume-preview .contact-info ul li .icons i,
 .resume-preview .icons i,
 .resume-preview .icons .fa,
-.resume-preview .icons .fas, 
+.resume-preview .icons .fas,
 .resume-preview .icons .fab {
-  font-size: 0.4cm;
-  line-height: 1;
+  font-size: var(--font-size-body);
   display: inline-block;
   vertical-align: middle;
 }
 
 .resume-preview .contact-info ul li .words,
 .words {
-  font-size: 0.35cm; /* Original font-size: 0.35cm in words, 0.32cm in separate block. Using 0.35cm based on original .contact-info .words */
+  font-size: var(--font-size-body);
   color: var(--text-color);
   flex: 1;
-  line-height: calc(0.35cm * 1.15); /* Match original calculation */
 }
+
 /* Re-added old specific words style to ensure full compatibility */
 .resume-preview .contact-info ul li .words {
   display: inline-block;
   padding: 0;
   margin: 0;
   overflow: hidden;
-  font-size: 0.35cm;
-  line-height: calc(0.35cm * 1.15);
+  font-size: var(--font-size-body);
   color: var(--left-text-color);
   vertical-align: middle;
 }
 
 
 /* Contact Info: Wide/Horizontal Variation */
-.contact-info-wide, 
 .resume-preview .contact-info-wide {
-  margin: 0.3cm 0;
+  margin: 0;
   text-align: center;
 }
 
-.contact-line, 
-.resume-preview .contact-line,
-.horizontal-contact {
+.resume-preview .contact-line {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 0.8cm;
+  gap: 0.5cm;
   flex-wrap: wrap;
-  font-size: 0.32cm;
+  font-size: var(--font-size-small);
 }
 
-.contact-line .contact-item,
-.horizontal-contact .contact-item {
+.resume-preview .contact-line .contact-item {
   white-space: nowrap;
   justify-content: flex-start;
+  width: auto;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 0;
 }
 
 /* Contact Info: Compact Variation */
 .compact-contact {
   text-align: center;
-  font-size: 0.28cm;
-  line-height: 1.3;
+  font-size: var(--font-size-small);
 }
 
 .compact-contact .contact-item {
@@ -407,14 +415,38 @@
    ============================================================================ */
 
 /* --- Common/Legacy Education Styles --- */
-.resume-preview .education .education-item { margin-bottom: 0.15cm; list-style: none; }
-.resume-preview .education.standard .education-list { padding-left: 0; }
-.resume-preview .education .education-item-header { margin-bottom: 0.05cm; }
-.resume-preview .education .institution { font-weight: bold; font-size: var(--font-size-h3); }
-.resume-preview .education .degree { font-size: var(--font-size-small); margin: 0.1cm 0; }
-.resume-preview .education .location, 
-.resume-preview .education .dates { font-size: var(--font-size-small); color: var(--text-muted); }
-.resume-preview .education .dates { font-style: italic; }
+.resume-preview .education .education-item {
+  margin-bottom: 0.15cm;
+  list-style: none;
+}
+
+.resume-preview .education.standard .education-list {
+  padding-left: 0;
+}
+
+.resume-preview .education .education-item-header {
+  margin-bottom: 0.05cm;
+}
+
+.resume-preview .education .institution {
+  font-weight: bold;
+  font-size: var(--font-size-h3);
+}
+
+.resume-preview .education .degree {
+  font-size: var(--font-size-small);
+  margin: 0.1cm 0;
+}
+
+.resume-preview .education .location,
+.resume-preview .education .dates {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+}
+
+.resume-preview .education .dates {
+  font-style: italic;
+}
 
 /* GPA Styling (Universal) */
 .resume-preview .education .gpa,
@@ -429,121 +461,428 @@
   font-weight: 600;
   margin-top: 0.1cm;
 }
+
 .resume-preview .education .gpa-inline,
-.resume-preview .education .timeline-gpa-inline { color: var(--primary-color); font-weight: 600; }
+.resume-preview .education .timeline-gpa-inline {
+  color: var(--primary-color);
+  font-weight: 600;
+}
 
 /* --- Modern Standard Template --- */
-.resume-preview .education.standard-modern .education-list-modern { margin: 0; padding: 0; }
+.resume-preview .education.standard-modern .education-list-modern {
+  margin: 0;
+  padding: 0;
+}
+
 .resume-preview .education.standard-modern .education-item-modern {
   margin-bottom: 0.4cm;
   padding-bottom: 0.3cm;
   border-bottom: 1px solid var(--border-subtle);
 }
-.resume-preview .education.standard-modern .education-item-modern:last-child { border-bottom: none; margin-bottom: 0; }
+
+.resume-preview .education.standard-modern .education-item-modern:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
 .resume-preview .education.standard-modern .education-header-modern {
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 1cm; margin-bottom: 0.15cm;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1cm;
+  margin-bottom: 0.15cm;
 }
-.resume-preview .education.standard-modern .education-main-info { flex: 1; }
+
+.resume-preview .education.standard-modern .education-main-info {
+  flex: 1;
+}
+
 .resume-preview .education.standard-modern .degree-modern {
-  font-size: var(--font-size-h3); font-weight: 700; color: var(--text-dark); line-height: 1.2; margin-bottom: 0.05cm; letter-spacing: -0.01cm;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.2;
+  margin-bottom: 0.05cm;
 }
+
 .resume-preview .education.standard-modern .institution-modern {
-  font-size: var(--font-size-body); font-weight: 500; color: var(--text-color, #4b5563); line-height: 1.3;
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  color: var(--text-color, #4b5563);
+  line-height: 1.3;
 }
-.resume-preview .education.standard-modern .education-meta-info { text-align: right; min-width: 2.5cm; }
+
+.resume-preview .education.standard-modern .education-meta-info {
+  text-align: right;
+  min-width: 2.5cm;
+}
+
 .resume-preview .education.standard-modern .dates-modern {
-  font-size: var(--font-size-small); font-weight: 600; color: var(--primary-color); margin-bottom: 0.05cm; line-height: 1.2;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.05cm;
+  line-height: 1.2;
 }
+
 .resume-preview .education.standard-modern .location-modern {
-  font-size: calc(var(--font-size-small) * 0.9); color: var(--text-muted); margin-bottom: 0.05cm; line-height: 1.2;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--text-muted);
+  margin-bottom: 0.05cm;
+  line-height: 1.2;
 }
+
 .resume-preview .education.standard-modern .gpa-modern {
-  font-size: calc(var(--font-size-small) * 0.9); color: var(--success-color); font-weight: 600; background: var(--success-background);
-  padding: 0.05cm 0.1cm; border-radius: 0.08cm; display: inline-block; line-height: 1.2;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--success-color);
+  font-weight: 600;
+  background: var(--success-background);
+  padding: 0.05cm 0.1cm;
+  border-radius: 0.08cm;
+  display: inline-block;
+  line-height: 1.2;
 }
-.resume-preview .education.standard-modern .education-details-modern { margin-top: 0.15cm; margin-left: 0.2cm; }
+
+.resume-preview .education.standard-modern .education-details-modern {
+  margin-top: 0.15cm;
+  margin-left: 0.2cm;
+}
+
 .resume-preview .education.standard-modern .detail-item-modern {
-  font-size: var(--font-size-small); color: var(--text-color); line-height: 1.5; margin-bottom: 0.08cm; position: relative; padding-left: 0.3cm;
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  line-height: 1.5;
+  margin-bottom: 0.08cm;
+  position: relative;
+  padding-left: 0.3cm;
 }
+
 .resume-preview .education.standard-modern .detail-item-modern:before {
-  content: "•"; color: var(--primary-color); font-weight: bold; position: absolute; left: 0;
+  content: "•";
+  color: var(--primary-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
 }
 
 /* --- Clean Modern Template --- */
-.resume-preview .education.clean-modern .education-clean-list { margin: 0; padding: 0; }
-.resume-preview .education.clean-modern .education-item-clean {
-  margin-bottom: 0.35cm; padding: 0.25cm; background: var(--secondary-color);
-  border-left: 0.08cm solid var(--primary-color); border-radius: 0 0.1cm 0.1cm 0;
+.resume-preview .education.clean-modern .education-clean-list {
+  margin: 0;
+  padding: 0;
 }
-.resume-preview .education.clean-modern .education-clean-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.08cm; }
-.resume-preview .education.clean-modern .degree-clean { font-size: var(--font-size-h3); font-weight: 600; color: var(--text-dark); line-height: 1.2; }
-.resume-preview .education.clean-modern .dates-clean { font-size: var(--font-size-small); font-weight: 500; color: var(--primary-color); }
-.resume-preview .education.clean-modern .institution-clean { font-size: var(--font-size-body); color: var(--text-color, #4b5563); margin-bottom: 0.08cm; font-weight: 500; }
-.resume-preview .education.clean-modern .education-clean-meta { display: flex; gap: 0.3cm; align-items: center; margin-bottom: 0.1cm; }
+
+.resume-preview .education.clean-modern .education-item-clean {
+  margin-bottom: 0.35cm;
+  padding: 0.25cm;
+  background: var(--secondary-color);
+  border-left: 0.08cm solid var(--primary-color);
+  border-radius: 0 0.1cm 0.1cm 0;
+}
+
+.resume-preview .education.clean-modern .education-clean-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.08cm;
+}
+
+.resume-preview .education.clean-modern .degree-clean {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.2;
+}
+
+.resume-preview .education.clean-modern .dates-clean {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.resume-preview .education.clean-modern .institution-clean {
+  font-size: var(--font-size-body);
+  color: var(--text-color, #4b5563);
+  margin-bottom: 0.08cm;
+  font-weight: 500;
+}
+
+.resume-preview .education.clean-modern .education-clean-meta {
+  display: flex;
+  gap: 0.3cm;
+  align-items: center;
+  margin-bottom: 0.1cm;
+}
+
 .resume-preview .education.clean-modern .location-clean,
-.resume-preview .education.clean-modern .gpa-clean { font-size: calc(var(--font-size-small) * 0.9); color: var(--text-muted); }
-.resume-preview .education.clean-modern .gpa-clean { color: var(--success-color); font-weight: 600; }
-.resume-preview .education.clean-modern .education-details-clean { margin-top: 0.12cm; }
-.resume-preview .education.clean-modern .detail-clean { font-size: calc(var(--font-size-small) * 0.95); color: var(--text-color); line-height: 1.4; margin-bottom: 0.06cm; }
+.resume-preview .education.clean-modern .gpa-clean {
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--text-muted);
+}
+
+.resume-preview .education.clean-modern .gpa-clean {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.resume-preview .education.clean-modern .education-details-clean {
+  margin-top: 0.12cm;
+}
+
+.resume-preview .education.clean-modern .detail-clean {
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: var(--text-color);
+  line-height: 1.4;
+  margin-bottom: 0.06cm;
+}
 
 /* --- Sleek Flat Template --- */
-.resume-preview .education.sleek-flat .education-sleek-list { margin: 0; padding: 0; }
-.resume-preview .education.sleek-flat .education-item-sleek { margin-bottom: 0.4cm; border-bottom: 1px solid var(--border-light); padding-bottom: 0.25cm; }
-.resume-preview .education.sleek-flat .education-item-sleek:last-child { border-bottom: none; margin-bottom: 0; }
+.resume-preview .education.sleek-flat .education-sleek-list {
+  margin: 0;
+  padding: 0;
+}
+
+.resume-preview .education.sleek-flat .education-item-sleek {
+  margin-bottom: 0.4cm;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.25cm;
+}
+
+.resume-preview .education.sleek-flat .education-item-sleek:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
 .resume-preview .education.sleek-flat .degree-sleek {
-  font-size: var(--font-size-h3); font-weight: 700; color: var(--text-dark); line-height: 1.1; margin-bottom: 0.05cm; letter-spacing: -0.02cm;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.1;
+  margin-bottom: 0.05cm;
+  letter-spacing: -0.02cm;
 }
-.resume-preview .education.sleek-flat .institution-sleek { font-size: var(--font-size-body); color: var(--text-color); margin-bottom: 0.1cm; font-weight: 400; }
-.resume-preview .education.sleek-flat .education-sleek-footer { display: flex; align-items: center; gap: 0.2cm; margin-bottom: 0.1cm; }
-.resume-preview .education.sleek-flat .dates-sleek {font-size: calc(var(--font-size-small) * 0.95); font-size: calc(var(--font-size-small) * 0.95); color: var(--primary-color); font-weight: 600; }
-.resume-preview .education.sleek-flat .location-sleek {font-size: calc(var(--font-size-small) * 0.95); font-size: calc(var(--font-size-small) * 0.95); font-weight: 600; }
-.resume-preview .education.sleek-flat .separator-sleek {font-size: calc(var(--font-size-small) * 0.95); color: var(--text-muted); font-weight: 300; }
-.resume-preview .education.sleek-flat .gpa-sleek {font-size: calc(var(--font-size-small) * 0.95); color: var(--success-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.02cm; }
+
+.resume-preview .education.sleek-flat .institution-sleek {
+  font-size: var(--font-size-body);
+  color: var(--text-color);
+  margin-bottom: 0.1cm;
+  font-weight: 400;
+}
+
+.resume-preview .education.sleek-flat .education-sleek-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.2cm;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .education.sleek-flat .dates-sleek {
+  font-size: calc(var(--font-size-small) * 0.95);
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.resume-preview .education.sleek-flat .location-sleek {
+  font-size: calc(var(--font-size-small) * 0.95);
+  font-size: calc(var(--font-size-small) * 0.95);
+  font-weight: 600;
+}
+
+.resume-preview .education.sleek-flat .separator-sleek {
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+.resume-preview .education.sleek-flat .gpa-sleek {
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: var(--success-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02cm;
+}
+
 .resume-preview .education.sleek-flat .detail-sleek {
-  font-size: calc(var(--font-size-small) * 0.95); color: var(--text-color); line-height: 1.5; margin-bottom: 0.08cm; position: relative; padding-left: 0.25cm;
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: var(--text-color);
+  line-height: 1.5;
+  margin-bottom: 0.08cm;
+  position: relative;
+  padding-left: 0.25cm;
 }
-.resume-preview .education.sleek-flat .detail-sleek:before { content: "•"; color: var(--text-muted); position: absolute; left: 0; font-weight: 300; }
+
+.resume-preview .education.sleek-flat .detail-sleek:before {
+  content: "•";
+  color: var(--text-muted);
+  position: absolute;
+  left: 0;
+  font-weight: 300;
+}
 
 /* --- Timeline Education Template --- */
-.resume-preview .education.timeline .education-timeline { position: relative; padding-left: 0.8cm; }
-.resume-preview .education.timeline .timeline-item { position: relative; margin-bottom: 0.5cm; }
+.resume-preview .education.timeline .education-timeline {
+  position: relative;
+  padding-left: 0.8cm;
+}
+
+.resume-preview .education.timeline .timeline-item {
+  position: relative;
+  margin-bottom: 0.5cm;
+}
+
 .resume-preview .education.timeline .timeline-item:before {
-  content: ''; position: absolute; left: -0.66cm; top: 0.1cm; bottom: -0.2cm; width: 0.05cm; background-color: var(--primary-color); opacity: 0.3;
+  content: '';
+  position: absolute;
+  left: -0.66cm;
+  top: 0.1cm;
+  bottom: -0.2cm;
+  width: 0.05cm;
+  background-color: var(--primary-color);
+  opacity: 0.3;
 }
+
 .resume-preview .education.timeline .timeline-item:after {
-  content: ''; position: absolute; left: -0.74cm; top: 0.1cm; width: 0.16cm; height: 0.16cm;
-  background-color: var(--primary-color); border: 0.03cm solid white; box-shadow: 0 0 0 0.03cm var(--primary-color);
-  border-radius: 50%; z-index: 2;
+  content: '';
+  position: absolute;
+  left: -0.74cm;
+  top: 0.1cm;
+  width: 0.16cm;
+  height: 0.16cm;
+  background-color: var(--primary-color);
+  border: 0.03cm solid white;
+  box-shadow: 0 0 0 0.03cm var(--primary-color);
+  border-radius: 50%;
+  z-index: 2;
 }
-.resume-preview .education.timeline .timeline-item:last-child:before { bottom: auto; height: 1.2cm; }
-.resume-preview .education.timeline .timeline-date { font-size: var(--font-size-small); color: var(--primary-color); font-weight: bold; }
-.resume-preview .education.timeline .timeline-institution { font-size: var(--font-size-small); margin: 0.1cm 0; }
-.resume-preview .education.timeline .timeline-degree { font-size: var(--font-size-h3); font-weight: bold; margin: 0.1cm 0; }
-.resume-preview .education.timeline .timeline-details { margin-top: 0.1cm; padding-left: 0.4cm; font-size: var(--font-size-small); }
+
+.resume-preview .education.timeline .timeline-item:last-child:before {
+  bottom: auto;
+  height: 1.2cm;
+}
+
+.resume-preview .education.timeline .timeline-date {
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.resume-preview .education.timeline .timeline-institution {
+  font-size: var(--font-size-small);
+  margin: 0.1cm 0;
+}
+
+.resume-preview .education.timeline .timeline-degree {
+  font-size: var(--font-size-h3);
+  font-weight: bold;
+  margin: 0.1cm 0;
+}
+
+.resume-preview .education.timeline .timeline-details {
+  margin-top: 0.1cm;
+  padding-left: 0.4cm;
+  font-size: var(--font-size-small);
+}
 
 /* --- Cards Education Template --- */
-.resume-preview .education.cards .education-cards-grid { display: flex; flex-direction: column; gap: 0.25cm; }
-.resume-preview .education.cards .education-card { border: 0.03cm solid var(--border-light); border-radius: 0.15cm; padding: 0.25cm; background: var(--secondary-color); }
-.resume-preview .education.cards .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.1cm; padding: 0.05cm; }
-.resume-preview .education.cards .card-degree { font-size: var(--font-size-body); font-weight: bold; margin: 0; color: var(--primary-color); }
-.resume-preview .education.cards .card-dates { font-size: var(--font-size-small); color: var(--text-muted); font-style: italic; }
+.resume-preview .education.cards .education-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25cm;
+}
+
+.resume-preview .education.cards .education-card {
+  border: 0.03cm solid var(--border-light);
+  border-radius: 0.15cm;
+  padding: 0.25cm;
+  background: var(--secondary-color);
+}
+
+.resume-preview .education.cards .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.1cm;
+  padding: 0.05cm;
+}
+
+.resume-preview .education.cards .card-degree {
+  font-size: var(--font-size-body);
+  font-weight: bold;
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.resume-preview .education.cards .card-dates {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .resume-preview .education.cards .card-institution,
 .resume-preview .education.cards .card-location,
-.resume-preview .education.cards .card-gpa { margin-bottom: 0.05cm; font-size: var(--font-size-small); }
+.resume-preview .education.cards .card-gpa {
+  margin-bottom: 0.05cm;
+  font-size: var(--font-size-small);
+}
+
 .resume-preview .education.cards .card-institution i,
 .resume-preview .education.cards .card-location i,
-.resume-preview .education.cards .card-gpa i { color: var(--primary-color); width: 0.4cm; }
-.resume-preview .education.cards .card-details { margin: 0.05cm 0 0 0; padding: 0; list-style: none; }
-.resume-preview .education.cards .card-details li { font-size: calc(var(--font-size-small) * 0.9); margin-bottom: 0.02cm; }
+.resume-preview .education.cards .card-gpa i {
+  color: var(--primary-color);
+  width: 0.4cm;
+}
+
+.resume-preview .education.cards .card-details {
+  margin: 0.05cm 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume-preview .education.cards .card-details li {
+  font-size: calc(var(--font-size-small) * 0.9);
+  margin-bottom: 0.02cm;
+}
 
 /* --- Sidebar Education Template --- */
-.resume-preview .education.sidebar .education-sidebar-list { display: flex; flex-direction: column; gap: 0.2cm; }
-.resume-preview .education.sidebar .education-item-sidebar { display: flex; gap: 0.4cm; margin-bottom: 0.15cm; }
-.resume-preview .education.sidebar .education-date-column { flex: 0 0 2.5cm; text-align: right; }
-.resume-preview .education.sidebar .sidebar-dates { font-size: var(--font-size-small); color: var(--primary-color); font-weight: bold; }
-.resume-preview .education.sidebar .education-content-column { flex: 1; }
-.resume-preview .education.sidebar .sidebar-degree { font-weight: bold; font-size: var(--font-size-body); margin-bottom: 0.05cm; }
-.resume-preview .education.sidebar .sidebar-institution { font-size: var(--font-size-small); color: var(--text-color, #4b5563); margin-bottom: 0.03cm; }
+.resume-preview .education.sidebar .education-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2cm;
+}
+
+.resume-preview .education.sidebar .education-item-sidebar {
+  display: flex;
+  gap: 0.4cm;
+  margin-bottom: 0.15cm;
+}
+
+.resume-preview .education.sidebar .education-date-column {
+  flex: 0 0 2.5cm;
+  text-align: right;
+}
+
+.resume-preview .education.sidebar .sidebar-dates {
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.resume-preview .education.sidebar .education-content-column {
+  flex: 1;
+}
+
+.resume-preview .education.sidebar .sidebar-degree {
+  font-weight: bold;
+  font-size: var(--font-size-body);
+  margin-bottom: 0.05cm;
+}
+
+.resume-preview .education.sidebar .sidebar-institution {
+  font-size: var(--font-size-small);
+  color: var(--text-color, #4b5563);
+  margin-bottom: 0.03cm;
+}
+
 .resume-preview .education.sidebar .sidebar-details {
   margin: 0;
   padding: 0;
@@ -567,51 +906,165 @@
 
 
 /* --- Table Education Template --- */
-.resume-preview .education.table .education-table { border-collapse: separate; border-spacing: 0; }
+.resume-preview .education.table .education-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
 .resume-preview .education.table .table-header {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.2cm; padding: 0.15cm 0;
-  border-bottom: 0.05cm solid var(--primary-color); font-weight: bold; margin-bottom: 0.2cm;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.2cm;
+  padding: 0.15cm 0;
+  border-bottom: 0.05cm solid var(--primary-color);
+  font-weight: bold;
+  margin-bottom: 0.2cm;
 }
+
 .resume-preview .education.table .table-row {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.2cm; padding: 0.1cm 0; border-bottom: 1px solid var(--border-light); margin-bottom: 0.1cm;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.2cm;
+  padding: 0.1cm 0;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 0.1cm;
 }
-.resume-preview .education.table .col-degree { font-weight: bold; font-size: var(--font-size-small); }
-.resume-preview .education.table .col-institution { font-size: var(--font-size-small); }
-.resume-preview .education.table .col-dates { font-size: var(--font-size-small); color: var(--text-muted); }
-.resume-preview .education.table .table-location { color: var(--text-muted); }
-.resume-preview .education.table .table-details { grid-column: 1 / -1; margin-top: 0.1cm; }
-.resume-preview .education.table .table-details ul { margin: 0 0 0 0.3cm; padding: 0; }
-.resume-preview .education.table .table-details li { font-size: calc(var(--font-size-small) * 0.9); margin-bottom: 0.02cm; }
+
+.resume-preview .education.table .col-degree {
+  font-weight: bold;
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .education.table .col-institution {
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .education.table .col-dates {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+}
+
+.resume-preview .education.table .table-location {
+  color: var(--text-muted);
+}
+
+.resume-preview .education.table .table-details {
+  grid-column: 1 / -1;
+  margin-top: 0.1cm;
+}
+
+.resume-preview .education.table .table-details ul {
+  margin: 0 0 0 0.3cm;
+  padding: 0;
+}
+
+.resume-preview .education.table .table-details li {
+  font-size: calc(var(--font-size-small) * 0.9);
+  margin-bottom: 0.02cm;
+}
 
 
 /* --- Badge Education Template --- */
-.resume-preview .education.badge .education-badge-list { display: flex; flex-direction: column; gap: 0.15cm; }
-.resume-preview .education.badge .badge-main { display: flex; align-items: center; gap: 0.2cm; flex-wrap: wrap; margin-bottom: 0.05cm; font-size: var(--font-size-small);}
-.resume-preview .education.badge .badge-degree {
-  background: var(--primary-color); color: white; padding: 0.05cm 0.15cm; border-radius: 0.1cm; font-size: var(--font-size-small); font-weight: bold;
+.resume-preview .education.badge .education-badge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cm;
 }
-.resume-preview .education.badge .badge-institution { font-size: var(--font-size-small); font-weight: bold; color: var(--text-color, #4b5563); }
-.resume-preview .education.badge .badge-dates { font-size: var(--font-size-small); color: var(--text-muted); font-style: italic; }
-.resume-preview .education.badge .badge-location { font-size: var(--font-size-small);}
-.resume-preview .education.badge .badge-gpa { font-size: var(--font-size-small); margin:0; margin-bottom: 0.1cm;}
-.resume-preview .education.badge .badge-details { margin-top: 0.05cm; display: flex; flex-wrap: wrap; gap: 0.1cm; }
-.badge-detail, .resume-preview .education.badge .badge-detail {
-  background: var(--border-subtle); color: var(--text-color, #4b5563); padding: 0.02cm 0.1cm; border-radius: 0.05cm; font-size: calc(var(--font-size-small) * 0.9); margin-right: 0.1cm; margin-bottom: 0.05cm; display: inline-block;
+
+.resume-preview .education.badge .badge-main {
+  display: flex;
+  align-items: center;
+  gap: 0.2cm;
+  flex-wrap: wrap;
+  margin-bottom: 0.05cm;
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .education.badge .badge-degree {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.05cm 0.15cm;
+  border-radius: 0.1cm;
+  font-size: var(--font-size-small);
+  font-weight: bold;
+}
+
+.resume-preview .education.badge .badge-institution {
+  font-size: var(--font-size-small);
+  font-weight: bold;
+  color: var(--text-color, #4b5563);
+}
+
+.resume-preview .education.badge .badge-dates {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.resume-preview .education.badge .badge-location {
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .education.badge .badge-gpa {
+  font-size: var(--font-size-small);
+  margin: 0;
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .education.badge .badge-details {
+  margin-top: 0.05cm;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1cm;
+}
+
+.badge-detail,
+.resume-preview .education.badge .badge-detail {
+  background: var(--border-subtle);
+  color: var(--text-color, #4b5563);
+  padding: 0.02cm 0.1cm;
+  border-radius: 0.05cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  margin-right: 0.1cm;
+  margin-bottom: 0.05cm;
+  display: inline-block;
 }
 
 /* --- Compact/Minimal/Wide Education Variations (Fix #5) --- */
 /* Fix #5: Restored original font sizes and margins */
-.resume-preview .education.compact .education-compact-list { margin: 0.2cm 0; }
-.resume-preview .education.compact .education-item-compact { margin-bottom: 0.3cm; font-size: var(--font-size-small); }
-.resume-preview .education.compact .education-details-compact {
-  margin-top: 0.1cm; font-size: calc(var(--font-size-small) * 0.9); color: var(--text-color, #4b5563);
+.resume-preview .education.compact .education-compact-list {
+  margin: 0.2cm 0;
 }
 
-.resume-preview .education.minimal .education-minimal-list { margin: 0.1cm 0; }
-.resume-preview .education.minimal .education-item-minimal { margin-bottom: 0.1cm; font-size: var(--font-size-small); }
-.resume-preview .education.minimal .education-row-minimal { line-height: 1.3; }
+.resume-preview .education.compact .education-item-compact {
+  margin-bottom: 0.3cm;
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .education.compact .education-details-compact {
+  margin-top: 0.1cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--text-color, #4b5563);
+}
+
+.resume-preview .education.minimal .education-minimal-list {
+  margin: 0.1cm 0;
+}
+
+.resume-preview .education.minimal .education-item-minimal {
+  margin-bottom: 0.1cm;
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .education.minimal .education-row-minimal {
+  line-height: 1.3;
+}
+
 .resume-preview .education.minimal .education-details-minimal {
-  margin-top: 0.05cm; font-size: calc(var(--font-size-small) * 0.9); color: var(--text-muted); font-style: italic;
+  margin-top: 0.05cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 
@@ -708,64 +1161,190 @@
    ============================================================================ */
 
 /* Standard Experience */
-.resume-preview .experience li { margin-bottom: 0.5cm; list-style: none; }
-.resume-preview .experience .experience-header { 
+.resume-preview .experience li {
+  margin-bottom: 0.5cm;
+  list-style: none;
+}
+
+.resume-preview .experience .experience-header {
   margin-bottom: 0.2cm;
 }
 
 /* Fix #6: Removing global item margin from timeline headers */
-.resume-preview .experience > ul > li .experience-header .first-row {
+.resume-preview .experience>ul>li .experience-header .first-row {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
   line-height: 0.4cm;
   font-size: var(--font-size-h3, 0.4cm);
   font-weight: 900;
-  margin-bottom: 0.1cm; /* Kept original first-row margin */
+  margin-bottom: 0.1cm;
+  /* Kept original first-row margin */
 }
 
-.resume-preview .experience .first-row .fw-bold { font-weight: bold; font-size: var(--font-size-h3); }
-.resume-preview .experience .first-row span { font-size: var(--font-size-small); }
-.resume-preview .experience .second-row { font-size: var(--font-size-small); color: var(--text-muted); font-style: italic; }
-.resume-preview .experience .experience-body { margin-top: 0.2cm; }
-.resume-preview .experience .experience-body ul { padding-left: 0.5cm; margin: 0; }
-.resume-preview .experience .experience-body li { margin-bottom: 0.1cm; font-size: var(--font-size-body); list-style-type: disc; }
+.resume-preview .experience .first-row .fw-bold {
+  font-weight: bold;
+  font-size: var(--font-size-h3);
+}
+
+.resume-preview .experience .first-row span {
+  font-size: var(--font-size-small);
+}
+
+.resume-preview .experience .second-row {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.resume-preview .experience .experience-body {
+  margin-top: 0.2cm;
+}
+
+.resume-preview .experience .experience-body ul {
+  padding-left: 0.5cm;
+  margin: 0;
+}
+
+.resume-preview .experience .experience-body li {
+  margin-bottom: 0.1cm;
+  font-size: var(--font-size-body);
+  list-style-type: disc;
+}
 
 /* Minimal Experience */
-.resume-preview .experience.minimal .experience-minimal-list { margin: 0.2cm 0; }
-.resume-preview .experience.minimal .experience-item-minimal { margin-bottom: 0.4cm; }
-.resume-preview .experience.minimal .exp-header-minimal { font-size: var(--font-size-small); margin-bottom: 0.1cm; }
-.resume-preview .experience.minimal .exp-summary { font-size: calc(var(--font-size-small) * 0.9); color: var(--text-color, #4b5563); margin-top: 0.1cm; }
+.resume-preview .experience.minimal .experience-minimal-list {
+  margin: 0.2cm 0;
+}
+
+.resume-preview .experience.minimal .experience-item-minimal {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .experience.minimal .exp-header-minimal {
+  font-size: var(--font-size-small);
+  margin-bottom: 0.1cm;
+}
+
+.resume-preview .experience.minimal .exp-summary {
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--text-color, #4b5563);
+  margin-top: 0.1cm;
+}
 
 /* Timeline Experience */
-.resume-preview .experience > ul { list-style-type: none; padding: 0; margin: 0 0 0.25cm 0; }
-.resume-preview .experience > ul > li { position: relative; margin: 0; padding-bottom: 0.25cm; padding-left: 0.4cm; }
-.resume-preview .experience > ul > li:before {
-  background-color: var(--primary-color); width: 0.05cm; content: ''; position: absolute; top: 0.1cm; bottom: -0.2cm; 
-  transform: translatex(-50%); left: 0cm; margin-left: 0.15cm; opacity: 0.6;
+.resume-preview .experience>ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 0.25cm 0;
 }
-.resume-preview .experience > ul > li::after {
-  content: ''; position: absolute; background: var(--primary-color); border: 0.03cm solid white; 
-  box-shadow: 0 0 0 0.03cm var(--primary-color); border-radius: 50%; transform: translatex(-50%); 
-  top: 0.05cm; left: 0; width: 0.16cm; height: 0.16cm; margin-left: 0.15cm; z-index: 2; box-sizing: content-box;
+
+.resume-preview .experience>ul>li {
+  position: relative;
+  margin: 0;
+  padding-bottom: 0.25cm;
+  padding-left: 0.4cm;
 }
-.resume-preview .experience > ul > li:last-child:before { bottom: auto; height: 1.2cm; }
+
+.resume-preview .experience>ul>li:before {
+  background-color: var(--primary-color);
+  width: 0.05cm;
+  content: '';
+  position: absolute;
+  top: 0.1cm;
+  bottom: -0.2cm;
+  transform: translatex(-50%);
+  left: 0cm;
+  margin-left: 0.15cm;
+  opacity: 0.6;
+}
+
+.resume-preview .experience>ul>li::after {
+  content: '';
+  position: absolute;
+  background: var(--primary-color);
+  border: 0.03cm solid white;
+  box-shadow: 0 0 0 0.03cm var(--primary-color);
+  border-radius: 50%;
+  transform: translatex(-50%);
+  top: 0.05cm;
+  left: 0;
+  width: 0.16cm;
+  height: 0.16cm;
+  margin-left: 0.15cm;
+  z-index: 2;
+  box-sizing: content-box;
+}
+
+.resume-preview .experience>ul>li:last-child:before {
+  bottom: auto;
+  height: 1.2cm;
+}
 
 /* Cards Experience */
-.resume-preview .experience.cards .experience-cards-grid { display: flex; flex-direction: column; gap: 0.15cm; width: 100%; }
+.resume-preview .experience.cards .experience-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cm;
+  width: 100%;
+}
+
 .resume-preview .experience.cards .experience-card {
-  border: 0.02cm solid var(--border-light); border-radius: 0.08cm; padding: 0.2cm; background-color: white; width: 100%; box-shadow: 0 0.02cm 0.1cm rgba(0,0,0,0.05);
+  border: 0.02cm solid var(--border-light);
+  border-radius: 0.08cm;
+  padding: 0.2cm;
+  background-color: white;
+  width: 100%;
+  box-shadow: 0 0.02cm 0.1cm rgba(0, 0, 0, 0.05);
 }
-.resume-preview .experience.cards .card-title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.05cm; }
-.resume-preview .experience.cards .card-position { font-size: var(--font-size-h3); font-weight: bold; color: var(--primary-color); margin: 0; line-height: 1.2; flex: 1; }
+
+.resume-preview .experience.cards .card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.05cm;
+}
+
+.resume-preview .experience.cards .card-position {
+  font-size: var(--font-size-h3);
+  font-weight: bold;
+  color: var(--primary-color);
+  margin: 0;
+  line-height: 1.2;
+  flex: 1;
+}
+
 .resume-preview .experience.cards .card-dates {
-  font-size: calc(var(--font-size-small) * 0.9); color: var(--text-muted); font-weight: 500; white-space: nowrap; margin-left: 0.2cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 0.2cm;
 }
-.resume-preview .experience.cards .card-company { font-size: var(--font-size-small); color: var(--text-color, #4b5563); font-weight: 600; margin: 0; }
+
+.resume-preview .experience.cards .card-company {
+  font-size: var(--font-size-small);
+  color: var(--text-color, #4b5563);
+  font-weight: 600;
+  margin: 0;
+}
+
 .resume-preview .experience.cards .card-detail {
-  font-size: calc(var(--font-size-small) * 0.95); color: var(--text-color); line-height: 1.3; margin-bottom: 0.08cm; position: relative; padding-left: 0.25cm;
+  font-size: calc(var(--font-size-small) * 0.95);
+  color: var(--text-color);
+  line-height: 1.3;
+  margin-bottom: 0.08cm;
+  position: relative;
+  padding-left: 0.25cm;
 }
-.resume-preview .experience.cards .card-detail:before { content: '•'; color: var(--primary-color); position: absolute; left: 0; font-weight: bold; }
+
+.resume-preview .experience.cards .card-detail:before {
+  content: '•';
+  color: var(--primary-color);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
 
 /* Compact Experience Template */
 .resume-preview .experience-compact h2 {
@@ -776,130 +1355,84 @@
 
 .resume-preview .experience-compact .experience-item-compact {
   margin-bottom: 0.2cm;
-  font-size: 0.32cm;
+  font-size: var(--font-size-small);
 }
 
-.resume-preview .experience-compact .experience-item-compact > div:first-child {
+.resume-preview .experience-compact .experience-item-compact>div:first-child {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 0.05cm;
 }
 
-.resume-preview .experience-compact .experience-item-compact > div:first-child strong {
-  color: var(--primary-color, #2c5aa0);
+.resume-preview .experience-compact .experience-item-compact>div:first-child strong {
+  color: var(--primary-color);
 }
 
-.resume-preview .experience-compact .experience-item-compact > div:first-child span {
-  font-size: 0.3cm;
-  opacity: 0.8;
+.resume-preview .experience-compact .experience-item-compact>div:first-child span {
+  color: var(--text-muted);
 }
 
-.resume-preview .experience-compact .experience-item-compact > div:nth-child(2) {
-  font-style: italic;
-  margin-bottom: 0.05cm;
-  font-size: 0.31cm;
-}
-
-.resume-preview .experience-compact .experience-item-compact > div:last-child {
-  font-size: 0.3cm;
-  line-height: 1.3;
-}
-
-/* Sidebar Experience Template */
-.resume-preview .experience-sidebar h2 {
-  margin-bottom: 0.25cm;
-}
-
-
-
-.resume-preview .experience-sidebar .experience-sidebar-list > div {
+.resume-preview .experience-sidebar .experience-sidebar-list>div {
   display: flex;
-  margin-bottom: 0.4cm;
-  gap: 0.5cm;
+  margin-bottom: 0cm;
+  gap: 0.3cm;
 }
 
-.resume-preview .experience-sidebar .experience-sidebar-list > div > div:first-child {
-  min-width: 2.5cm;
-  font-size: 0.3cm;
-  color: var(--primary-color, #2c5aa0);
-  font-weight: 600;
+.resume-preview .experience-sidebar .experience-sidebar-list>div>div:first-child {
+  min-width: 3.5cm;
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
   text-align: right;
 }
 
-.resume-preview .experience-sidebar .experience-sidebar-list > div > div:last-child {
-  flex: 1;
-}
-
-.resume-preview .experience-sidebar .experience-sidebar-list h3 {
-  margin-bottom: 0.1cm;
-  font-size: 0.38cm;
-}
-
-.resume-preview .experience-sidebar .experience-sidebar-list > div > div:last-child > div {
+.resume-preview .experience-sidebar .experience-sidebar-list>div>div:last-child>div {
   font-style: italic;
-  margin-bottom: 0.15cm;
-  font-size: 0.33cm;
+  /* margin-bottom: 0.15cm; */
+  font-size: var(--font-size-body);
 }
 
 .resume-preview .experience-sidebar .experience-sidebar-list ul {
-  margin-left: 0.5cm;
-  font-size: 0.32cm;
-  line-height: 1.4;
+  margin-left: 0cm;
+  font-size: var(--font-size-small);
 }
 
-.resume-preview .experience-sidebar .experience-sidebar-list ul li {
-  margin-bottom: 0.1cm;
-}
-
-/* Achievement Focused Experience Template */
-.resume-preview .experience-focused h2 {
-  margin-bottom: 0.25cm;
-}
-
-
-
-.resume-preview .experience-focused .experience-focused-list > div {
+.resume-preview .experience-focused .experience-focused-list>div {
   margin-bottom: 0.5cm;
 }
 
-.resume-preview .experience-focused .experience-focused-list > div > div:first-child {
+.resume-preview .experience-focused .experience-focused-list>div>div:first-child {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 0.1cm;
 }
 
-.resume-preview .experience-focused .experience-focused-list h3 {
-  color: var(--primary-color, #2c5aa0);
-  font-size: 0.4cm;
-}
-
-.resume-preview .experience-focused .experience-focused-list > div > div:first-child span {
+.resume-preview .experience-focused .experience-focused-list>div>div:first-child span {
   font-weight: 600;
-  font-size: 0.32cm;
+  font-size: var(--font-size-body);
 }
 
-.resume-preview .experience-focused .experience-focused-list > div > div:nth-child(2) {
+.resume-preview .experience-focused .experience-focused-list>div>div:nth-child(2) {
   margin-bottom: 0.2cm;
-  font-size: 0.34cm;
+  font-size: var(--font-size-body);
   font-weight: 500;
 }
 
-.resume-preview .experience-focused .experience-focused-list > div > div:last-child {
+.resume-preview .experience-focused .experience-focused-list>div>div:last-child {
   background-color: var(--secondary-color, #f8f9fa);
   padding: 0.2cm;
   border-radius: 0.1cm;
-  font-size: 0.32cm;
+  font-size: var(--font-size-body);
   line-height: 1.4;
 }
 
-.resume-preview .experience-focused .experience-focused-list > div > div:last-child ul {
+.resume-preview .experience-focused .experience-focused-list>div>div:last-child ul {
   margin-top: 0.1cm;
   margin-left: 0.5cm;
 }
 
-.resume-preview .experience-focused .experience-focused-list > div > div:last-child ul li {
+.resume-preview .experience-focused .experience-focused-list>div>div:last-child ul li {
   margin-bottom: 0.05cm;
 }
 
@@ -910,13 +1443,13 @@
 
 
 
-.resume-preview .experience-modern .experience-modern-list > div {
+.resume-preview .experience-modern .experience-modern-list>div {
   margin-bottom: 0.6cm;
   padding-left: 0.3cm;
   border-left: 0.05cm solid var(--primary-color, #4a90e2);
 }
 
-.resume-preview .experience-modern .experience-modern-list > div > div:first-child {
+.resume-preview .experience-modern .experience-modern-list>div>div:first-child {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.5cm;
@@ -924,32 +1457,22 @@
   margin-bottom: 0.1cm;
 }
 
-.resume-preview .experience-modern .experience-modern-list h3 {
-  font-size: 0.38cm;
-  font-weight: 700;
-  color: var(--text-color, #333);
-}
-
-.resume-preview .experience-modern .experience-modern-list > div > div:first-child > div {
-  background-color: var(--primary-color, #4a90e2);
+.resume-preview .experience-modern .experience-modern-list>div>div:first-child>div {
+  background-color: var(--primary-color);
   color: white;
   padding: 0.05cm 0.2cm;
   border-radius: 0.3cm;
-  font-size: 0.28cm;
+  font-size: var(--font-size-small);
   font-weight: 600;
 }
 
-.resume-preview .experience-modern .experience-modern-list > div > div:nth-child(2) {
-  font-size: 0.34cm;
-  font-weight: 500;
-  color: var(--primary-color, #2c5aa0);
-  margin-bottom: 0.15cm;
+.resume-preview .experience-modern .experience-modern-list>div>div:nth-child(2) {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
 }
 
 .resume-preview .experience-modern .experience-modern-list ul {
-  font-size: 0.32cm;
-  line-height: 1.5;
-  margin-left: 0.4cm;
+  margin-left: 0cm;
 }
 
 .resume-preview .experience-modern .experience-modern-list ul li {
@@ -961,71 +1484,215 @@
    8. SKILLS SECTION TEMPLATES
    ============================================================================ */
 
-.resume-preview .skills-section .skills-content { margin: 0.2cm 0; }
-.resume-preview .skills-section .skill-category { margin-bottom: 0.4cm; }
-.resume-preview .skills-section .category-name {
-  font-size: var(--font-size-h3); font-weight: bold; color: var(--accent-color);
+.resume-preview .skills-section .skills-content {
+  margin: 0.2cm 0;
 }
-.resume-preview .skills-section .skills-list { display: flex; flex-wrap: wrap; gap: 0.2cm; line-height: 1.6; }
+
+.resume-preview .skills-section .skill-category {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .skills-section .category-name {
+  font-size: var(--font-size-h3);
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.resume-preview .skills-section .skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2cm;
+  line-height: 1.6;
+}
 
 /* Standard & Mini Tags */
 .resume-preview .skills-section .skill-tag,
 .resume-preview .skills-mini .skill-tag-mini {
-  background-color: var(--secondary-color); padding: 0.06cm 0.15cm; border-radius: 0.1cm; color: var(--text-color, #4b5563);
-  border: 1px solid #d1d5db; margin: 0.03cm; box-shadow: 0 1px 1px rgba(0,0,0,0.04);
-  font-weight: 500; display: inline-block;
-  word-wrap: break-word; overflow-wrap: break-word;
+  background-color: var(--secondary-color);
+  padding: 0.06cm 0.15cm;
+  border-radius: 0.1cm;
+  color: var(--text-color, #4b5563);
+  border: 1px solid #d1d5db;
+  margin: 0.03cm;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  font-weight: 500;
+  display: inline-block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
-.resume-preview .skills-section .skill-tag { font-size: calc(var(--font-size-small) * 0.9); }
-.resume-preview .skills-mini .skill-tag-mini { font-size: calc(var(--font-size-small) * 0.82); padding: 0.04cm 0.12cm; border-radius: 0.08cm; }
+
+.resume-preview .skills-section .skill-tag {
+  font-size: calc(var(--font-size-small) * 0.9);
+}
+
+.resume-preview .skills-mini .skill-tag-mini {
+  font-size: calc(var(--font-size-small) * 0.82);
+  padding: 0.04cm 0.12cm;
+  border-radius: 0.08cm;
+}
 
 /* Bar Style Skills */
-.resume-preview .skills-section.bars .skill-bar-item { display: flex; align-items: center; margin-bottom: 0.25cm; gap: 0.3cm; }
-.resume-preview .skills-section.bars .skill-name { min-width: 3.5cm; font-size: var(--font-size-small); font-weight: 500; color: var(--text-color); }
+.resume-preview .skills-section.bars .skill-bar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25cm;
+  gap: 0.3cm;
+}
+
+.resume-preview .skills-section.bars .skill-name {
+  min-width: 3.5cm;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--text-color);
+}
+
 .resume-preview .skills-section.bars .skill-progress {
-  flex: 1; height: 0.25cm; background-color: var(--border-light); border-radius: 0.125cm; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  flex: 1;
+  height: 0.25cm;
+  background-color: var(--border-light);
+  border-radius: 0.125cm;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
+
 .resume-preview .skills-section.bars .skill-bar {
-  height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); border-radius: 0.125cm;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  border-radius: 0.125cm;
 }
-.resume-preview .skills-section.bars .skill-percentage { min-width: 1cm; font-size: calc(var(--font-size-small) * 0.9); color: var(--primary-color); font-weight: 600; text-align: right; }
+
+.resume-preview .skills-section.bars .skill-percentage {
+  min-width: 1cm;
+  font-size: calc(var(--font-size-small) * 0.9);
+  color: var(--primary-color);
+  font-weight: 600;
+  text-align: right;
+}
 
 /* Cloud Style Skills */
-.resume-preview .skills-section.cloud .skills-cloud { margin: 0.3cm 0; line-height: 2.2; text-align: center; }
+.resume-preview .skills-section.cloud .skills-cloud {
+  margin: 0.3cm 0;
+  line-height: 2.2;
+  text-align: center;
+}
+
 .resume-preview .skills-section.cloud .skill-cloud-tag,
 .resume-preview .skills-section.cloud .skill-cloud-tag-compact {
-  display: inline-block; background-color: var(--secondary-color); padding: 0.1cm 0.2cm; margin: 0.08cm 0.1cm;
-  border-radius: 0.2cm; font-size: var(--font-size-small); color: var(--text-color, #4b5563); border: 1px solid #d1d5db;
-  transition: all 0.3s ease; cursor: default; box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  display: inline-block;
+  background-color: var(--secondary-color);
+  padding: 0.1cm 0.2cm;
+  margin: 0.08cm 0.1cm;
+  border-radius: 0.2cm;
+  font-size: var(--font-size-small);
+  color: var(--text-color, #4b5563);
+  border: 1px solid #d1d5db;
+  transition: all 0.3s ease;
+  cursor: default;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 /* Grid Layout (Wide) */
-.resume-preview .skills-wide .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr)); gap: 0.4cm; margin: 0.3cm 0; }
+.resume-preview .skills-wide .skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr));
+  gap: 0.4cm;
+  margin: 0.3cm 0;
+}
+
 .resume-preview .skills-wide .cvtag-wide {
-  background: var(--secondary-color); color: var(--text-color); padding: 0.1cm 0.2cm; border-radius: 0.15cm;
-  font-size: var(--font-size-small); border: 1px solid #e0e0e0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  word-wrap: break-word; overflow-wrap: break-word;
+  background: var(--secondary-color);
+  color: var(--text-color);
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.15cm;
+  font-size: var(--font-size-small);
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Inline Layout (Wide2) */
-.resume-preview .skills-wide2 .skill-line { display: flex; align-items: flex-start; margin-bottom: 0.25cm; gap: 0.3cm; flex-wrap: wrap; }
-.resume-preview .skills-wide2 .category-label { font-weight: 600; font-size: var(--font-size-small); color: var(--primary-color); min-width: 3cm; flex-shrink: 0; }
-.resume-preview .skills-wide2 .skill-tag:nth-child(odd) { background: #eff6ff; color: #1e40af; border-color: #c7d2fe; }
+.resume-preview .skills-wide2 .skill-line {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.25cm;
+  gap: 0.3cm;
+  flex-wrap: wrap;
+}
+
+.resume-preview .skills-wide2 .category-label {
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  min-width: 3cm;
+  flex-shrink: 0;
+}
+
+.resume-preview .skills-wide2 .skill-tag:nth-child(odd) {
+  background: #eff6ff;
+  color: #1e40af;
+  border-color: #c7d2fe;
+}
 
 /* Column Layout */
-.resume-preview .skills-section.columns .skills-columns-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(3cm, 1fr)); gap: 0.4cm; margin: 0.2cm 0; }
-.resume-preview .skills-section.columns .column-title {
-  font-size: var(--font-size-h3); font-weight: 600; color: var(--primary-color); margin-bottom: 0.2cm; border-bottom: 1px solid var(--border-light); padding-bottom: 0.1cm;
+.resume-preview .skills-section.columns .skills-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(3cm, 1fr));
+  gap: 0.4cm;
+  margin: 0.2cm 0;
 }
-.resume-preview .skills-section.columns .column-skill-list { list-style: none; padding: 0; margin: 0; }
-.resume-preview .skills-section.columns .column-skill { font-size: var(--font-size-small); color: var(--text-color); padding: 0.05cm 0; line-height: 1.3; }
+
+.resume-preview .skills-section.columns .column-title {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.2cm;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.1cm;
+}
+
+.resume-preview .skills-section.columns .column-skill-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resume-preview .skills-section.columns .column-skill {
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  padding: 0.05cm 0;
+  line-height: 1.3;
+}
 
 /* Proficiency Dots */
-.resume-preview .skills-section.proficiency .proficiency-item { display: flex; align-items: center; gap: 0.2cm; margin-bottom: 0.15cm; }
-.resume-preview .skills-section.proficiency .proficiency-name { font-size: var(--font-size-small); color: var(--text-color); min-width: 2.5cm; }
-.resume-preview .skills-section.proficiency .dot { width: 0.12cm; height: 0.12cm; border-radius: 50%; border: 0.03cm solid #d1d5db; }
-.resume-preview .skills-section.proficiency .dot.filled { background: var(--primary-color); border-color: var(--primary-color); }
-.resume-preview .skills-section.proficiency .dot.empty { background: transparent; }
+.resume-preview .skills-section.proficiency .proficiency-item {
+  display: flex;
+  align-items: center;
+  gap: 0.2cm;
+  margin-bottom: 0.15cm;
+}
+
+.resume-preview .skills-section.proficiency .proficiency-name {
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  min-width: 2.5cm;
+}
+
+.resume-preview .skills-section.proficiency .dot {
+  width: 0.12cm;
+  height: 0.12cm;
+  border-radius: 50%;
+  border: 0.03cm solid #d1d5db;
+}
+
+.resume-preview .skills-section.proficiency .dot.filled {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.resume-preview .skills-section.proficiency .dot.empty {
+  background: transparent;
+}
 
 /* Simple List Template */
 .resume-preview .skills-simple {
@@ -1044,7 +1711,7 @@
 
 .resume-preview .skills-simple .skill-category-simple {
   margin-bottom: 0.15cm;
-  font-size: 0.33cm;
+  font-size: var(--font-size-body);
 }
 
 .resume-preview .skills-simple .skill-category-simple strong {
@@ -1075,16 +1742,15 @@
 
 .resume-preview .skills-minimal .skill-category-minimal span:first-child {
   font-weight: 600;
-  color: var(--primary-color, #2c5aa0);
+  color: var(--primary-color);
   min-width: 3cm;
   margin-right: 0.3cm;
-  font-size: 0.33cm;
+  font-size: var(--font-size-body);
 }
 
 .resume-preview .skills-minimal .skill-category-minimal span:last-child {
-  font-size: 0.32cm;
-  line-height: 1.4;
-  color: var(--text-color, #4b5563);
+  font-size: var(--font-size-body);
+  color: var(--text-color);
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -1094,16 +1760,8 @@
   margin-bottom: 0.4cm;
 }
 
-.resume-preview .skills-clean h2 {
-  margin-bottom: 0.3cm;
-  font-size: var(--font-size-h2);
-  font-weight: 600;
-  color: var(--text-dark);
-}
 
-
-
-.resume-preview .skills-clean .skills-clean-content > div {
+.resume-preview .skills-clean .skills-clean-content>div {
   margin-bottom: 0.2cm;
   display: flex;
   align-items: flex-start;
@@ -1111,16 +1769,16 @@
   flex-wrap: wrap;
 }
 
-.resume-preview .skills-clean .skills-clean-content > div span:first-child {
+.resume-preview .skills-clean .skills-clean-content>div span:first-child {
   font-weight: 500;
   color: var(--text-color, #4b5563);
-  font-size: 0.33cm;
+  font-size: var(--font-size-body);
   min-width: 2.5cm;
   flex-shrink: 0;
 }
 
-.resume-preview .skills-clean .skills-clean-content > div span:last-child {
-  font-size: 0.32cm;
+.resume-preview .skills-clean .skills-clean-content>div span:last-child {
+  font-size: var(--font-size-body);
   color: var(--text-muted);
   line-height: 1.5;
   flex: 1;
@@ -1129,11 +1787,6 @@
 }
 
 /* Clean Lines Template */
-.resume-preview .skills-lines h2 {
-  margin-bottom: 0.25cm;
-}
-
-
 
 .resume-preview .skills-lines .skill-line-group {
   margin-bottom: 0.25cm;
@@ -1145,19 +1798,9 @@
   border-bottom: none;
 }
 
-.resume-preview .skills-lines .skill-line-group h3 {
-  font-size: 0.38cm;
-  font-weight: 600;
-  color: var(--primary-color, #2c5aa0);
-  margin-bottom: 0.1cm;
-  letter-spacing: 0.02cm;
-}
-
-.resume-preview .skills-lines .skill-line-group > div {
-  font-size: 0.32cm;
+.resume-preview .skills-lines .skill-line-group>div {
+  font-size: var(--font-size-body);
   color: var(--text-color, #4b5563);
-  line-height: 1.5;
-  font-weight: 400;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -1167,85 +1810,69 @@
   margin-bottom: 0.4cm;
 }
 
-.resume-preview .skills-modern h2 {
-  margin-bottom: 0.3cm;
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  letter-spacing: 0.02cm;
-}
-
 .resume-preview .skills-modern .skills-modern-grid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr));
   gap: 0.3cm;
+  word-break: break-word;
 }
 
-.resume-preview .skills-modern .skills-modern-grid > div {
+.resume-preview .skills-modern .skills-modern-grid .skills-modern-category {
   margin-bottom: 0.2cm;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+  /* Prevents overflow in grid by allowing shrinking */
+  display: flex;
+  flex-direction: column;
 }
 
-.resume-preview .skills-modern .skills-modern-grid > div > div:first-child {
-  font-size: 0.28cm;
-  font-weight: 600;
+.resume-preview .skills-sleek .skills-sleek-content>div>div:first-child {
   color: var(--text-dark);
-  margin-bottom: 0.08cm;
-  text-transform: uppercase;
-  letter-spacing: 0.05cm;
+  text-transform: capitalize;
+  font-size: var(--font-size-h3);
 }
 
-.resume-preview .skills-modern .skills-modern-grid > div > div:last-child {
-  font-size: 0.33cm;
+.resume-preview .skills-modern .skills-modern-grid>div>div:last-child {
+  font-size: var(--font-size-small);
   color: var(--text-muted);
-  line-height: 1.6;
-  font-weight: 400;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
 
 /* Sleek Minimalist Template */
 .resume-preview .skills-sleek {
   margin-bottom: 0.4cm;
 }
 
-.resume-preview .skills-sleek h2 {
-  margin-bottom: 0.3cm;
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  color: var(--text-dark);
-  letter-spacing: -0.01cm;
-}
-
-
-
-.resume-preview .skills-sleek .skills-sleek-content > div {
+.resume-preview .skills-sleek .skills-sleek-content>div {
   margin-bottom: 0.25cm;
   padding-left: 0.1cm;
-  border-left: 2px solid var(--border-light);
+  border-left: 0.1cm solid var(--border-light);
 }
 
-.resume-preview .skills-sleek .skills-sleek-content > div > div:first-child {
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 0.32cm;
-  margin-bottom: 0.05cm;
+.resume-preview .skills-sleek .skills-sleek-content>div>div:first-child {
+  font-size: var(--font-size-h3);
+  color: var(--text-dark);
   text-transform: capitalize;
 }
 
-.resume-preview .skills-sleek .skills-sleek-content > div > div:last-child {
-  font-size: 0.31cm;
+.resume-preview .skills-sleek .skills-sleek-content>div>div:last-child {
+  font-size: var(--font-size-small);
   color: var(--text-muted);
-  line-height: 1.5;
-  font-weight: 400;
   padding-left: 0.05cm;
-  word-wrap: break-word;
+  word-break: break-word;
   overflow-wrap: break-word;
+  hyphens: auto;
 }
 
-.resume-preview .skills-sleek .skills-sleek-content > div > div:last-child span {
+/* .resume-preview .skills-sleek .skills-sleek-content > div > div:last-child span {
   margin-right: 0.3cm;
-}
+} */
 
-.resume-preview .skills-sleek .skills-sleek-content > div > div:last-child span span {
+.resume-preview .skills-sleek .skills-sleek-content>div>div:last-child span span {
   color: var(--text-muted);
   margin: 0 0.1cm;
 }
@@ -1255,141 +1882,401 @@
    ============================================================================ */
 
 .resume-preview .publications-section h2 {
-  font-size: var(--font-size-h2); color: var(--primary-color); font-weight: 700; margin-bottom: 0.4cm;
-  border-bottom: 0.05cm solid var(--primary-color); padding-bottom: 0.1cm; position: relative;
+  font-size: var(--font-size-h2);
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 0.4cm;
+  border-bottom: 0.05cm solid var(--primary-color);
+  padding-bottom: 0.1cm;
+  position: relative;
 }
+
 .resume-preview .publications-section h2::after {
-  content: ''; position: absolute; bottom: -0.05cm; left: 0; width: 2cm; height: 0.05cm; background: var(--accent-color);
+  content: '';
+  position: absolute;
+  bottom: -0.05cm;
+  left: 0;
+  width: 2cm;
+  height: 0.05cm;
+  background: var(--accent-color);
 }
 
 /* Simple List */
-.resume-preview .publications-section.simple .publications-simple-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.15cm; }
-.resume-preview .publications-section.simple .publication-item-simple {
-  position: relative; padding-left: 0.4cm; font-size: var(--font-size-body); color: var(--text-color); line-height: 1.5;
+.resume-preview .publications-section.simple .publications-simple-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cm;
 }
+
+.resume-preview .publications-section.simple .publication-item-simple {
+  position: relative;
+  padding-left: 0.4cm;
+  font-size: var(--font-size-body);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
 .resume-preview .publications-section.simple .publication-item-simple::before {
-  content: '•'; position: absolute; left: 0; color: var(--primary-color); font-weight: bold; font-size: 0.4cm;
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 0.4cm;
 }
 
 /* Fix #7: Modern Cards */
-.resume-preview .publications-section.modern .publications-modern-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr)); gap: 0.4cm; }
+.resume-preview .publications-section.modern .publications-modern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8cm, 1fr));
+  gap: 0.4cm;
+}
+
 .resume-preview .publications-section.modern .publication-card-modern {
-  background: linear-gradient(135deg, var(--card-background) 0%, #ffffff 100%); border: 1px solid var(--border-light);
-  border-radius: 0.3cm; padding: 0.4cm; box-shadow: 0 0.1cm 0.3cm rgba(0, 0, 0, 0.08); transition: all 0.2s ease; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--card-background) 0%, #ffffff 100%);
+  border: 1px solid var(--border-light);
+  border-radius: 0.3cm;
+  padding: 0.4cm;
+  box-shadow: 0 0.1cm 0.3cm rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
+
 .resume-preview .publications-section.modern .publication-card-modern::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 0.08cm; background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.08cm;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
 }
-.resume-preview .publications-section.modern .publication-title-modern { 
-  font-size: var(--font-size-h3); /* Custom size for Modern Title */
-  font-weight: 600; color: var(--text-color); margin: 0 0 0.15cm 0; line-height: 1.3;
+
+.resume-preview .publications-section.modern .publication-title-modern {
+  font-size: var(--font-size-h3);
+  /* Custom size for Modern Title */
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.15cm 0;
+  line-height: 1.3;
 }
+
 .resume-preview .publications-section.modern .publication-venue-modern {
-  font-size: var(--font-size-body); 
-  color: var(--primary-color); font-weight: 500; margin-bottom: 0.1cm;
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  font-weight: 500;
+  margin-bottom: 0.1cm;
 }
+
 .resume-preview .publications-section.modern .publication-date-modern {
-  font-size: var(--font-size-small); color: var(--text-muted); font-weight: 500; margin-bottom: 0.15cm;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 0.15cm;
 }
+
 .resume-preview .publications-section.modern .publication-description-modern {
-  font-size: var(--font-size-small); color: var(--text-muted); line-height: 1.4; margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
 }
 
 
 /* Fix #7: Elegant Timeline Style */
-.resume-preview .publications-section.elegant .publications-elegant-list { position: relative; padding-left: 0.8cm; }
-.resume-preview .publications-section.elegant .publication-item-elegant { position: relative; margin-bottom: 0.5cm; padding-bottom: 0.3cm; }
+.resume-preview .publications-section.elegant .publications-elegant-list {
+  position: relative;
+  padding-left: 0.8cm;
+}
+
+.resume-preview .publications-section.elegant .publication-item-elegant {
+  position: relative;
+  margin-bottom: 0.5cm;
+  padding-bottom: 0.3cm;
+}
+
 .resume-preview .publications-section.elegant .publication-item-elegant::before {
-  content: ''; position: absolute; left: -0.66cm; top: 0.1cm; bottom: -0.2cm; width: 0.05cm; background-color: var(--primary-color); opacity: 0.3;
+  content: '';
+  position: absolute;
+  left: -0.66cm;
+  top: 0.1cm;
+  bottom: -0.2cm;
+  width: 0.05cm;
+  background-color: var(--primary-color);
+  opacity: 0.3;
 }
+
 .resume-preview .publications-section.elegant .publication-item-elegant::after {
-  content: ''; position: absolute; left: -0.75cm; top: 0.15cm; width: 0.2cm; height: 0.2cm; 
-  background-color: var(--primary-color); border: 1px solid white; border-radius: 50%; box-shadow: 0 0 0 1px var(--primary-color); z-index: 2;
+  content: '';
+  position: absolute;
+  left: -0.75cm;
+  top: 0.15cm;
+  width: 0.2cm;
+  height: 0.2cm;
+  background-color: var(--primary-color);
+  border: 1px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--primary-color);
+  z-index: 2;
 }
-.resume-preview .publications-section.elegant .publication-item-elegant:last-child::before { bottom: auto; height: 1.2cm; }
+
+.resume-preview .publications-section.elegant .publication-item-elegant:last-child::before {
+  bottom: auto;
+  height: 1.2cm;
+}
+
 .resume-preview .publications-section.elegant .publication-content-elegant {
-  background: var(--hover-background); border: 1px solid var(--border-light); border-radius: 0.2cm; padding: 0.3cm; box-shadow: 0 0.05cm 0.2cm rgba(0, 0, 0, 0.05);
+  background: var(--hover-background);
+  border: 1px solid var(--border-light);
+  border-radius: 0.2cm;
+  padding: 0.3cm;
+  box-shadow: 0 0.05cm 0.2cm rgba(0, 0, 0, 0.05);
 }
+
 .resume-preview .publications-section.elegant .publication-header-elegant {
-  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.15cm; gap: 0.3cm;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.15cm;
+  gap: 0.3cm;
 }
-.resume-preview .publications-section.elegant .publication-title-elegant { 
-  font-size: var(--font-size-h3); font-weight: 600; color: var(--text-color); margin: 0; flex: 1; line-height: 1.3;
+
+.resume-preview .publications-section.elegant .publication-title-elegant {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+  flex: 1;
+  line-height: 1.3;
 }
+
 .resume-preview .publications-section.elegant .publication-date-elegant {
-  font-size: var(--font-size-small); color: var(--text-muted); font-weight: 500; white-space: nowrap;
-  background: var(--card-background); padding: 0.1cm 0.2cm; border-radius: 0.15cm;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--card-background);
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.15cm;
 }
+
 .resume-preview .publications-section.elegant .publication-venue-elegant {
-  font-size: var(--font-size-body); color: var(--primary-color); font-weight: 500; margin-bottom: 0.1cm;
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  font-weight: 500;
+  margin-bottom: 0.1cm;
 }
+
 .resume-preview .publications-section.elegant .publication-location-elegant {
-  font-size: var(--font-size-small); color: var(--text-muted); font-style: italic; margin-bottom: 0.1cm;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 0.1cm;
 }
+
 .resume-preview .publications-section.elegant .publication-description-elegant {
-  font-size: var(--font-size-small); color: var(--text-muted); line-height: 1.4; margin: 0.1cm 0 0 0;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0.1cm 0 0 0;
 }
+
 .resume-preview .publications-section.elegant .publication-details-elegant li {
-  position: relative; padding-left: 0.4cm; margin-bottom: 0.05cm; font-size: var(--font-size-small); color: var(--text-muted); line-height: 1.3;
+  position: relative;
+  padding-left: 0.4cm;
+  margin-bottom: 0.05cm;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  line-height: 1.3;
 }
-.resume-preview .publications-section.elegant .publication-details-elegant li::before { content: '▸'; position: absolute; left: 0; color: var(--primary-color); }
+
+.resume-preview .publications-section.elegant .publication-details-elegant li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+}
 
 
 /* Minimal */
-.resume-preview .publications-section.minimal .publication-item-minimal { padding: 0.25cm 0; border-bottom: 1px solid var(--border-light); transition: all 0.2s ease; }
+.resume-preview .publications-section.minimal .publication-item-minimal {
+  padding: 0.25cm 0;
+  border-bottom: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
 
 /* Fix #7: Academic Citation Style */
-.resume-preview .publications-section.academic .publications-academic-list { display: flex; flex-direction: column; gap: 0.4cm; }
-.resume-preview .publications-section.academic .publication-item-academic {
-  display: flex; gap: 0.3cm; align-items: flex-start; padding: 0.25cm; background: var(--card-background); border-left: 4px solid var(--primary-color); border-radius: 0.1cm;
+.resume-preview .publications-section.academic .publications-academic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4cm;
 }
-.resume-preview .publications-section.academic .publication-number-academic { font-size: var(--font-size-body); font-weight: 700; color: var(--primary-color); min-width: 0.6cm; margin-top: 0.05cm; }
 
-.resume-preview .publications-section.academic .publication-content-academic { flex: 1; }
+.resume-preview .publications-section.academic .publication-item-academic {
+  display: flex;
+  gap: 0.3cm;
+  align-items: flex-start;
+  padding: 0.25cm;
+  background: var(--card-background);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0.1cm;
+}
+
+.resume-preview .publications-section.academic .publication-number-academic {
+  font-size: var(--font-size-body);
+  font-weight: 700;
+  color: var(--primary-color);
+  min-width: 0.6cm;
+  margin-top: 0.05cm;
+}
+
+.resume-preview .publications-section.academic .publication-content-academic {
+  flex: 1;
+}
+
 .resume-preview .publications-section.academic .publication-citation-academic {
-  font-size: var(--font-size-body); color: var(--text-color); line-height: 1.4; margin-bottom: 0.1cm;
+  font-size: var(--font-size-body);
+  color: var(--text-color);
+  line-height: 1.4;
+  margin-bottom: 0.1cm;
 }
-.resume-preview .publications-section.academic .publication-title-academic { font-weight: 600; color: var(--text-color); }
-.resume-preview .publications-section.academic .publication-venue-academic { font-style: italic; color: var(--primary-color); font-weight: 500; }
-.resume-preview .publications-section.academic .publication-date-academic { color: var(--text-muted); font-weight: 500; }
-.resume-preview .publications-section.academic .publication-location-academic { color: var(--text-muted); }
+
+.resume-preview .publications-section.academic .publication-title-academic {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.resume-preview .publications-section.academic .publication-venue-academic {
+  font-style: italic;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.resume-preview .publications-section.academic .publication-date-academic {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.resume-preview .publications-section.academic .publication-location-academic {
+  color: var(--text-muted);
+}
+
 .resume-preview .publications-section.academic .publication-description-academic {
-  font-size: var(--font-size-small); color: var(--text-muted); line-height: 1.4; margin: 0.1cm 0 0 0; font-style: italic;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0.1cm 0 0 0;
+  font-style: italic;
 }
+
 .resume-preview .publications-section.academic .publication-details-academic li {
-  font-size: var(--font-size-small); color: var(--text-muted); line-height: 1.3; margin-bottom: 0.05cm; padding-left: 0.3cm; position: relative;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  line-height: 1.3;
+  margin-bottom: 0.05cm;
+  padding-left: 0.3cm;
+  position: relative;
 }
-.resume-preview .publications-section.academic .publication-detail-academic::before { content: '→'; position: absolute; left: 0; color: var(--primary-color); }
+
+.resume-preview .publications-section.academic .publication-detail-academic::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+}
 
 
 /* ============================================================================
    10. FOOTER TEMPLATES (Fix #1: Mountains, Fix #2: Minimal Line)
    ============================================================================ */
 
-.page-footer { width: 100%; height: 100%; position: relative; overflow: hidden; }
+.page-footer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
 
 /* Default Footer */
 .footer-default .foot-back {
-  width: 100%; height: 5.385cm; z-index: 1; transform: rotate(-16deg); background-color: var(--text-color); position: absolute; bottom: -6cm; left: 1.452cm;
+  width: 100%;
+  height: 5.385cm;
+  z-index: 1;
+  transform: rotate(-16deg);
+  background-color: var(--text-color);
+  position: absolute;
+  bottom: -6cm;
+  left: 1.452cm;
 }
+
 .footer-default .foot-front .left {
-  width: 17cm; height: 5cm; z-index: 1; transform: rotate(7deg); background-color: var(--primary-color); box-shadow: 0 0 0.317cm -0.105cm #000; position: absolute; bottom: -2.90cm; left: -2cm;
+  width: 17cm;
+  height: 5cm;
+  z-index: 1;
+  transform: rotate(7deg);
+  background-color: var(--primary-color);
+  box-shadow: 0 0 0.317cm -0.105cm #000;
+  position: absolute;
+  bottom: -2.90cm;
+  left: -2cm;
 }
+
 .footer-default .foot-front .right {
-  width: 10cm; height: 5cm; z-index: 2; transform: rotate(28deg); background-color: var(--primary-color); position: absolute; bottom: -6.01cm; left: 13.48cm;
+  width: 10cm;
+  height: 5cm;
+  z-index: 2;
+  transform: rotate(28deg);
+  background-color: var(--primary-color);
+  position: absolute;
+  bottom: -6.01cm;
+  left: 13.48cm;
 }
 
 /* Modern Footer */
-.footer-modern { background: transparent; position: relative; width: 100%; height: 100%; }
-.footer-modern .footer-content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-.footer-modern .footer-line { width: 60%; height: 0.05cm; background: linear-gradient(90deg, transparent 0%, #2c5aa0 50%, transparent 100%); margin-bottom: 0.3cm; }
-.footer-modern .footer-text { display: flex; align-items: center; gap: 0.4cm; font-size: 0.25cm; color: var(--text-muted); font-weight: 300; letter-spacing: 0.08cm; }
+.footer-modern {
+  background: transparent;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.footer-modern .footer-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.footer-modern .footer-line {
+  width: 60%;
+  height: 0.05cm;
+  background: linear-gradient(90deg, transparent 0%, #2c5aa0 50%, transparent 100%);
+  margin-bottom: 0.3cm;
+}
+
 .footer-modern .footer-gradient {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 0.08cm; background: linear-gradient(90deg, transparent 0%, #2c5aa0 20%, #333333 50%, #2c5aa0 80%, transparent 100%); opacity: 0.4;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0.08cm;
+  background: linear-gradient(90deg, transparent 0%, #2c5aa0 20%, #333333 50%, #2c5aa0 80%, transparent 100%);
+  opacity: 0.4;
 }
 
 /* Fix #2: Minimal Footer (Dot) */
-.footer-minimal { background: transparent; } /* Restored background: transparent */
+.footer-minimal {
+  background: transparent;
+}
+
+/* Restored background: transparent */
 .footer-minimal .footer-simple {
   display: flex;
   align-items: center;
@@ -1397,32 +2284,105 @@
   width: 100%;
   height: 100%;
 }
+
 .footer-minimal .footer-dot {
-  width: 0.3cm; height: 0.3cm; border-radius: 50%; background: var(--primary-color); opacity: 0.6; box-shadow: 0 0 0.2cm rgba(0,0,0,0.1);
+  width: 0.3cm;
+  height: 0.3cm;
+  border-radius: 50%;
+  background: var(--primary-color);
+  opacity: 0.6;
+  box-shadow: 0 0 0.2cm rgba(0, 0, 0, 0.1);
 }
 
 /* Fix #1: Mountains Footer - Required full definition because position/z-index broke */
-.footer-mountains { background: transparent; overflow: hidden; position: relative; width: 100%; height: 100%; }
-.footer-mountains .mountains-container { position: relative; width: 100%; height: 100%; }
+.footer-mountains {
+  background: transparent;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.footer-mountains .mountains-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
 .footer-mountains .mountain-1 {
-  position: absolute; left: 0; bottom: 0; width: 0; height: 0; border-left: 2cm solid transparent; border-right: 2cm solid transparent; border-bottom: 1.5cm solid var(--primary-color); opacity: 0.9;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 2cm solid transparent;
+  border-right: 2cm solid transparent;
+  border-bottom: 1.5cm solid var(--primary-color);
+  opacity: 0.9;
 }
+
 .footer-mountains .mountain-2 {
-  position: absolute; left: 3cm; bottom: 0; width: 0; height: 0; border-left: 1.5cm solid transparent; border-right: 1.5cm solid transparent; border-bottom: 2cm solid var(--secondary-color); opacity: 0.7;
+  position: absolute;
+  left: 3cm;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 1.5cm solid transparent;
+  border-right: 1.5cm solid transparent;
+  border-bottom: 2cm solid var(--secondary-color);
+  opacity: 0.7;
 }
+
 .footer-mountains .mountain-3 {
-  position: absolute; left: 7cm; bottom: 0; width: 0; height: 0; border-left: 2.5cm solid transparent; border-right: 2.5cm solid transparent; border-bottom: 1.8cm solid var(--primary-color); opacity: 0.8;
+  position: absolute;
+  left: 7cm;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 2.5cm solid transparent;
+  border-right: 2.5cm solid transparent;
+  border-bottom: 1.8cm solid var(--primary-color);
+  opacity: 0.8;
 }
+
 .footer-mountains .mountain-4 {
-  position: absolute; left: 13cm; bottom: 0; width: 0; height: 0; border-left: 1.8cm solid transparent; border-right: 1.8cm solid transparent; border-bottom: 1.3cm solid var(--secondary-color); opacity: 0.6;
+  position: absolute;
+  left: 13cm;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 1.8cm solid transparent;
+  border-right: 1.8cm solid transparent;
+  border-bottom: 1.3cm solid var(--secondary-color);
+  opacity: 0.6;
 }
+
 .footer-mountains .mountain-5 {
-  position: absolute; right: 0; bottom: 0; width: 0; height: 0; border-left: 3cm solid transparent; border-right: 3cm solid transparent; border-bottom: 2.2cm solid var(--primary-color); opacity: 0.9;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 3cm solid transparent;
+  border-right: 3cm solid transparent;
+  border-bottom: 2.2cm solid var(--primary-color);
+  opacity: 0.9;
 }
 
 
 /* SVG Footers */
-.footer-fish, .footer-salmon { background: transparent; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
-.footer-fish svg, .footer-salmon svg { width: 100%; height: 100%; }
+.footer-fish,
+.footer-salmon {
+  background: transparent;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.footer-fish svg,
+.footer-salmon svg {
+  width: 100%;
+  height: 100%;
+}

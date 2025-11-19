@@ -194,8 +194,8 @@ export const SkillsTemplates = {
           <h2>{section.title}</h2>
           <div className="skills-modern-grid">
             {categories.map((category: any, index: number) => (
-              <div key={index}>
-                <div>
+              <div key={index} className='skills-modern-category'>
+                <div className="fw-bold">
                   {category.name}
                 </div>
                 <div>
@@ -259,7 +259,7 @@ export const SkillsTemplates = {
           <div className="skills-sleek-content">
             {categories.map((category: any, index: number) => (
               <div key={index}>
-                <div>
+                <div className="fw-bold">
                   {category.name}
                 </div>
                 <div>
