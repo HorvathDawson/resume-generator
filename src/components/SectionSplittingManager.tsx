@@ -153,6 +153,17 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
     setSplitParts(newParts);
   };
 
+  // Get all item IDs that are selected in other parts (not current part)
+  const getItemsSelectedInOtherParts = (currentPartIndex: number): string[] => {
+    const selectedInOtherParts: string[] = [];
+    splitParts.forEach((part, index) => {
+      if (index !== currentPartIndex) {
+        selectedInOtherParts.push(...part.selectedItems);
+      }
+    });
+    return selectedInOtherParts;
+  };
+
   const toggleItemSelection = (partIndex: number, itemId: string) => {
     const part = splitParts[partIndex];
     const selectedItems = part.selectedItems.includes(itemId)
@@ -243,20 +254,30 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
             <div className="items-section">
               <h4>Select items for this part:</h4>
               <div className="items-list">
-                {itemsWithIds.map((item) => (
-                  <div key={item.id} className="item-checkbox">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={currentPart.selectedItems.includes(item.id)}
-                        onChange={() => toggleItemSelection(activePart, item.id)}
-                      />
-                      <span className="item-title">
-                        {getItemDisplayTitle(item, section.type)}
-                      </span>
-                    </label>
-                  </div>
-                ))}
+                {itemsWithIds.map((item) => {
+                  const isSelectedInCurrentPart = currentPart.selectedItems.includes(item.id);
+                  const isSelectedInOtherParts = getItemsSelectedInOtherParts(activePart).includes(item.id);
+                  const isDisabled = isSelectedInOtherParts && !isSelectedInCurrentPart;
+                  
+                  return (
+                    <div key={item.id} className={`item-checkbox ${isDisabled ? 'disabled' : ''}`}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={isSelectedInCurrentPart}
+                          disabled={isDisabled}
+                          onChange={() => toggleItemSelection(activePart, item.id)}
+                        />
+                        <span className={`item-title ${isDisabled ? 'disabled-text' : ''}`}>
+                          {getItemDisplayTitle(item, section.type)}
+                          {isSelectedInOtherParts && !isSelectedInCurrentPart && (
+                            <span className="selected-elsewhere"> (selected in another part)</span>
+                          )}
+                        </span>
+                      </label>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

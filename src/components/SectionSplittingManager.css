@@ -488,6 +488,69 @@
   background: #94a3b8;
 }
 
+/* Item checkbox styles */
+.item-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.item-checkbox:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.item-checkbox.disabled {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.item-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.item-checkbox.disabled label {
+  cursor: not-allowed;
+}
+
+.item-checkbox input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #3b82f6;
+}
+
+.item-checkbox input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.item-title {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.item-title.disabled-text {
+  color: #9ca3af;
+}
+
+.selected-elsewhere {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-style: italic;
+  font-weight: 400;
+}
+
 .item-card.skills-category {
   border-left: 4px solid #10b981;
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
