@@ -1,0 +1,7 @@
+1. adding more on splits goes kaput
+2. colors are not consistent 
+3. drop zones are confusing
+4. fix the menu button to be in the bar
+5. fix centering name template
+6. edit split sections 
+7. move x for sections
