@@ -149,16 +149,20 @@ export const EducationTemplates = {
         <div className="education-compact-list">
           {section.items?.map((item, index) => (
             <div key={index} className="education-item-compact">
-              <strong>{item.institution || item.organization}</strong> - {item.degree} ({item.dates})
-              {item.gpa && (
-                <div className="education-gpa-compact">
-                  <strong>GPA:</strong> {item.gpa}
-                </div>
-              )}
+              <div className="compact-header">
+                <span className="degree-compact">{item.degree}</span>
+                <span className="institution-compact">{item.institution || item.organization}</span>
+              </div>
+              <div className="compact-meta">
+                <span className="dates-compact">{item.dates}</span>
+                {item.gpa && <span className="gpa-compact">GPA: {item.gpa}</span>}
+              </div>
               {item.details && item.details.length > 0 && (
-                <div className="education-details-compact">
-                  {item.details.join(' • ')}
-                </div>
+                <ul className="details-compact">
+                  {item.details.map((detail, detailIndex) => (
+                    <li key={detailIndex}>{detail}</li>
+                  ))}
+                </ul>
               )}
             </div>
           ))}
