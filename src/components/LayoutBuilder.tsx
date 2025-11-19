@@ -2162,6 +2162,48 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                     
                     <span className="row-type-badge">{row.type}</span>
                     
+                    {/* Row reorder buttons */}
+                    <div className="row-reorder-controls">
+                      <button
+                        className="row-reorder-btn"
+                        onClick={() => {
+                          if (rowIndex > 0) {
+                            // Move row up (swap with previous row)
+                            const newRows = [...currentPage.rows];
+                            const [movedRow] = newRows.splice(rowIndex, 1);
+                            newRows.splice(rowIndex - 1, 0, movedRow);
+                            
+                            const newPages = [...pages];
+                            newPages[currentPageIndex] = { ...currentPage, rows: newRows };
+                            updateLayout(newPages);
+                          }
+                        }}
+                        disabled={rowIndex === 0}
+                        title="Move row up"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        className="row-reorder-btn"
+                        onClick={() => {
+                          if (rowIndex < currentPage.rows.length - 1) {
+                            // Move row down (swap with next row)
+                            const newRows = [...currentPage.rows];
+                            const [movedRow] = newRows.splice(rowIndex, 1);
+                            newRows.splice(rowIndex + 1, 0, movedRow);
+                            
+                            const newPages = [...pages];
+                            newPages[currentPageIndex] = { ...currentPage, rows: newRows };
+                            updateLayout(newPages);
+                          }
+                        }}
+                        disabled={rowIndex === currentPage.rows.length - 1}
+                        title="Move row down"
+                      >
+                        ▼
+                      </button>
+                    </div>
+                    
                     {row.type === 'columns' && row.columns && (
                       <>
                         <div className="split-badge">
