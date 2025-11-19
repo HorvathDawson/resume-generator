@@ -311,19 +311,16 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   };
 
   const handleRowDragStart = (e: React.DragEvent, rowIndex: number) => {
-    // Check if the drag is originating from a section element or within content areas
+    // Check if the drag is originating from a section element
     const target = e.target as HTMLElement;
-    if (target.closest('.section-item') || 
-        target.closest('.column-builder') || 
-        target.closest('.whole-page-builder') ||
-        target.closest('.column-sections') ||
-        target.closest('.whole-page-sections')) {
-      // Prevent row drag when dragging within content areas or sections
+    if (target.closest('.section-item')) {
+      // Prevent row drag when dragging a section
       e.preventDefault();
       e.stopPropagation();
       return;
     }
     
+    // Allow row drag from row headers, badges, and empty content areas
     console.log('🏗️ ROW DRAG START:', rowIndex);
     setDraggedRow(rowIndex);
     e.dataTransfer.effectAllowed = 'move';
@@ -2025,7 +2022,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
           
           {/* Scrollable Layout Content */}
           <div className="layout-content-scrollable">
-            <div className="layout-rows">
+            <div className={`layout-rows ${draggedRow !== null ? 'row-drag-active' : ''}`}>
             <h4>Page {currentPage.pageNumber} Layout</h4>
             <p className="layout-tip">Drop layout elements and sections here to build your resume</p>
             
@@ -2463,7 +2460,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   {/* The malformed `wholePage` block that was here (lines 2235-2477) has been deleted. */}
                   
                   {row.type === 'wholePage' && (
-                    <div className="row-main-content">
+                    <div className="row-builder">
                       <div className="row-left-sidebar">
                         <div className="color-controls-vertical">
                           <button

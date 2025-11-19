@@ -621,10 +621,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Disable row dragging when sections are present - sections take priority */
-.layout-row-builder:has(.section-item.placed) {
-  cursor: default;
-}
+/* When sections are present, show mixed cursor but still allow row drag from headers */
 
 /* Make sections immediately draggable without hover delay */
 .layout-row-builder .section-item.placed {
@@ -695,7 +692,7 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.row-main-content {
+.row-builder {
   display: flex;
   gap: 1rem;
 }
@@ -738,10 +735,7 @@
   /* Prevent content from extending past column boundaries */
 }
 
-/* When sections are present, prioritize section dragging over column/row dragging */
-.column-builder:has(.section-item.placed) {
-  cursor: default;
-}
+/* Sections within columns take priority for dragging */
 
 .column-builder:hover {
   border-color: #6b7280;
@@ -763,10 +757,7 @@
   transition: all 0.2s;
 }
 
-/* When sections are present, prioritize section dragging over whole-page/row dragging */
-.whole-page-builder:has(.section-item.placed) {
-  cursor: default;
-}
+/* Sections within whole-page areas take priority for dragging */
 
 .whole-page-builder:hover {
   border-color: #6b7280;
@@ -776,6 +767,39 @@
 .whole-page-builder.drag-over {
   border-color: #2563eb;
   background: #eff6ff;
+}
+
+/* ROW DRAG COLLAPSE STYLES */
+/* When dragging rows, hide the entire row content to minimize vertical space */
+.layout-rows.row-drag-active .row-builder {
+  display: none !important; /* Completely hide all row content */
+}
+
+/* Make collapsed rows ultra-minimal */
+.layout-rows.row-drag-active .layout-row-builder {
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.25rem;
+  min-height: 30px;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+/* Keep only essential row identification visible */
+.layout-rows.row-drag-active .row-badges-top {
+  opacity: 1;
+  margin-bottom: 0;
+}
+
+/* Add a minimal content indicator after hiding row-builder */
+.layout-rows.row-drag-active .layout-row-builder::after {
+  content: 'Row Content Hidden During Drag';
+  display: block;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.6rem;
+  font-style: italic;
+  padding: 0.25rem;
+  pointer-events: none;
 }
 
 /* Section Lists inside Columns/Pages */
