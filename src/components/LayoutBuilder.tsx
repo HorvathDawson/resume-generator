@@ -311,6 +311,19 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   };
 
   const handleRowDragStart = (e: React.DragEvent, rowIndex: number) => {
+    // Check if the drag is originating from a section element or within content areas
+    const target = e.target as HTMLElement;
+    if (target.closest('.section-item') || 
+        target.closest('.column-builder') || 
+        target.closest('.whole-page-builder') ||
+        target.closest('.column-sections') ||
+        target.closest('.whole-page-sections')) {
+      // Prevent row drag when dragging within content areas or sections
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    
     console.log('🏗️ ROW DRAG START:', rowIndex);
     setDraggedRow(rowIndex);
     e.dataTransfer.effectAllowed = 'move';
@@ -480,13 +493,16 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
 
   // Handlers for within-row dragging and section management
   const handleSectionDragStart = (e: React.DragEvent, sectionId: string, rowIndex: number, columnIndex?: number) => {
+    console.log('📦 SECTION DRAG START:', sectionId, 'from row:', rowIndex, 'column:', columnIndex);
     setDraggedSectionInRow({
       sectionId,
       fromRowIndex: rowIndex,
       fromColumnIndex: columnIndex
     });
     setDraggedSection(null); // Clear any existing sidebar drag state
+    setDraggedRow(null); // Ensure no row drag state
     e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', sectionId); // Set data for better drag handling
     // Stop propagation to prevent row dragging
     e.stopPropagation();
   };
@@ -983,8 +999,15 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
   const handleSplitSection = (originalSectionId: string, splitData: { sections: any[] }) => {
     if (!onResumeDataChange) return;
 
-    // Find the original section
-    const originalSection = resumeData.sections?.find(s => s.id === originalSectionId);
+    // Check if this is a split section being re-edited
+    let baseOriginalId = originalSectionId;
+    const splitMatch = originalSectionId.match(/^(.+)_split_\d+$/);
+    if (splitMatch) {
+      baseOriginalId = splitMatch[1];
+    }
+
+    // Find the base original section
+    const originalSection = resumeData.sections?.find(s => s.id === baseOriginalId);
     if (!originalSection) return;
 
     // Create new sections with unique IDs and smart titles
@@ -1001,23 +1024,26 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       
       return {
         ...sectionData,
-        id: `${originalSectionId}_split_${index + 1}`,
+        id: `${baseOriginalId}_split_${index + 1}`,
         title: sectionData.title || defaultTitle
       };
     });
 
-    // Update resume data - replace original section with new sections
+    // Update resume data - keep original section and add new split sections
     const updatedSections = (resumeData.sections || [])
-      .filter(s => s.id !== originalSectionId) // Remove original
+      .filter(s => !s.id.startsWith(`${baseOriginalId}_split_`)) // Remove existing splits
       .concat(newSections); // Add new split sections
+    // Note: Original section is preserved (not filtered out)
 
     const newResumeData = {
       ...resumeData,
       sections: updatedSections
     };
 
-    // Update layout - replace original section ID with new section IDs
+    // Update layout - replace original section with first split if it's in layout
     const currentPages = getPages();
+    const layoutSectionIds = getAllLayoutSectionIds();
+    const originalInLayout = layoutSectionIds.includes(baseOriginalId);
     
     const updatedPages = currentPages.map(page => ({
       ...page,
@@ -1025,21 +1051,31 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
         ...row,
         columns: row.columns?.map(col => ({
           ...col,
-          sections: col.sections.flatMap((sectionRef: any) => {
+          sections: col.sections.map((sectionRef: any) => {
             const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
-            if (sectionId === originalSectionId) {
-              return newSections.map(ns => ns.id);
+            // Replace original with first split if original is in layout
+            if (sectionId === baseOriginalId && originalInLayout) {
+              return newSections[0].id;
             }
-            return [sectionRef]; // Keep original format (string or object)
-          })
+            // Remove existing splits (but not the original)
+            if (sectionId.startsWith(`${baseOriginalId}_split_`)) {
+              return null;
+            }
+            return sectionRef;
+          }).filter(Boolean)
         })),
-        sections: row.sections?.flatMap((sectionRef: any) => {
+        sections: row.sections?.map((sectionRef: any) => {
           const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
-          if (sectionId === originalSectionId) {
-            return newSections.map(ns => ns.id);
+          // Replace original with first split if original is in layout
+          if (sectionId === baseOriginalId && originalInLayout) {
+            return newSections[0].id;
           }
-          return [sectionRef]; // Keep original format (string or object)
-        })
+          // Remove existing splits (but not the original)
+          if (sectionId.startsWith(`${baseOriginalId}_split_`)) {
+            return null;
+          }
+          return sectionRef;
+        }).filter(Boolean)
       }))
     }));
 
@@ -1060,6 +1096,28 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     if (!splittingSection) return null;
     const section = resumeData.sections?.find(s => s.id === splittingSection);
     return section as any; // Type cast for now - will need proper type alignment later
+  };
+
+  const getExistingSplitsForSection = (sectionId: string) => {
+    if (!sectionId) return [];
+    
+    // Check if this is already a split section
+    const splitMatch = sectionId.match(/^(.+)_split_\d+$/);
+    const baseId = splitMatch ? splitMatch[1] : sectionId;
+    
+    // Find all existing splits for this base section
+    const existingSplits = (resumeData.sections || [])
+      .filter(s => s.id.startsWith(`${baseId}_split_`))
+      .sort((a, b) => {
+        // Sort by split number
+        const aMatch = a.id.match(/_split_(\d+)$/);
+        const bMatch = b.id.match(/_split_(\d+)$/);
+        const aNum = aMatch ? parseInt(aMatch[1]) : 0;
+        const bNum = bMatch ? parseInt(bMatch[1]) : 0;
+        return aNum - bNum;
+      });
+    
+    return existingSplits;
   };
 
   // Sidebar-based combine function - automatically finds and removes split sections from layout
@@ -1567,19 +1625,18 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     return [...new Set(allSectionIds)]; // Remove duplicates
   };
 
-  // Helper function to detect split sections that can be combined
-  const getSplitSectionsInLayout = () => {
-    const layoutSectionIds = getAllLayoutSectionIds();
+  // Helper function to detect ALL split sections that can be combined (including those not in layout)
+  const getAllSplitSections = () => {
     const splitGroups: { [baseId: string]: string[] } = {};
     
-    layoutSectionIds.forEach(sectionId => {
-      const match = sectionId.match(/^(.+)_split_\d+$/);
+    (resumeData.sections || []).forEach(section => {
+      const match = section.id.match(/^(.+)_split_\d+$/);
       if (match) {
         const baseId = match[1];
         if (!splitGroups[baseId]) {
           splitGroups[baseId] = [];
         }
-        splitGroups[baseId].push(sectionId);
+        splitGroups[baseId].push(section.id);
       }
     });
     
@@ -1753,27 +1810,39 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               <p className="section-tip">Drag items into the layout to use them</p>
             </div>
 
-            {/* Combinable split sections */}
-            {getSplitSectionsInLayout().length > 0 && (
+            {/* Combinable split sections - show ALL splits, not just those in layout */}
+            {getAllSplitSections().length > 0 && (
               <>
                 <h4 className="split-sections-header">Split Sections</h4>
                 <p className="section-tip">Click combine to merge split sections back together</p>
                 <div className="split-sections-list">
-                  {getSplitSectionsInLayout().map(([baseId, splitSectionIds]) => {
+                  {getAllSplitSections().map(([baseId, splitSectionIds]) => {
                     const baseSectionTitle = resumeData.sections?.find(s => s.id === splitSectionIds[0])?.title?.replace(/ \((Part \d+|cont)\)$/, '') || baseId;
+                    const inLayoutCount = splitSectionIds.filter(id => getAllLayoutSectionIds().includes(id)).length;
                     return (
                       <div key={baseId} className="split-section-group">
                         <div className="split-section-info">
                           <span className="split-section-title">{baseSectionTitle}</span>
-                          <span className="split-section-count">({splitSectionIds.length} parts)</span>
+                          <span className="split-section-count">
+                            ({splitSectionIds.length} parts{inLayoutCount > 0 ? `, ${inLayoutCount} in layout` : ''})
+                          </span>
                         </div>
-                        <button
-                          className="sidebar-combine-button"
-                          onClick={() => handleCombineFromSidebar(baseId, splitSectionIds)}
-                          title={`Combine ${splitSectionIds.length} parts back into one section`}
-                        >
-                          🔗 Combine
-                        </button>
+                        <div className="split-section-actions">
+                          <button
+                            className="sidebar-edit-split-button"
+                            onClick={() => setSplittingSection(baseId)}
+                            title="Edit split configuration"
+                          >
+                            ✏️ Edit
+                          </button>
+                          <button
+                            className="sidebar-combine-button"
+                            onClick={() => handleCombineFromSidebar(baseId, splitSectionIds)}
+                            title={`Combine ${splitSectionIds.length} parts back into one section`}
+                          >
+                            🔗 Combine
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -1781,10 +1850,19 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
               </>
             )}
             <div className="sections-list">
-              {availableSections.map((section) => {
+              {availableSections.filter((section) => {
                 const resumeSection = resumeData.sections?.find(s => s.id === section.id);
-                // Check if section can be split (has splittable type AND more than 1 item)
-                const canSplit = resumeSection && (
+                const isSplitSection = resumeSection?.id.includes('_split_');
+                const hasExistingSplits = resumeSection && !isSplitSection && 
+                  getExistingSplitsForSection(resumeSection.id).length > 0;
+                // Hide original sections that have been split
+                return !hasExistingSplits;
+              }).map((section) => {
+                const resumeSection = resumeData.sections?.find(s => s.id === section.id);
+                // Check if section can be split (has splittable type AND more than 1 item AND is not already a split)
+                const isSplitSection = resumeSection?.id.includes('_split_');
+                
+                const canSplit = resumeSection && !isSplitSection && (
                   resumeSection.type === 'experience' || 
                   resumeSection.type === 'education' || 
                   resumeSection.type === 'projects' ||
@@ -2649,6 +2727,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       {splittingSection && (
         <SectionSplittingManager
           section={getSectionForSplitting()!}
+          existingSplits={getExistingSplitsForSection(splittingSection) as any}
           onSplit={(splitData) => handleSplitSection(splittingSection, splitData)}
           onClose={() => setSplittingSection(null)}
         />

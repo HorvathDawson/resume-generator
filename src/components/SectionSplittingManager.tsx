@@ -6,6 +6,7 @@ interface SectionSplittingManagerProps {
   section: ResumeSection;
   onSplit: (splitData: { sections: any[] }) => void;
   onClose: () => void;
+  existingSplits?: ResumeSection[]; // Optional array of existing split sections
 }
 
 interface SplitPart {
@@ -17,7 +18,8 @@ interface SplitPart {
 export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = ({
   section,
   onSplit,
-  onClose
+  onClose,
+  existingSplits = []
 }) => {
   console.log('=== SectionSplittingManager received section ===');
   console.log('Section:', section);
@@ -57,16 +59,34 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
     id: item.id || `${section.id}-item-${index}`
   }));
 
-  // Initialize with the original section as first part
+  // Initialize with existing splits or original section as first part
   useEffect(() => {
     if (splitParts.length === 0) {
-      setSplitParts([{
-        title: section.title,
-        items: itemsWithIds,
-        selectedItems: itemsWithIds.map(item => item.id)
-      }]);
+      if (existingSplits.length > 0) {
+        // Reconstruct existing split configuration
+        const reconstructedParts: SplitPart[] = existingSplits.map(splitSection => {
+          const splitItems = getItems(splitSection);
+          const splitItemIds = splitItems.map((item, index) => 
+            item.id || `${splitSection.id}-item-${index}`
+          );
+          
+          return {
+            title: splitSection.title,
+            items: itemsWithIds,
+            selectedItems: splitItemIds
+          };
+        });
+        setSplitParts(reconstructedParts);
+      } else {
+        // Initialize with original section
+        setSplitParts([{
+          title: section.title,
+          items: itemsWithIds,
+          selectedItems: itemsWithIds.map(item => item.id)
+        }]);
+      }
     }
-  }, [section.title, itemsWithIds, splitParts.length]);
+  }, [section.title, itemsWithIds, splitParts.length, existingSplits]);
 
 
 

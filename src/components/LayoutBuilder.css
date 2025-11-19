@@ -376,6 +376,11 @@
   transform: rotate(2deg) scale(0.98);
 }
 
+.section-item.placed.dragging .section-actions {
+  pointer-events: none; /* Disable buttons during drag */
+  opacity: 0; /* Hide buttons during drag */
+}
+
 /* Item Contents */
 .section-title {
   flex: 1;
@@ -403,10 +408,49 @@
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 10;
+  pointer-events: none; /* Always prevent interfering with drag */
 }
 
 .section-item.placed:hover .section-actions {
   opacity: 1;
+  /* Keep pointer-events: none to prevent drag interference */
+}
+
+/* Only enable button interactions when explicitly hovering the buttons */
+.section-item.placed:hover .section-actions:hover {
+  pointer-events: auto;
+}
+
+/* Ensure the entire section is draggable */
+.section-item.placed {
+  position: relative;
+  cursor: grab;
+}
+
+.section-item.placed:active {
+  cursor: grabbing;
+}
+
+/* Disable all button interactions during active drag */
+.section-item.placed.dragging .section-actions {
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* Make sure title area doesn't interfere */
+.section-item.placed .section-title {
+  cursor: inherit;
+  pointer-events: none; /* Let drag events pass through */
+}
+
+/* Prevent buttons from intercepting mousedown events that start drags */
+.section-actions button {
+  pointer-events: inherit;
+}
+
+/* When section actions are disabled, all buttons are disabled */
+.section-actions[style*="pointer-events: none"] button {
+  pointer-events: none !important;
 }
 
 /* Wrapper for sidebar split controls */
@@ -577,6 +621,22 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Disable row dragging when sections are present - sections take priority */
+.layout-row-builder:has(.section-item.placed) {
+  cursor: default;
+}
+
+/* Make sections immediately draggable without hover delay */
+.layout-row-builder .section-item.placed {
+  position: relative;
+  z-index: 10; /* Higher than row to capture drag events first */
+  cursor: grab !important;
+}
+
+.layout-row-builder .section-item.placed:active {
+  cursor: grabbing !important;
+}
+
 .layout-row-builder:hover {
   border-color: #2563eb;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
@@ -678,6 +738,11 @@
   /* Prevent content from extending past column boundaries */
 }
 
+/* When sections are present, prioritize section dragging over column/row dragging */
+.column-builder:has(.section-item.placed) {
+  cursor: default;
+}
+
 .column-builder:hover {
   border-color: #6b7280;
   background: #f3f4f6;
@@ -696,6 +761,11 @@
   background: #f9fafb;
   min-height: 100px;
   transition: all 0.2s;
+}
+
+/* When sections are present, prioritize section dragging over whole-page/row dragging */
+.whole-page-builder:has(.section-item.placed) {
+  cursor: default;
 }
 
 .whole-page-builder:hover {
@@ -1192,42 +1262,153 @@
 }
 
 .sidebar-split-button {
-  background: #10b981;
-  color: #ffffff;
-  border-radius: 3px;
+  background: transparent;
+  color: #10b981;
+  border: 1px solid #10b981;
+  border-radius: 4px;
   padding: 0.125rem 0.25rem;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   min-width: 28px;
   max-width: 60px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: all 0.2s ease;
 }
 
 .sidebar-split-button:hover {
-  background: #059669;
-  transform: scale(1.05);
+  background: #10b981;
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 
 .sidebar-split-button.inline {
-  padding: 0.2rem 0.4rem;
-  min-width: 24px;
-  width: 24px;
-  height: 24px;
+  padding: 0.25rem;
+  min-width: 26px;
+  width: 26px;
+  height: 26px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-edit-split-button {
+  background: transparent;
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+  padding: 0.125rem 0.25rem;
+  font-size: 0.8rem;
+  min-width: 28px;
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease;
+}
+
+.sidebar-edit-split-button:hover {
+  background: #f59e0b;
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.sidebar-edit-split-button.inline {
+  padding: 0.25rem;
+  min-width: 26px;
+  width: 26px;
+  height: 26px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Split sections styling */
+.split-sections-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 1rem 0 0.5rem 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-tip {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.split-sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.split-section-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.split-section-group:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.split-section-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  flex: 1;
+}
+
+.split-section-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.split-section-count {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.split-section-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .sidebar-combine-button {
-  background: #8b5cf6;
-  color: #ffffff;
+  background: transparent;
+  color: #8b5cf6;
+  border: 1px solid #8b5cf6;
   border-radius: 4px;
   padding: 0.375rem 0.75rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   align-self: flex-start;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .sidebar-combine-button:hover {
-  background: #7c3aed;
+  background: #8b5cf6;
+  color: #ffffff;
   transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
 }
 
 .reorder-done-button {
@@ -1273,6 +1454,7 @@
   width: 20px;
   height: 20px;
   backdrop-filter: blur(4px);
+  pointer-events: auto; /* Ensure they can be clicked when parent allows */
 }
 
 .template-button:hover {
