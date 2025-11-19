@@ -81,13 +81,13 @@ export const EducationTemplates = {
                 </div>
               </div>
               {item.details && item.details.length > 0 && (
-                <div className="education-details-modern">
+                <ul className="education-details-modern">
                   {item.details.map((detail, detailIndex) => (
-                    <div key={detailIndex} className="detail-item-modern">
+                    <li key={detailIndex} className="detail-item-modern">
                       {detail}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
             </div>
           ))}

@@ -224,9 +224,7 @@
 #resume-preview .small-text,
 #resume-preview .dates {
   font-size: var(--font-size-small) !important;
-  color: var(--text-color) !important;
-  opacity: 0.8;
-  margin-bottom: var(--item-margin) !important;
+  color: var(--text-muted) !important;
 }
 
 .resume-preview .continuation {
@@ -239,11 +237,6 @@
   margin: 0.2cm 0;
   font-size: var(--font-size-small);
   line-height: 1.5;
-}
-
-.resume-preview .text-section .text-content p {
-  margin-bottom: 0 !important;
-  margin-top: 0.2cm;
 }
 
 /* Highlighted Text */
@@ -544,25 +537,19 @@
 }
 
 .resume-preview .education.standard-modern .education-details-modern {
-  margin-top: 0.15cm;
-  margin-left: 0.2cm;
+  list-style-position: outside;
+  padding-left: 0.5cm;
+  margin-top: 0.2cm;
 }
 
 .resume-preview .education.standard-modern .detail-item-modern {
-  font-size: var(--font-size-small);
-  color: var(--text-color);
-  line-height: 1.5;
-  margin-bottom: 0.08cm;
-  position: relative;
-  padding-left: 0.3cm;
+  margin-bottom: 0.1cm;
+  list-style-type: disc;
 }
 
-.resume-preview .education.standard-modern .detail-item-modern:before {
-  content: "•";
-  color: var(--primary-color);
-  font-weight: bold;
-  position: absolute;
-  left: 0;
+.resume-preview .education.standard-modern .education-details-modern {
+  margin-top: 0.2cm;
+  margin-left: 0.2cm;
 }
 
 /* --- Clean Modern Template --- */
@@ -1088,19 +1075,11 @@
   flex: 1;
 }
 
-.resume-preview .education-wide h3 {
-  font-size: var(--font-size-h3);
-  font-weight: bold;
-  margin: 0 0 0.1cm 0;
-  color: var(--primary-color);
-}
-
 .resume-preview .education-wide .education-institution-line {
   display: flex;
   align-items: center;
-  gap: 0.4cm;
+  gap: 0cm;
   flex-wrap: wrap;
-  margin-bottom: 0.1cm;
 }
 
 .resume-preview .education-wide .institution {
@@ -1346,12 +1325,6 @@
   font-weight: bold;
 }
 
-/* Compact Experience Template */
-.resume-preview .experience-compact h2 {
-  margin-bottom: 0.25cm;
-}
-
-
 
 .resume-preview .experience-compact .experience-item-compact {
   margin-bottom: 0.2cm;
@@ -1435,13 +1408,6 @@
 .resume-preview .experience-focused .experience-focused-list>div>div:last-child ul li {
   margin-bottom: 0.05cm;
 }
-
-/* Modern Clean Experience Template */
-.resume-preview .experience-modern h2 {
-  margin-bottom: 0.25cm;
-}
-
-
 
 .resume-preview .experience-modern .experience-modern-list>div {
   margin-bottom: 0.6cm;
@@ -1607,8 +1573,6 @@
   font-size: var(--font-size-small);
   border: 1px solid #e0e0e0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 /* Inline Layout (Wide2) */
@@ -1699,10 +1663,6 @@
   margin-bottom: 0.3cm;
 }
 
-.resume-preview .skills-simple h2 {
-  margin-bottom: 0.2cm;
-}
-
 .resume-preview .skills-simple .skills-simple-content {
   line-height: 1.4;
   word-wrap: break-word;
@@ -1725,13 +1685,6 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
-
-/* Minimal Dots Template */
-.resume-preview .skills-minimal h2 {
-  margin-bottom: 0.25cm;
-}
-
-
 
 .resume-preview .skills-minimal .skill-category-minimal {
   display: flex;
@@ -1880,26 +1833,6 @@
 /* ============================================================================
    9. PUBLICATIONS TEMPLATES (Fix #7: Modern, Elegant, Academic)
    ============================================================================ */
-
-.resume-preview .publications-section h2 {
-  font-size: var(--font-size-h2);
-  color: var(--primary-color);
-  font-weight: 700;
-  margin-bottom: 0.4cm;
-  border-bottom: 0.05cm solid var(--primary-color);
-  padding-bottom: 0.1cm;
-  position: relative;
-}
-
-.resume-preview .publications-section h2::after {
-  content: '';
-  position: absolute;
-  bottom: -0.05cm;
-  left: 0;
-  width: 2cm;
-  height: 0.05cm;
-  background: var(--accent-color);
-}
 
 /* Simple List */
 .resume-preview .publications-section.simple .publications-simple-list {
