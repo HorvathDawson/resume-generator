@@ -92,9 +92,12 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
       textDark: '#111827',
       textMuted: '#9ca3af',
       textLighter: '#d1d5db',
+      headerH1Color: '#2c5aa0',
+      headerH2Color: '#2c5aa0',
+      headerH3Color: '#2c5aa0',
+      accentTextColor: '#4a90e2',
+      tagBackground: '#f3f4f6',
       successColor: '#059669',
-      successBackground: '#ecfdf5',
-      hoverBackground: '#ffffff',
       borderLight: '#e9ecef',
       borderSubtle: '#f3f4f6'
     },
@@ -303,7 +306,50 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
           </div>
         </div>
 
-        {/* Advanced Colors Row */}
+        {/* Header Colors Row */}
+        <div className="compact-row">
+          <div className="compact-group">
+            <label>H1 Color</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.headerH1Color || '#2c5aa0'}
+              onChange={(e) => updateColorScheme('headerH1Color', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+          
+          <div className="compact-group">
+            <label>H2 Color</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.headerH2Color || '#2c5aa0'}
+              onChange={(e) => updateColorScheme('headerH2Color', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+          
+          <div className="compact-group">
+            <label>H3 Color</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.headerH3Color || '#2c5aa0'}
+              onChange={(e) => updateColorScheme('headerH3Color', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+          
+          <div className="compact-group">
+            <label>Accent Text</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.accentTextColor || '#4a90e2'}
+              onChange={(e) => updateColorScheme('accentTextColor', e.target.value)}
+              className="compact-color"
+            />
+          </div>
+        </div>
+        
+        {/* Text & Border Colors Row */}
         <div className="compact-row">
           <div className="compact-group">
             <label>Text Dark</label>
@@ -326,16 +372,6 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
           </div>
           
           <div className="compact-group">
-            <label>Success</label>
-            <input
-              type="color"
-              value={globalStyles.colorScheme.successColor || '#059669'}
-              onChange={(e) => updateColorScheme('successColor', e.target.value)}
-              className="compact-color"
-            />
-          </div>
-          
-          <div className="compact-group">
             <label>Border</label>
             <input
               type="color"
@@ -344,7 +380,19 @@ export function GlobalStylesPanel({ resumeData, onResumeDataChange }: GlobalStyl
               className="compact-color"
             />
           </div>
+          
+          <div className="compact-group">
+            <label>Tag Bg</label>
+            <input
+              type="color"
+              value={globalStyles.colorScheme.tagBackground || '#f3f4f6'}
+              onChange={(e) => updateColorScheme('tagBackground', e.target.value)}
+              className="compact-color"
+            />
+          </div>
         </div>
+        
+
       </div>
     </div>
   );

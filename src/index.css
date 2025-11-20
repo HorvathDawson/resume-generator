@@ -11,6 +11,18 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Resume Color Variables - Available Globally */
+  --header-h1-color: #2c5aa0;
+  --header-h2-color: #2c5aa0;
+  --header-h3-color: #2c5aa0;
+  --accent-text-color: #4a90e2;
+  --text-dark: #111827;
+  --text-muted: #6b7280;
+  --primary-color: #2c5aa0;
+  --secondary-color: #f8f9fa;
+  --text-color: #333333;
+  --tag-background: #f3f4f6;
 }
 
 a {

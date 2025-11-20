@@ -299,7 +299,15 @@
       "primary": "#2c5aa0",
       "secondary": "#333333",
       "text": "#333333",
-      "accent": "#666666"
+      "accent": "#666666",
+      "textDark": "#111827",
+      "textMuted": "#6b7280",
+      "headerH1Color": "#2c5aa0",
+      "headerH2Color": "#2c5aa0",
+      "headerH3Color": "#2c5aa0",
+      "accentTextColor": "#666666",
+      "tagBackground": "#f3f4f6",
+      "borderLight": "#e9ecef"
     },
     "spacing": {
       "sectionMargin": "0.6cm",

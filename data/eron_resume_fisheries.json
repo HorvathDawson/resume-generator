@@ -332,6 +332,12 @@
     },
     "fontFamily": "Roboto, sans-serif",
     "colorScheme": {
+    "textDark": "#111827",
+    "textMuted": "#6b7280",
+    "headerH1Color": "#2c5aa0",
+    "headerH2Color": "#2c5aa0",
+    "headerH3Color": "#2c5aa0",
+    "accentTextColor": "#4a90e2",
       "primary": "#2c5aa0",
       "secondary": "#333333",
       "text": "#333333",

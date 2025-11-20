@@ -5,7 +5,7 @@
 
 .awards-section h2 {
   margin-bottom: 0.4cm;
-  border-bottom: 2px solid var(--primary-color, #2c5aa0);
+  border-bottom: 0.05cm solid var(--primary-color, #2c5aa0);
   padding-bottom: 0.1cm;
 }
 
@@ -17,7 +17,7 @@
 .award-item {
   margin-bottom: 0.4cm;
   padding-bottom: 0.3cm;
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  border-bottom: 0.03cm solid var(--border-color, #e0e0e0);
 }
 
 .award-item:last-child {
@@ -166,7 +166,7 @@
 
 .award-badge-item {
   background: transparent;
-  border: 2px solid var(--primary-color, #2c5aa0);
+  border: 0.05cm solid var(--primary-color, #2c5aa0);
   color: var(--text-color, #333);
   border-radius: 0.3cm;
   padding: 0.3cm 0.4cm;
@@ -317,7 +317,7 @@
 }
 
 .award-modern-item {
-  border-left: 4px solid var(--primary-color, #2c5aa0);
+  border-left: 0.11cm solid var(--primary-color, #2c5aa0);
   padding-left: 0.4cm;
   padding-bottom: 0.3cm;
 }
@@ -425,7 +425,7 @@
 /* Awards Editor Styles */
 .awards-item-editor {
   background: #f0f8ff;
-  border-left: 4px solid var(--primary-color, #2c5aa0);
+  border-left: 0.11cm solid var(--primary-color, #2c5aa0);
 }
 
 .awards-details {

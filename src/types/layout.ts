@@ -73,9 +73,14 @@ export interface FlexLayoutConfig {
       textDark?: string;
       textMuted?: string;
       textLighter?: string;
+      // Header colors
+      headerH1Color?: string;
+      headerH2Color?: string;
+      headerH3Color?: string;
+      accentTextColor?: string;
+      // Background colors
+      tagBackground?: string;
       successColor?: string;
-      successBackground?: string;
-      hoverBackground?: string;
       borderLight?: string;
       borderSubtle?: string;
     };
