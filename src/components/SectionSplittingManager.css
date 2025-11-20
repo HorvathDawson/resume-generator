@@ -649,7 +649,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  padding: 2rem;
+  padding: 1rem 2rem;
   border-top: 1px solid #e2e8f0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
   position: relative;

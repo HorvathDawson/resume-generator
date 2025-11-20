@@ -345,7 +345,7 @@
   align-items: center;
   transition: all 0.2s ease;
   position: relative;
-  padding: 0.875rem;
+  padding: 0.5rem;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   min-width: 200px;
@@ -619,15 +619,15 @@
 /* Row Remove Button - Top Right Corner */
 .row-remove-button {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 28px;
-  height: 28px;
+  top: 0.125rem;
+  right: 0.125rem;
+  width: 22px;
+  height: 22px;
   background: #f3f4f6;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 4px;
   color: #6b7280;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
@@ -635,8 +635,9 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  z-index: 10;
+  z-index: 20;
   user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .row-remove-button:hover {
@@ -1459,8 +1460,8 @@
 .split-section-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem;
+  gap: 0.25rem;
+  padding: 0.5rem;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
@@ -1562,6 +1563,10 @@
   height: 20px;
   backdrop-filter: blur(4px);
   pointer-events: auto; /* Ensure they can be clicked when parent allows */
+}
+
+.remove-section-button {
+  margin-left: 8px;
 }
 
 .template-button:hover {
@@ -1861,6 +1866,7 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  margin-right: 2rem;
 }
 
 .row-type-corner {

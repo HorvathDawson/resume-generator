@@ -1365,151 +1365,13 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     }
   };
 
-  // Cycle column background between white, secondary, and primary colors
-  const toggleColumnBackground = (rowIndex: number, columnIndex: number) => {
-    const updatedPages = [...pages];
-    const row = updatedPages[currentPageIndex].rows[rowIndex];
-    
-    if (row.type === 'columns' && row.columns) {
-      const column = row.columns[columnIndex];
-      const primaryColor = resumeData.layout?.globalStyles?.colorScheme?.primary || '#2c5aa0';
-      const secondaryColor = resumeData.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa';
-      const textColor = resumeData.layout?.globalStyles?.colorScheme?.text || '#333333';
-      
-      // Cycle through: white -> secondary -> primary -> white
-      let newBackgroundColor = '#ffffff';
-      let newTextColor = textColor;
-      
-      if (column.backgroundColor === '#ffffff' || !column.backgroundColor) {
-        // White -> Secondary
-        newBackgroundColor = secondaryColor;
-        newTextColor = textColor;
-      } else if (column.backgroundColor === secondaryColor) {
-        // Secondary -> Primary
-        newBackgroundColor = primaryColor;
-        newTextColor = '#ffffff';
-      } else {
-        // Primary (or any other color) -> White
-        newBackgroundColor = '#ffffff';
-        newTextColor = textColor;
-      }
-      
-      row.columns[columnIndex] = {
-        ...column,
-        backgroundColor: newBackgroundColor,
-        textColor: newTextColor
-      };
-      
-      updateLayout(updatedPages);
-    }
-  };
 
-  // Cycle whole page row background between white, secondary, and primary colors
-  const toggleWholePageBackground = (rowIndex: number) => {
-    const updatedPages = [...pages];
-    const row = updatedPages[currentPageIndex].rows[rowIndex];
-    
-    if (row.type === 'wholePage') {
-      const primaryColor = resumeData.layout?.globalStyles?.colorScheme?.primary || '#2c5aa0';
-      const secondaryColor = resumeData.layout?.globalStyles?.colorScheme?.secondary || '#f8f9fa';
-      const textColor = resumeData.layout?.globalStyles?.colorScheme?.text || '#333333';
-      
-      // Cycle through: white -> secondary -> primary -> white
-      let newBackgroundColor = '#ffffff';
-      let newTextColor = textColor;
-      
-      if (row.backgroundColor === '#ffffff' || !row.backgroundColor) {
-        // White -> Secondary
-        newBackgroundColor = secondaryColor;
-        newTextColor = textColor;
-      } else if (row.backgroundColor === secondaryColor) {
-        // Secondary -> Primary
-        newBackgroundColor = primaryColor;
-        newTextColor = '#ffffff';
-      } else {
-        // Primary (or any other color) -> White
-        newBackgroundColor = '#ffffff';
-        newTextColor = textColor;
-      }
-      
-      updatedPages[currentPageIndex].rows[rowIndex] = {
-        ...row,
-        backgroundColor: newBackgroundColor,
-        textColor: newTextColor
-      };
-      
-      updateLayout(updatedPages);
-      
-      // Update the layout
-      const currentPage = pages[currentPageIndex];
-      const updatedCurrentPage = {
-        ...currentPage,
-        rows: [...updatedPages[currentPageIndex].rows]
-      };
-      
-      updateLayout(
-        updatedPages.map((page, idx) => 
-          idx === currentPageIndex ? updatedCurrentPage : page
-        )
-      );
-    }
-  };
 
-  // Set custom text color for column
-  const setColumnTextColor = (rowIndex: number, columnIndex: number, color: string) => {
-    const updatedPages = [...pages];
-    const row = updatedPages[currentPageIndex].rows[rowIndex];
-    
-    if (row.type === 'columns' && row.columns) {
-      row.columns[columnIndex] = {
-        ...row.columns[columnIndex],
-        textColor: color
-      };
-      
-      updateLayout(updatedPages);
-      
-      // Update the layout
-      const currentPage = pages[currentPageIndex];
-      const updatedCurrentPage = {
-        ...currentPage,
-        rows: [...updatedPages[currentPageIndex].rows]
-      };
-      
-      updateLayout(
-        updatedPages.map((page, idx) => 
-          idx === currentPageIndex ? updatedCurrentPage : page
-        )
-      );
-    }
-  };
 
-  // Set custom text color for whole-page row
-  const setWholePageTextColor = (rowIndex: number, color: string) => {
-    const updatedPages = [...pages];
-    const row = updatedPages[currentPageIndex].rows[rowIndex];
-    
-    if (row.type === 'wholePage') {
-      updatedPages[currentPageIndex].rows[rowIndex] = {
-        ...row,
-        textColor: color
-      };
-      
-      updateLayout(updatedPages);
-      
-      // Update the layout
-      const currentPage = pages[currentPageIndex];
-      const updatedCurrentPage = {
-        ...currentPage,
-        rows: [...updatedPages[currentPageIndex].rows]
-      };
-      
-      updateLayout(
-        updatedPages.map((page, idx) => 
-          idx === currentPageIndex ? updatedCurrentPage : page
-        )
-      );
-    }
-  };
+
+
+
+
 
   // Update footer configuration for current page
   const updatePageFooter = (footerType: 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern') => {
@@ -2375,25 +2237,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, rowIndex, columnIndex)}
                       >
-                        {/* Column Header with Background Toggle */}
+                        {/* Column Header */}
                         <div className="column-header">
                           <span className="column-title">Column {columnIndex + 1}</span>
-                          <div className="column-controls">
-                            <button
-                              className={`bg-toggle-btn ${column.backgroundColor !== '#ffffff' ? 'active' : ''}`}
-                              onClick={() => toggleColumnBackground(rowIndex, columnIndex)}
-                              title="Cycle background: White → Secondary → Primary"
-                            >
-                              🎨
-                            </button>
-                            <input
-                              type="color"
-                              value={column.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
-                              onChange={(e) => setColumnTextColor(rowIndex, columnIndex, e.target.value)}
-                              className="text-color-picker"
-                              title="Set text color"
-                            />
-                          </div>
                         </div>
                         <div className="column-sections">
                           {column.sections.map((sectionRef: any, sectionIndex: number) => {
@@ -2472,14 +2318,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 
                                 <div className="section-actions">
                                   <button
-                                    className="remove-section-button"
-                                    onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
-                                    onMouseDown={(e) => e.stopPropagation()}
-                                    title="Remove section"
-                                  >
-                                    ×
-                                  </button>
-                                  <button
                                     className="template-button"
                                     onClick={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
                                     onMouseDown={(e) => e.stopPropagation()}
@@ -2494,6 +2332,14 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                     title="Reorder items in section"
                                   >
                                     📋
+                                  </button>
+                                  <button
+                                    className="remove-section-button"
+                                    onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    title="Remove section"
+                                  >
+                                    ×
                                   </button>
                                 </div>
                               </div>
@@ -2616,22 +2462,6 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                   {row.type === 'wholePage' && (
                     <div className="row-builder">
                       <div className="row-left-sidebar">
-                        <div className="color-controls-vertical">
-                          <button
-                            className={`bg-toggle-btn ${row.backgroundColor !== '#ffffff' ? 'active' : ''}`}
-                            onClick={() => toggleWholePageBackground(rowIndex)}
-                            title="Cycle background: White → Secondary → Primary"
-                          >
-                            🎨
-                          </button>
-                          <input
-                            type="color"
-                            value={row.textColor || resumeData.layout?.globalStyles?.colorScheme?.text || '#333333'}
-                            onChange={(e) => setWholePageTextColor(rowIndex, e.target.value)}
-                            className="text-color-picker"
-                            title="Set text color"
-                          />
-                        </div>
                       </div>
 
                       <div className="row-content-area">
