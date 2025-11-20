@@ -315,105 +315,208 @@
 }
 
 /* ============================================================================
-   6. PERSONAL INFO / CONTACT TEMPLATES (Fix #4: Contact Icons Cut Off)
+   6. CONTACT INFO TEMPLATES - Enhanced with Color Variations & Modern Layouts
    ============================================================================ */
 
-/* General Container Structure */
+/* --- Base Contact Styles --- */
 .contact-info {
   width: 100%;
-  background-color: transparent;
-  overflow: hidden;
-  margin: 0 auto;
-  display: inline-block;
-  text-align: left;
+  margin: 0.3cm 0;
 }
 
-/* List Styles */
-.contact-info ul,
-.resume-preview .contact-info ul {
+.contact-info ul {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.2cm;
 }
 
-.resume-preview .contact-info ul li.contact {
+.contact-info li {
   display: flex;
   align-items: center;
-  width: 100%;
+  gap: 0.3cm;
+  font-size: var(--font-size-body);
 }
 
-/* Icons & Text in Contact */
-.resume-preview .contact-info ul li .icons,
-.icons {
-  min-width: 0.6cm;
-  width: 0.6cm;
-  height: 0.6cm;
+.contact-info .icon {
+  min-width: 0.5cm;
+  width: 0.5cm;
   text-align: center;
-  color: var(--accent-text-color);
-  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
-  margin-right: 0.0cm;
-  padding: 0.0cm;
-  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
-.resume-preview .contact-info ul li .icons i,
-.resume-preview .icons i,
-.resume-preview .icons .fa,
-.resume-preview .icons .fas,
-.resume-preview .icons .fab {
-  font-size: var(--font-size-body);
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.resume-preview .contact-info ul li .words,
-.words {
-  font-size: var(--font-size-body);
+.contact-info .text {
   color: var(--text-color);
   flex: 1;
 }
 
-/* Contact Info: Wide/Horizontal Variation */
-.resume-preview .contact-info-wide {
-  margin: 0;
-  text-align: center;
+/* --- Standard Contact (Default) --- */
+.contact-info.standard .icon {
+  color: var(--accent-text-color);
 }
 
-.resume-preview .contact-line {
-  display: flex;
+/* --- Primary Color Icons Template --- */
+.contact-info.primary-icons .icon {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* --- Colored Text Template --- */
+.contact-info.colored-text .text {
+  color: var(--accent-text-color);
+}
+
+.contact-info.colored-text .icon {
+  color: var(--text-muted);
+}
+
+/* --- Minimal Template --- */
+.contact-info.minimal {
+  margin: 0.2cm 0;
+}
+
+.contact-info.minimal ul {
+  gap: 0.15cm;
+}
+
+.contact-info.minimal li {
+  font-size: var(--font-size-small);
+  gap: 0.2cm;
+}
+
+.contact-info.minimal .icon {
+  min-width: 0.4cm;
+  width: 0.4cm;
+  color: var(--text-muted);
+}
+
+/* --- Wide Badge Template --- */
+.contact-info.wide-badge ul {
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5cm;
   flex-wrap: wrap;
-  font-size: var(--font-size-small);
+  gap: 0.3cm;
+  justify-content: center;
 }
 
-.resume-preview .contact-line .contact-item {
-  white-space: nowrap;
-  justify-content: flex-start;
+.contact-info.wide-badge li {
+  background: var(--muted-background);
+  padding: 0.2cm 0.3cm;
+  border-radius: 0.15cm;
+  border: 0.03cm solid var(--border-light);
   width: auto;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-  gap: 0;
+  white-space: nowrap;
 }
 
-/* Contact Info: Compact Variation */
-.compact-contact {
-  text-align: center;
+.contact-info.wide-badge .icon {
+  color: var(--primary-color);
+}
+
+/* --- Wide Card Template --- */
+.contact-info.wide-card {
+  background: var(--muted-background);
+  padding: 0.25cm 0.3cm;
+  border-radius: 0.15cm;
+  border: 0.03cm solid var(--border-light);
+}
+
+.contact-info.wide-card ul {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.3cm;
+  justify-content: center;
+}
+
+.contact-info.wide-card li {
+  width: auto;
+  white-space: nowrap;
+  gap: 0.2cm;
   font-size: var(--font-size-small);
 }
 
-.compact-contact .contact-item {
-  margin-bottom: 0.05cm;
+.contact-info.wide-card .icon {
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  min-width: 0.45cm;
+  width: 0.45cm;
+  height: 0.45cm;
+  font-size: 0.25cm;
+}
+
+/* --- Horizontal Layout Template --- */
+.contact-info.horizontal ul {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.8cm;
+  justify-content: center;
+}
+
+.contact-info.horizontal li {
+  width: auto;
+  white-space: nowrap;
+}
+
+.contact-info.horizontal .icon {
+  color: var(--accent-text-color);
+}
+
+/* --- Sidebar Template --- */
+.contact-info.sidebar ul {
+  gap: 0.3cm;
+}
+
+.contact-info.sidebar li {
+  padding: 0.1cm 0;
+  border-bottom: 0.03cm solid var(--border-light);
+}
+
+.contact-info.sidebar li:last-child {
+  border-bottom: none;
+}
+
+.contact-info.sidebar .icon {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* --- Modern Grid Template --- */
+.contact-info.grid ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(5cm, 1fr));
+  gap: 0.2cm;
+}
+
+.contact-info.grid .icon {
+  color: var(--accent-text-color);
+}
+
+/* --- Compact Template --- */
+.contact-info.compact {
+  text-align: center;
+  margin: 0.2cm 0;
+}
+
+.contact-info.compact ul {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4cm;
+}
+
+.contact-info.compact li {
+  font-size: var(--font-size-small);
+  gap: 0.15cm;
+}
+
+.contact-info.compact .icon {
+  min-width: 0.4cm;
+  width: 0.4cm;
+  color: var(--text-muted);
 }
 
 /* ============================================================================
