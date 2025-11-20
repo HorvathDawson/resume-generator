@@ -143,6 +143,7 @@
   top: auto !important;
   right: auto !important;
   opacity: 1 !important; /* Always visible */
+  pointer-events: auto !important; /* Always clickable */
 }
 
 .resume-content-builder .toggle-edit-btn,
