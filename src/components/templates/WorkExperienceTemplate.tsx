@@ -58,35 +58,31 @@ export interface TemplateOption {
 export const ExperienceTemplates = {
   detailed: {
     id: 'experience-detailed',
-    name: 'Detailed Format',
-    description: 'Comprehensive experience layout',
+    name: 'Modern Detailed',
+    description: 'Contemporary professional layout with gradient backgrounds',
     component: ({ section }: { section: Section }) => (
       <div className="section experience detailed">
         <h2>{section.title}</h2>
-        <ul>
+        <div className="experience-modern-grid">
           {section.items?.map((item, index) => (
-            <li key={index}>
-              <div className="experience-header">
-                <div className="first-row">
-                  <div className="fw-bold">{item.organization}</div>
-                  <span>{item.title}</span>
+            <div key={index} className="experience-modern-item">
+              <div className="modern-header">
+                <div className="modern-title-group">
+                  <div className="modern-position">{item.title}</div>
+                  <div className="modern-company">{item.organization}</div>
                 </div>
-                <div className="second-row">
-                  <i className="fa fa-calendar"></i> {item.dates}
-                </div>
+                <div className="modern-dates">{item.dates}</div>
               </div>
               {item.details && item.details.length > 0 && (
-                <div className="experience-body">
-                  <ul>
-                    {item.details.map((detail, detailIndex) => (
-                      <li key={detailIndex}>{detail}</li>
-                    ))}
-                  </ul>
+                <div className="modern-details">
+                  {item.details.map((detail, detailIndex) => (
+                    <div key={detailIndex} className="modern-detail">{detail}</div>
+                  ))}
                 </div>
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     )
   },
@@ -117,7 +113,7 @@ export const ExperienceTemplates = {
   timeline: {
     id: 'experience-timeline',
     name: 'Timeline Format',
-    description: 'Timeline-style layout with dots and lines (matches original)',
+    description: 'Timeline-style layout with dots and lines',
     component: ({ section, isContinuation }: { section: Section, isContinuation?: boolean }) => (
       <div className="section experience">
         <h2>
@@ -171,9 +167,11 @@ export const ExperienceTemplates = {
               </div>
               {item.details && item.details.length > 0 && (
                 <div className="card-details">
-                  {item.details.slice(0, 2).map((detail, detailIndex) => (
-                    <div key={detailIndex} className="card-detail">{detail}</div>
-                  ))}
+                  <ul>
+                    {item.details.slice(0, 2).map((detail, detailIndex) => (
+                      <li key={detailIndex}>{detail}</li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>

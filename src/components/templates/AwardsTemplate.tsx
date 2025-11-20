@@ -42,7 +42,7 @@ export const AwardsCompactTemplate = ({ section }: { section: Section }) => (
   </div>
 );
 
-// Timeline awards template (matches experience timeline style exactly)
+// Timeline awards template
 export const AwardsTimelineTemplate = ({ section }: { section: Section }) => (
   <div className="section experience">
     <h2>{section.title || 'Awards & Recognition'}</h2>

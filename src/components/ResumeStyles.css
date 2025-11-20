@@ -1470,7 +1470,13 @@
   margin: 0;
 }
 
-.resume-preview .experience.cards .card-detail {
+.resume-preview .experience.cards .card-details ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume-preview .experience.cards .card-details li {
   font-size: var(--font-size-small);
   color: var(--text-color);
   line-height: 1.4;
@@ -1479,16 +1485,111 @@
   position: relative;
 }
 
-.resume-preview .experience.cards .card-detail:last-child {
+.resume-preview .experience.cards .card-details li:last-child {
   margin-bottom: 0;
 }
 
-.resume-preview .experience.cards .card-detail:before {
+.resume-preview .experience.cards .card-details li:before {
   content: '•';
   color: var(--primary-color);
   position: absolute;
   left: 0;
   top: 0;
+}
+
+/* Modern Detailed Experience Template */
+.resume-preview .experience.detailed {
+  margin-bottom: var(--section-margin);
+}
+
+.resume-preview .experience.detailed .experience-modern-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4cm;
+}
+
+.resume-preview .experience.detailed .experience-modern-item {
+  background: linear-gradient(135deg, var(--muted-background) 0%, rgba(255,255,255,0.8) 100%);
+  border-left: 0.1cm solid var(--primary-color);
+  border-radius: 0 0.2cm 0.2cm 0;
+  padding: 0.3cm 0.4cm;
+  position: relative;
+  box-shadow: 0 0.05cm 0.2cm rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.resume-preview .experience.detailed .modern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.15cm;
+  flex-wrap: wrap;
+  gap: 0.2cm;
+}
+
+.resume-preview .experience.detailed .modern-title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.resume-preview .experience.detailed .modern-position {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  color: var(--header-h3-color);
+  margin: 0 0 0.05cm 0;
+  line-height: 1.2;
+}
+
+.resume-preview .experience.detailed .modern-company {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.resume-preview .experience.detailed .modern-dates {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.1cm 0.2cm;
+  border-radius: 0.1cm;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.resume-preview .experience.detailed .modern-details {
+  margin-top: 0.2cm;
+}
+
+.resume-preview .experience.detailed .modern-detail {
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  line-height: 1.5;
+  margin-bottom: 0.1cm;
+  padding-left: 0.3cm;
+  position: relative;
+  border-left: 0.05cm solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.resume-preview .experience.detailed .modern-detail:hover {
+  border-left-color: var(--accent-text-color);
+}
+
+.resume-preview .experience.detailed .modern-detail:before {
+  content: '▸';
+  color: var(--accent-text-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 0.9em;
+}
+
+.resume-preview .experience.detailed .modern-detail:last-child {
+  margin-bottom: 0;
 }
 
 
