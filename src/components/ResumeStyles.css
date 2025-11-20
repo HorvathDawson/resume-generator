@@ -208,6 +208,10 @@
   margin-bottom: var(--item-margin) !important;
 }
 
+#resume-preview li:last-child {
+  margin-bottom: 0 !important;
+}
+
 /* Links */
 .section a {
   color: var(--accent-text-color);
@@ -334,14 +338,9 @@
   flex-wrap: wrap;
 }
 
-/* Individual Contact Items */
-.resume-preview .contact-info li,
-.contact-item,
 .resume-preview .contact-info ul li.contact {
-  margin-bottom: 0.1cm;
   display: flex;
   align-items: center;
-  gap: 0.2cm;
   width: 100%;
 }
 
@@ -357,10 +356,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Fix icon cutoff: Ensure icons have enough space and proper line-height */
   overflow: visible;
   margin-right: 0.0cm;
-  /* Additional padding to prevent cutoff */
   padding: 0.0cm;
   box-sizing: border-box;
 }
@@ -381,18 +378,6 @@
   color: var(--text-color);
   flex: 1;
 }
-
-/* Re-added old specific words style to ensure full compatibility */
-.resume-preview .contact-info ul li .words {
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  font-size: var(--font-size-body);
-  color: var(--left-text-color);
-  vertical-align: middle;
-}
-
 
 /* Contact Info: Wide/Horizontal Variation */
 .resume-preview .contact-info-wide {
