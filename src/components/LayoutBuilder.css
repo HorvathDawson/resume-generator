@@ -407,18 +407,13 @@
   align-items: center;
   opacity: 0;
   transition: opacity 0.2s ease;
-  z-index: 10;
-  pointer-events: none; /* Always prevent interfering with drag */
+  z-index: 20;
+  pointer-events: none;
 }
 
 .section-item.placed:hover .section-actions {
   opacity: 1;
-  /* Keep pointer-events: none to prevent drag interference */
-}
-
-/* Only enable button interactions when explicitly hovering the buttons */
-.section-item.placed:hover .section-actions:hover {
-  pointer-events: auto;
+  pointer-events: auto; /* Enable clicking when section is hovered */
 }
 
 /* Ensure the entire section is draggable */

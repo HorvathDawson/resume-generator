@@ -1327,7 +1327,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
     }
 
     // Get the sections array to find the dragged section's index
-    let sections: string[];
+    let sections: any[];
     if (columnIndex !== undefined) {
       // Column layout
       sections = currentPage.rows[rowIndex].columns?.[columnIndex]?.sections || [];
@@ -1336,16 +1336,32 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       sections = currentPage.rows[rowIndex].sections || [];
     }
 
-    const draggedSectionIndex = sections.findIndex(id => id === draggedSectionInRow.sectionId);
+    const draggedSectionIndex = sections.findIndex(sectionRef => {
+      const sectionId = typeof sectionRef === 'string' ? sectionRef : sectionRef.sectionId;
+      return sectionId === draggedSectionInRow.sectionId;
+    });
     if (draggedSectionIndex === -1) return false;
 
-    // Hide drop zones immediately adjacent to the dragged section
+    // Calculate the target insertion index for this drop zone
+    let targetInsertionIndex: number;
     if (isBeforeSection) {
-      // Drop zone before a section - hide if it's right before the dragged section
-      return sectionIndex === draggedSectionIndex;
+      // Drop zone before a section
+      targetInsertionIndex = sectionIndex;
     } else {
-      // Drop zone after a section - hide if it's right after the dragged section
-      return sectionIndex === draggedSectionIndex;
+      // Drop zone after a section  
+      targetInsertionIndex = sectionIndex + 1;
+    }
+
+    // Hide drop zones that would result in no actual position change
+    // When moving a section, we need to consider how the array indices shift
+    if (targetInsertionIndex <= draggedSectionIndex) {
+      // Dropping before or at the current position
+      // After removal, the section would end up at targetInsertionIndex
+      return targetInsertionIndex === draggedSectionIndex;
+    } else {
+      // Dropping after the current position  
+      // After removal, indices shift down, so section ends up at targetInsertionIndex - 1
+      return (targetInsertionIndex - 1) === draggedSectionIndex;
     }
   };
 
@@ -2458,6 +2474,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   <button
                                     className="remove-section-button"
                                     onClick={() => removeSectionFromRow(sectionId, rowIndex, columnIndex, sectionIndex)}
+                                    onMouseDown={(e) => e.stopPropagation()}
                                     title="Remove section"
                                   >
                                     ×
@@ -2465,6 +2482,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   <button
                                     className="template-button"
                                     onClick={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
+                                    onMouseDown={(e) => e.stopPropagation()}
                                     title="Select template"
                                   >
                                     ⚙
@@ -2472,6 +2490,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                   <button
                                     className={`reorder-button ${reorderingSection === sectionId ? 'active' : ''}`}
                                     onClick={() => toggleSectionReorder(sectionId)}
+                                    onMouseDown={(e) => e.stopPropagation()}
                                     title="Reorder items in section"
                                   >
                                     📋
@@ -2695,6 +2714,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 <button
                                   className="remove-section-button"
                                   onClick={() => removeSectionFromRow(sectionId, rowIndex, undefined, sectionIndex)}
+                                  onMouseDown={(e) => e.stopPropagation()}
                                   title="Remove section"
                                 >
                                   ×
@@ -2702,6 +2722,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 <button
                                   className="template-button"
                                   onClick={(e) => handleSectionRightClick(e, sectionId, sectionRef.instanceId)}
+                                  onMouseDown={(e) => e.stopPropagation()}
                                   title="Select template"
                                 >
                                   ⚙
@@ -2709,6 +2730,7 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
                                 <button
                                   className={`reorder-button ${reorderingSection === sectionId ? 'active' : ''}`}
                                   onClick={() => toggleSectionReorder(sectionId)}
+                                  onMouseDown={(e) => e.stopPropagation()}
                                   title="Reorder items in section"
                                 >
                                   📋

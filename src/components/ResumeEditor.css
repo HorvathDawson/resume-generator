@@ -17,6 +17,7 @@
   min-height: 56px;
   z-index: 100;
   overflow-x: auto;
+  overflow-y: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -76,6 +77,139 @@
 .editor-tab:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Import/Export Tab Menu */
+.import-export-tab-menu {
+  position: relative;
+  margin-right: 16px;
+  flex-shrink: 0;
+  overflow: visible;
+  z-index: 99999;
+}
+
+.import-export-tab-button {
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  color: var(--color-gray-600, #4b5563);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+.import-export-tab-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-blue-500);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.import-export-tab-button:hover {
+  background: var(--color-white);
+  color: var(--color-gray-800);
+  transform: translateY(-1px);
+}
+
+.import-export-tab-button:hover::before {
+  opacity: 0.05;
+}
+
+.import-export-tab-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.import-export-tab-button:active {
+  transform: translateY(0);
+}
+
+.import-export-tab-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 9999;
+}
+
+/* Dropdown Menu Styles */
+.dropdown-menu {
+  position: absolute;
+  background: var(--color-white, white);
+  border: 1px solid var(--color-gray-200, #e5e7eb);
+  border-radius: var(--radius-xl, 12px);
+  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04));
+  min-width: 180px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  animation: dropdownSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+  z-index: 2000;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-700, #374151);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-blue-500, #3b82f6);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item:hover {
+  background: var(--color-gray-50, #f9fafb);
+  color: var(--color-gray-900, #111827);
+}
+
+.menu-item:hover::before {
+  transform: scaleY(1);
+}
+
+.menu-item:active {
+  background: var(--color-gray-100, #f3f4f6);
 }
 
 /* Responsive tabs */

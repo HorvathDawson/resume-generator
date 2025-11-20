@@ -282,7 +282,33 @@
 }
 
 /* ============================================================================
-   5. PERSONAL INFO / CONTACT TEMPLATES (Fix #4: Contact Icons Cut Off)
+   5. NAME SECTION TEMPLATES
+   ============================================================================ */
+
+/* Standard Name Template */
+.resume-preview .name {
+  margin-bottom: 0.4cm;
+}
+
+.resume-preview .name h1 {
+  font-size: var(--font-size-h1);
+  color: var(--text-color);
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Centered Name Template */
+.resume-preview .name.centered {
+  text-align: center;
+}
+
+.resume-preview .name.centered h1 {
+  text-align: center;
+}
+
+/* ============================================================================
+   6. PERSONAL INFO / CONTACT TEMPLATES (Fix #4: Contact Icons Cut Off)
    ============================================================================ */
 
 /* General Container Structure */
@@ -403,7 +429,7 @@
 }
 
 /* ============================================================================
-   6. EDUCATION SECTION TEMPLATES (Fix #3: Wide, Fix #5: Compact/Minimal)
+   7. EDUCATION SECTION TEMPLATES (Fix #3: Wide, Fix #5: Compact/Minimal)
    ============================================================================ */
 
 /* --- Common/Legacy Education Styles --- */
@@ -1135,7 +1161,7 @@
 }
 
 /* ============================================================================
-   7. EXPERIENCE SECTION TEMPLATES (Fix #6: Timeline Header Margin)
+   8. EXPERIENCE SECTION TEMPLATES (Fix #6: Timeline Header Margin)
    ============================================================================ */
 
 /* Standard Experience */
@@ -1446,7 +1472,7 @@
 }
 
 /* ============================================================================
-   8. SKILLS SECTION TEMPLATES
+   9. SKILLS SECTION TEMPLATES
    ============================================================================ */
 
 .resume-preview .skills-section .skills-content {
@@ -1830,7 +1856,7 @@
 }
 
 /* ============================================================================
-   9. PUBLICATIONS TEMPLATES (Fix #7: Modern, Elegant, Academic)
+   10. PUBLICATIONS TEMPLATES (Fix #7: Modern, Elegant, Academic)
    ============================================================================ */
 
 /* Simple List */
@@ -2123,7 +2149,7 @@
 
 
 /* ============================================================================
-   10. FOOTER TEMPLATES (Fix #1: Mountains, Fix #2: Minimal Line)
+   11. FOOTER TEMPLATES (Fix #1: Mountains, Fix #2: Minimal Line)
    ============================================================================ */
 
 .page-footer {

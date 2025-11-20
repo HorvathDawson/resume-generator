@@ -6,14 +6,6 @@
   color: #111827;
 }
 
-/* Top Left Import/Export Menu */
-.top-left-menu {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1001; /* Higher than tabs to prevent overlap */
-}
-
 .menu-button, .preview-actions-button {
   background: var(--color-gray-700);
   color: var(--color-white);
@@ -535,11 +527,6 @@
     width: 100% !important;
     height: 40vh !important;
     overflow: hidden; /* No scrollbars on panel, only on container inside */
-  }
-  
-  .top-left-menu {
-    top: 8px;
-    left: 8px;
   }
   
   .top-right-actions {

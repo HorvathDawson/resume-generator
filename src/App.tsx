@@ -93,7 +93,6 @@ function App() {
   
   // Close menus when clicking elsewhere
   const handleAppClick = () => {
-    setShowImportExportMenu(false);
     setShowPreviewActions(false);
     setShowImportConfirmation(false);
   };
@@ -552,45 +551,6 @@ function App() {
         }}
         style={{ display: 'none' }}
       />
-      
-      {/* Top Left Menu */}
-      <div className="top-left-menu">
-        <button 
-          className="menu-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowImportExportMenu(!showImportExportMenu);
-          }}
-          title="Import/Export Menu"
-        >
-          ☰
-        </button>
-        {showImportExportMenu && (
-          <div className="dropdown-menu import-export-menu" onClick={(e) => e.stopPropagation()}>
-            <button 
-              onClick={() => {
-                console.log('=== IMPORT BUTTON CLICKED ===');
-                console.log('File input ref exists:', !!fileInputRef.current);
-                console.log('Triggering file input click...');
-                fileInputRef.current?.click();
-                setShowImportExportMenu(false);
-              }}
-              className="menu-item"
-            >
-              Import JSON
-            </button>
-            <button 
-              onClick={() => {
-                handleExportJSON();
-                setShowImportExportMenu(false);
-              }}
-              className="menu-item"
-            >
-              Export JSON
-            </button>
-          </div>
-        )}
-      </div>
 
       <div className="app-main">
         {/* Left Panel: Resume Editor */}
@@ -601,6 +561,20 @@ function App() {
             templateLibrary={templateLibrary}
             onResumeDataChange={handleResumeDataChange}
             onLayoutStateChange={setLayoutState}
+            fileInputRef={fileInputRef}
+            showImportExportMenu={showImportExportMenu}
+            onImportExportMenuToggle={() => setShowImportExportMenu(!showImportExportMenu)}
+            onImportJSON={() => {
+              console.log('=== IMPORT BUTTON CLICKED ===');
+              console.log('File input ref exists:', !!fileInputRef.current);
+              console.log('Triggering file input click...');
+              fileInputRef.current?.click();
+              setShowImportExportMenu(false);
+            }}
+            onExportJSON={() => {
+              handleExportJSON();
+              setShowImportExportMenu(false);
+            }}
           />
         </div>
         

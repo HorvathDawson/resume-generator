@@ -46,9 +46,6 @@
   padding: 16px;
   margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  max-height: 60vh;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .add-section-dropdown h3 {
