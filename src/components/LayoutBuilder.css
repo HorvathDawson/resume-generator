@@ -1405,14 +1405,13 @@
   color: #f59e0b;
   border: 1px solid #f59e0b;
   border-radius: 4px;
-  padding: 0.125rem 0.25rem;
-  font-size: 0.8rem;
-  min-width: 28px;
-  max-width: 60px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex: 1;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .sidebar-edit-split-button:hover {
@@ -1459,9 +1458,9 @@
 
 .split-section-group {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
@@ -1477,7 +1476,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
-  flex: 1;
+  width: 100%;
 }
 
 .split-section-title {
@@ -1494,7 +1493,8 @@
 .split-section-actions {
   display: flex;
   gap: 0.5rem;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
 }
 
 .sidebar-combine-button {
@@ -1502,12 +1502,13 @@
   color: #8b5cf6;
   border: 1px solid #8b5cf6;
   border-radius: 4px;
-  padding: 0.375rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 500;
-  align-self: flex-start;
+  flex: 1;
   transition: all 0.2s ease;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .sidebar-combine-button:hover {

@@ -380,9 +380,11 @@
 
 .instance-config {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 2.5rem;
+  grid-template-columns: minmax(200px, 1fr) minmax(300px, 1.5fr);
+  gap: 1.5rem;
   align-items: start;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .instance-settings {
