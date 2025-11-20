@@ -68,7 +68,6 @@ export interface FlexLayoutConfig {
       primary: string;
       secondary: string;
       text: string;
-      accent: string;
       // Extended color scheme
       textDark?: string;
       textMuted?: string;
@@ -79,7 +78,7 @@ export interface FlexLayoutConfig {
       headerH3Color?: string;
       accentTextColor?: string;
       // Background colors
-      tagBackground?: string;
+      mutedBackground?: string;
       successColor?: string;
       borderLight?: string;
       borderSubtle?: string;

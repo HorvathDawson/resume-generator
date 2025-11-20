@@ -197,7 +197,7 @@ export function PreviewPanel({
               '--header-h2-color': resumeData?.layout?.globalStyles?.colorScheme?.headerH2Color || '#2c5aa0',
               '--header-h3-color': resumeData?.layout?.globalStyles?.colorScheme?.headerH3Color || '#2c5aa0',
               '--accent-text-color': resumeData?.layout?.globalStyles?.colorScheme?.accentTextColor || '#4a90e2',
-              '--tag-background': resumeData?.layout?.globalStyles?.colorScheme?.tagBackground || '#f3f4f6',
+              '--muted-background': resumeData?.layout?.globalStyles?.colorScheme?.mutedBackground || '#f3f4f6',
               '--success-color': resumeData?.layout?.globalStyles?.colorScheme?.successColor || '#059669',
               '--border-light': resumeData?.layout?.globalStyles?.colorScheme?.borderLight || '#e9ecef',
               '--border-subtle': resumeData?.layout?.globalStyles?.colorScheme?.borderSubtle || '#f3f4f6',

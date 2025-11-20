@@ -306,7 +306,7 @@
       "headerH2Color": "#2c5aa0",
       "headerH3Color": "#2c5aa0",
       "accentTextColor": "#666666",
-      "tagBackground": "#f3f4f6",
+      "mutedBackground": "#f3f4f6",
       "borderLight": "#e9ecef"
     },
     "spacing": {

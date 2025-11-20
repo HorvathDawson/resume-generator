@@ -16,7 +16,7 @@
   --header-h2-color: #2c5aa0;
   --header-h3-color: #2c5aa0;
   --accent-text-color: #4a90e2;
-  --tag-background: #f3f4f6;
+  --muted-background: #f3f4f6;
   --section-margin: 0.5cm;
   --item-margin: 0.3cm;
   --page-margin: 1.27cm;
@@ -831,7 +831,7 @@
   border: 0.03cm solid var(--primary-color);
   border-radius: 0.15cm;
   padding: 0.25cm;
-  background: var(--tag-background);
+  background: var(--muted-background);
 }
 
 .resume-preview .education.cards .card-header {
@@ -1325,7 +1325,7 @@
   border: 0.02cm solid var(--primary-color);
   border-radius: 0.08cm;
   padding: 0.2cm;
-  background-color: var(--tag-background);
+  background-color: var(--muted-background);
   width: 100%;
   box-shadow: 0 0.02cm 0.1cm rgba(0, 0, 0, 0.05);
 }
@@ -1537,7 +1537,7 @@
 /* Standard & Mini Tags */
 .resume-preview .skills-section .skill-tag,
 .resume-preview .skills-mini .skill-tag-mini {
-  background-color: var(--tag-background);
+  background-color: var(--muted-background);
   padding: 0.06cm 0.15cm;
   border-radius: 0.1cm;
   color: var(--text-color);
@@ -1608,7 +1608,7 @@
 .resume-preview .skills-section.cloud .skill-cloud-tag,
 .resume-preview .skills-section.cloud .skill-cloud-tag-compact {
   display: inline-block;
-  background-color: var(--tag-background);
+  background-color: var(--muted-background);
   padding: 0.1cm 0.2cm;
   margin: 0.08cm 0.1cm;
   border-radius: 0.2cm;
@@ -1627,7 +1627,7 @@
 }
 
 .resume-preview .skills-wide .cvtag-wide {
-  background: var(--tag-background);
+  background: var(--muted-background);
   color: var(--text-color);
   padding: 0.1cm 0.2cm;
   border-radius: 0.15cm;
@@ -1944,7 +1944,7 @@
 }
 
 .resume-preview .publications-section.modern .publication-card-modern {
-  background: var(--tag-background);
+  background: var(--muted-background);
   border: 0.03cm solid var(--primary-color);
   border-radius: 0.3cm;
   padding: 0.4cm;
@@ -1954,7 +1954,7 @@
 }
 
 .resume-preview .publications-section.modern-alt .publication-card-modern {
-  background: var(--tag-background);
+  background: var(--muted-background);
   border: 0.03cm solid var(--secondary-color);
   border-radius: 0.3cm;
   padding: 0.4cm;
@@ -2047,7 +2047,7 @@
 }
 
 .resume-preview .publications-section.elegant .publication-content-elegant {
-  background: var(--tag-background);
+  background: var(--muted-background);
   border: 0.03cm solid var(--primary-color);
   border-radius: 0.2cm;
   padding: 0.3cm;
@@ -2084,7 +2084,7 @@
   color: var(--text-muted);
   font-weight: 500;
   white-space: nowrap;
-  background: var(--tag-background);
+  background: var(--muted-background);
   padding: 0.1cm 0.2cm;
   border-radius: 0.15cm;
 }
@@ -2151,7 +2151,7 @@
   gap: 0.3cm;
   align-items: flex-start;
   padding: 0.25cm;
-  background: var(--tag-background);
+  background: var(--muted-background);
   border-left: 0.11cm solid var(--primary-color);
   border-radius: 0.1cm;
 }
@@ -2434,7 +2434,7 @@
   padding: 0.3cm;
   border: 0.03cm solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background-color: var(--tag-background);
+  background-color: var(--muted-background);
   break-inside: avoid;
 }
 
