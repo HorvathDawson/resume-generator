@@ -94,8 +94,11 @@ export function convertToFlexLayout(oldResumeData: any): FlexLayoutConfig {
       colorScheme: globalStyles?.colorScheme || {
         primary: '#2c5aa0',
         secondary: '#333333',
-        text: '#333333',
-        accent: '#2563eb',
+        text: {
+          primary: '#333333',
+          secondary: '#666666',
+          muted: '#999999'
+        },
       },
       spacing: globalStyles?.spacing || {
         sectionMargin: '0.6cm',

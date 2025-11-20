@@ -42,7 +42,6 @@ export const createDefaultGlobalLayoutStyles = (): GlobalLayoutStyles => ({
   colorScheme: {
     primary: '#2c5aa0',
     secondary: '#333333',
-    accent: '#2563eb',
     text: {
       primary: '#333333',
       secondary: '#374151',

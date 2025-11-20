@@ -28,7 +28,6 @@ export function ResumeEditor({
   templateLibrary: _templateLibrary,
   onResumeDataChange,
   onLayoutStateChange: _onLayoutStateChange,
-  fileInputRef,
   showImportExportMenu,
   onImportExportMenuToggle,
   onImportJSON,

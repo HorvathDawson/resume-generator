@@ -68,6 +68,7 @@ export interface FlexLayoutConfig {
       primary: string;
       secondary: string;
       text: string;
+      accent?: string;
       // Extended color scheme
       textDark?: string;
       textMuted?: string;

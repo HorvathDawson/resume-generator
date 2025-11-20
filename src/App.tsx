@@ -410,7 +410,7 @@ function App() {
         globalStyles: resumeDataToImport.layout?.globalStyles || {
           fontSizes: { h1: "1.2cm", h2: "0.5cm", h3: "0.4cm", body: "0.35cm", small: "0.3cm" },
           fontFamily: "Arial, sans-serif",
-          colorScheme: { primary: "#2c5aa0", secondary: "#333333", text: "#333333", accent: "#666666" },
+          colorScheme: { primary: "#2c5aa0", secondary: "#333333", text: { primary: "#333333", secondary: "#666666", muted: "#999999" } },
           spacing: { sectionMargin: "0.5cm", itemMargin: "0.3cm", pageMargin: "1.27cm" }
         }
       } : resumeDataToImport.layout

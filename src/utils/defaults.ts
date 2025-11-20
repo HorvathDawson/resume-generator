@@ -17,7 +17,6 @@ export function createDefaultResumeData(): ResumeData {
     colorScheme: {
       primary: '#2c5aa0',
       secondary: '#4a7ba0',
-      accent: '#87ceeb',
       text: {
         primary: '#333333',
         secondary: '#374151',
@@ -177,7 +176,6 @@ export function createDefaultResumeData(): ResumeData {
           primary: defaultGlobalStyles.colorScheme.primary,
           secondary: defaultGlobalStyles.colorScheme.secondary,
           text: defaultGlobalStyles.colorScheme.text.primary,
-          accent: defaultGlobalStyles.colorScheme.accent,
         },
         spacing: {
           sectionMargin: defaultGlobalStyles.spacing.sectionSpacing,

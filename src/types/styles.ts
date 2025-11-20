@@ -29,7 +29,6 @@ export interface FontSizes {
 export interface ColorScheme {
   primary: ColorValue;
   secondary: ColorValue;
-  accent: ColorValue;
   text: {
     primary: ColorValue;
     secondary: ColorValue;
