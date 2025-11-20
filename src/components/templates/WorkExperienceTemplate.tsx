@@ -162,18 +162,18 @@ export const ExperienceTemplates = {
         <div className="experience-cards-grid">
           {section.items?.map((item, index) => (
             <div key={index} className="experience-card">
-              <div className="card-header">
-                <h3>{item.title}</h3>
-                <div className="card-company">{item.organization}</div>
+              <div className="card-title-row">
+                <div className="card-left-column">
+                  <div className="card-position">{item.title}</div>
+                  <div className="card-company">{item.organization}</div>
+                </div>
                 <div className="card-dates">{item.dates}</div>
               </div>
               {item.details && item.details.length > 0 && (
-                <div className="card-body">
-                  <ul>
-                    {item.details.slice(0, 2).map((detail, detailIndex) => (
-                      <li key={detailIndex}>{detail}</li>
-                    ))}
-                  </ul>
+                <div className="card-details">
+                  {item.details.slice(0, 2).map((detail, detailIndex) => (
+                    <div key={detailIndex} className="card-detail">{detail}</div>
+                  ))}
                 </div>
               )}
             </div>
