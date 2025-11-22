@@ -110,7 +110,7 @@ export function ResumeEditor({
           className={`editor-tab ${activeTab === 'layout' ? 'active' : ''}`}
           onClick={() => setActiveTab('layout')}
         >
-          🎨 Layout Builder
+          📐 Layout Builder
         </button>
         <button
           className={`editor-tab ${activeTab === 'content' ? 'active' : ''}`}

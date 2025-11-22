@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ResumeData, Section } from '../types';
 import './ResumeContentBuilder.css';
 
@@ -23,6 +23,26 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
     { type: 'list', label: 'List Items', description: 'Simple bulleted or numbered list' },
     { type: 'references', label: 'References', description: 'Professional references and contacts' },
   ];
+
+  // Handle keyboard navigation for modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showAddSection) {
+        setShowAddSection(false);
+      }
+    };
+
+    if (showAddSection) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Focus management - prevent scrolling behind modal
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showAddSection]);
 
   const addSection = (sectionType: string) => {
     const newSection: Section = {
@@ -1093,18 +1113,34 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
       </div>
 
       {showAddSection && (
-        <div className="add-section-dropdown">
-          <h3>Choose Section Type:</h3>
-          {availableSectionTypes.map(sectionType => (
-            <button
-              key={sectionType.type}
-              className="section-type-option"
-              onClick={() => addSection(sectionType.type)}
-            >
-              <div className="section-type-label">{sectionType.label}</div>
-              <div className="section-type-description">{sectionType.description}</div>
-            </button>
-          ))}
+        <div className="modal-overlay" onClick={() => setShowAddSection(false)}>
+          <div className="add-section-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Choose Section Type</h3>
+              <button 
+                className="modal-close-btn"
+                onClick={() => setShowAddSection(false)}
+                aria-label="Close modal"
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-content">
+              {availableSectionTypes.map(sectionType => (
+                <button
+                  key={sectionType.type}
+                  className="section-type-option"
+                  onClick={() => {
+                    addSection(sectionType.type);
+                    setShowAddSection(false);
+                  }}
+                >
+                  <div className="section-type-label">{sectionType.label}</div>
+                  <div className="section-type-description">{sectionType.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
