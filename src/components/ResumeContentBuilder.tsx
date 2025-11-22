@@ -10,6 +10,8 @@ interface ResumeContentBuilderProps {
 export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeContentBuilderProps) {
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [showAddSection, setShowAddSection] = useState(false);
+  const [sectionTitleErrors, setSectionTitleErrors] = useState<{[sectionId: string]: string}>({});
+  const [originalValues, setOriginalValues] = useState<{[key: string]: string}>({});
 
   const availableSectionTypes = [
     { type: 'name', label: 'Name', description: 'Full name or header name' },
@@ -44,16 +46,113 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
     };
   }, [showAddSection]);
 
+  // Validate section title for conflicts
+  const validateSectionTitle = (sectionId: string, title: string): string | null => {
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      return 'Section title cannot be empty';
+    }
+    
+    const existingSection = resumeData.sections?.find(s => 
+      s.id !== sectionId && s.title.toLowerCase().trim() === trimmedTitle.toLowerCase()
+    );
+    
+    if (existingSection) {
+      return `A section named "${trimmedTitle}" already exists`;
+    }
+    
+    return null;
+  };
+
+  // Handle title change with validation
+  const handleTitleChange = (sectionId: string, title: string) => {
+    const error = validateSectionTitle(sectionId, title);
+    
+    // Update error state
+    setSectionTitleErrors(prev => ({
+      ...prev,
+      [sectionId]: error || ''
+    }));
+    
+    // Always update the title (let user type freely)
+    updateSection(sectionId, { title });
+  };
+
+  // Handle input focus - store original value
+  const handleInputFocus = (key: string, value: string) => {
+    setOriginalValues(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  // Handle input blur - only revert if there are errors
+  const handleInputBlur = (key: string, revertCallback: () => void, hasError: boolean = false) => {
+    const originalValue = originalValues[key];
+    if (originalValue !== undefined && hasError) {
+      revertCallback();
+    }
+    
+    // Clear the stored original value
+    setOriginalValues(prev => {
+      const newValues = { ...prev };
+      delete newValues[key];
+      return newValues;
+    });
+  };
+
+  // Handle keyboard events (ESC to cancel)
+  const handleInputKeyDown = (e: React.KeyboardEvent, key: string, revertCallback: () => void) => {
+    if (e.key === 'Escape') {
+      const originalValue = originalValues[key];
+      if (originalValue !== undefined) {
+        revertCallback();
+      }
+      
+      // Blur the input to exit edit mode
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+  // Revert functions for different field types
+  const revertSectionTitle = (sectionId: string, key: string) => {
+    const originalValue = originalValues[key];
+    if (originalValue !== undefined) {
+      updateSection(sectionId, { title: originalValue });
+      setSectionTitleErrors(prev => ({
+        ...prev,
+        [sectionId]: ''
+      }));
+    }
+  };
+
+  const revertPersonalInfo = (field: string, key: string) => {
+    const originalValue = originalValues[key];
+    if (originalValue !== undefined) {
+      updatePersonalInfo(field, originalValue);
+    }
+  };
+
+  const revertItemField = (sectionId: string, itemId: string, field: string, key: string) => {
+    const originalValue = originalValues[key];
+    if (originalValue !== undefined) {
+      updateItem(sectionId, itemId, { [field]: originalValue });
+    }
+  };
+
   const addSection = (sectionType: string) => {
+    // Generate base title
+    let baseTitle = sectionType === 'experience' ? 'Experience' : 
+                   sectionType === 'name' ? 'Name' :
+                   sectionType === 'awards' ? 'Awards & Recognition' :
+                   sectionType === 'publications' ? 'Publications' :
+                   sectionType === 'list' ? 'List' :
+                   sectionType.charAt(0).toUpperCase() + sectionType.slice(1);
+
     const newSection: Section = {
       id: `${sectionType}-${Date.now()}`,
       type: sectionType as any,
-      title: sectionType === 'experience' ? 'Experience' : 
-             sectionType === 'name' ? 'Name' :
-             sectionType === 'awards' ? 'Awards & Recognition' :
-             sectionType === 'publications' ? 'Publications' :
-             sectionType === 'list' ? 'List' :
-             sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
+      title: baseTitle,
       templateId: sectionType === 'name' ? 'name-standard' : 'basic',
       isVisible: true,
       items: sectionType === 'skills' ? [] : 
@@ -313,6 +412,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
           type="text"
           value={resumeData.personalInfo?.fullName || ''}
           onChange={(e) => updatePersonalInfo('fullName', e.target.value)}
+          onFocus={(e) => handleInputFocus('personal-fullName', e.target.value)}
+          onBlur={() => handleInputBlur('personal-fullName', () => revertPersonalInfo('fullName', 'personal-fullName'), false)}
+          onKeyDown={(e) => handleInputKeyDown(e, 'personal-fullName', () => revertPersonalInfo('fullName', 'personal-fullName'))}
           className="item-input"
         />
       </div>
@@ -322,6 +424,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
           type="email"
           value={resumeData.personalInfo?.email || ''}
           onChange={(e) => updatePersonalInfo('email', e.target.value)}
+          onFocus={(e) => handleInputFocus('personal-email', e.target.value)}
+          onBlur={() => handleInputBlur('personal-email', () => revertPersonalInfo('email', 'personal-email'), false)}
+          onKeyDown={(e) => handleInputKeyDown(e, 'personal-email', () => revertPersonalInfo('email', 'personal-email'))}
           className="item-input"
         />
       </div>
@@ -386,6 +491,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
               type="text"
               value={item.degree || ''}
               onChange={(e) => updateItem(section.id, item.id, { degree: e.target.value })}
+              onFocus={(e) => handleInputFocus(`item-${item.id}-degree`, e.target.value)}
+              onBlur={() => handleInputBlur(`item-${item.id}-degree`, () => revertItemField(section.id, item.id, 'degree', `item-${item.id}-degree`), false)}
+              onKeyDown={(e) => handleInputKeyDown(e, `item-${item.id}-degree`, () => revertItemField(section.id, item.id, 'degree', `item-${item.id}-degree`))}
               placeholder="Degree (e.g., B.ASc., Engineering Physics)"
               className="item-input"
             />
@@ -393,6 +501,9 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
               type="text"
               value={item.organization || ''}
               onChange={(e) => updateItem(section.id, item.id, { organization: e.target.value })}
+              onFocus={(e) => handleInputFocus(`item-${item.id}-organization`, e.target.value)}
+              onBlur={() => handleInputBlur(`item-${item.id}-organization`, () => revertItemField(section.id, item.id, 'organization', `item-${item.id}-organization`), false)}
+              onKeyDown={(e) => handleInputKeyDown(e, `item-${item.id}-organization`, () => revertItemField(section.id, item.id, 'organization', `item-${item.id}-organization`))}
               placeholder="University/Institution"
               className="item-input"
             />
@@ -1149,13 +1260,21 @@ export function ResumeContentBuilder({ resumeData, onResumeDataChange }: ResumeC
           {resumeData.sections?.map((section) => (
           <div key={section.id} className="section-card">
             <div className="section-header">
-              <input
-                type="text"
-                value={section.title}
-                onChange={(e) => updateSection(section.id, { title: e.target.value })}
-                className="section-title-input"
-                placeholder="Section Title"
-              />
+              <div className="section-title-container">
+                <input
+                  type="text"
+                  value={section.title}
+                  onChange={(e) => handleTitleChange(section.id, e.target.value)}
+                  onFocus={(e) => handleInputFocus(`section-title-${section.id}`, e.target.value)}
+                  onBlur={() => handleInputBlur(`section-title-${section.id}`, () => revertSectionTitle(section.id, `section-title-${section.id}`), !!sectionTitleErrors[section.id])}
+                  onKeyDown={(e) => handleInputKeyDown(e, `section-title-${section.id}`, () => revertSectionTitle(section.id, `section-title-${section.id}`))}
+                  className={`section-title-input ${sectionTitleErrors[section.id] ? 'error' : ''}`}
+                  placeholder="Section Title"
+                />
+                {sectionTitleErrors[section.id] && (
+                  <div className="title-error-message">{sectionTitleErrors[section.id]} (ESC or click away to revert)</div>
+                )}
+              </div>
               <div className="section-actions">
                 <button
                   className="toggle-edit-btn"

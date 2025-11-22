@@ -29,6 +29,7 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
   
   const [splitParts, setSplitParts] = useState<SplitPart[]>([]);
   const [activePart, setActivePart] = useState(0);
+  const [titleErrors, setTitleErrors] = useState<{[partIndex: number]: string}>({});
 
   // Get items from the section if it has them
   const getItems = (section: ResumeSection): any[] => {
@@ -109,17 +110,20 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
   };
 
   const addNewPart = () => {
+    // Extract base name without "(Part 1)" for new parts
+    const baseName = section.title.replace(/ \(Part \d+\)$/, '');
+    
     const currentCount = splitParts.length;
     let newTitle: string;
-
+    
     if (currentCount === 1) {
-      // When adding the second part, use "(cont)" 
-      newTitle = `${section.title} (cont)`;
+      // Second tab gets "(cont)"
+      newTitle = `${baseName} (cont)`;
     } else {
-      // For 3+ parts, use "Part X" numbering
-      newTitle = `${section.title} (Part ${currentCount + 1})`;
+      // Third tab and beyond get "(Part 2)", "(Part 3)", etc.
+      newTitle = `${baseName} (Part ${currentCount})`;
     }
-
+    
     const newPart: SplitPart = {
       title: newTitle,
       items: itemsWithIds,
@@ -127,15 +131,6 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
     };
 
     const newParts = [...splitParts, newPart];
-    
-    // If we now have 3 parts, rename the second part from "(cont)" to "(Part 2)"
-    if (newParts.length === 3 && newParts[1].title.endsWith('(cont)')) {
-      newParts[1] = {
-        ...newParts[1],
-        title: `${section.title} (Part 2)`
-      };
-    }
-
     setSplitParts(newParts);
     setActivePart(splitParts.length);
   };
@@ -167,9 +162,45 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
     setActivePart(Math.min(activePart, newParts.length - 1));
   };
 
+  // Validate part title for conflicts
+  const validatePartTitle = (partIndex: number, title: string): string | null => {
+    const trimmedTitle = title.trim();
+    
+    if (!trimmedTitle) {
+      return 'Part title cannot be empty';
+    }
+    
+    // Check for conflicts with other part titles
+    const conflictIndex = splitParts.findIndex((part, index) => 
+      index !== partIndex && part.title.toLowerCase().trim() === trimmedTitle.toLowerCase()
+    );
+    
+    if (conflictIndex !== -1) {
+      return `This title conflicts with Part ${conflictIndex + 1}`;
+    }
+    
+    return null;
+  };
+
   const updatePartTitle = (partIndex: number, title: string) => {
     const newParts = [...splitParts];
-    newParts[partIndex] = { ...newParts[partIndex], title };
+    
+    // For the first part (index 0), preserve the original section name
+    if (partIndex === 0) {
+      // Extract base name without "(Part 1)" if it exists
+      const baseName = section.title.replace(/ \(Part \d+\)$/, '');
+      newParts[partIndex] = { ...newParts[partIndex], title: `${baseName} (Part 1)` };
+      // Clear any errors for first part since it's read-only
+      setTitleErrors(prev => ({ ...prev, [partIndex]: '' }));
+    } else {
+      // For other parts, validate and update
+      const error = validatePartTitle(partIndex, title);
+      setTitleErrors(prev => ({ ...prev, [partIndex]: error || '' }));
+      
+      // Always update the title (let user type freely)
+      newParts[partIndex] = { ...newParts[partIndex], title };
+    }
+    
     setSplitParts(newParts);
   };
 
@@ -262,13 +293,21 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
 
           <div className="split-content">
             <div className="part-title-section">
-              <label>Part Title:</label>
+              <label>
+                Part Title:
+                {activePart === 0 && <span className="readonly-label"> (Master Section - Cannot be changed)</span>}
+              </label>
               <input
                 type="text"
                 value={currentPart.title}
                 onChange={(e) => updatePartTitle(activePart, e.target.value)}
-                className="part-title-input"
+                className={`part-title-input ${activePart === 0 ? 'readonly-master' : ''} ${titleErrors[activePart] ? 'error' : ''}`}
+                readOnly={activePart === 0}
+                title={activePart === 0 ? 'This is the master section title and cannot be changed' : ''}
               />
+              {titleErrors[activePart] && (
+                <div className="title-error-message">{titleErrors[activePart]}</div>
+              )}
             </div>
 
             <div className="items-section">
@@ -307,7 +346,12 @@ export const SectionSplittingManager: React.FC<SectionSplittingManagerProps> = (
           <button onClick={onClose} className="cancel-button">
             Cancel
           </button>
-          <button onClick={applySplit} className="apply-button">
+          <button 
+            onClick={applySplit} 
+            className="apply-button"
+            disabled={Object.values(titleErrors).some(error => error)}
+            title={Object.values(titleErrors).some(error => error) ? 'Please resolve title conflicts before splitting' : ''}
+          >
             Split Section
           </button>
         </div>

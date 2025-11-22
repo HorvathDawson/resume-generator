@@ -1219,9 +1219,9 @@ export const LayoutBuilder: React.FC<LayoutBuilderProps> = ({
       ...(firstSection.type !== 'skills' && combinedItems.length > 0 ? { items: combinedItems } : {})
     } as any;
 
-    // Update resume data - remove split sections and add combined section
+    // Update resume data - remove split sections and any existing base section, then add combined section
     const updatedSections = (resumeData.sections || [])
-      .filter(s => !splitSectionIds.includes(s.id)) // Remove all split sections
+      .filter(s => !splitSectionIds.includes(s.id) && s.id !== baseId) // Remove all split sections AND any existing base section
       .concat([combinedSection]); // Add combined section
 
     const newResumeData = {

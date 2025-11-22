@@ -231,11 +231,18 @@
 
 .resume-content-builder .section-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 16px;
   background: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
+}
+
+.section-title-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .section-title-input {
@@ -255,6 +262,23 @@
   background: white;
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.section-title-input.error {
+  border-color: #dc3545;
+  background: #fff5f5;
+}
+
+.section-title-input.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.title-error-message {
+  font-size: 0.75rem;
+  color: #dc3545;
+  font-weight: 500;
+  margin-top: 2px;
 }
 
 .resume-content-builder .section-actions {
