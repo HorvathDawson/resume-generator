@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 /** A dropdown menu that closes on outside click, Escape or picking an item. */
-export function Menu({ label, icon, primary, children }: { label: string; icon?: ReactNode; primary?: boolean; children: ReactNode }) {
+export function Menu({ label, icon, primary, tour, children }: { label: string; icon?: ReactNode; primary?: boolean; tour?: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -22,7 +22,7 @@ export function Menu({ label, icon, primary, children }: { label: string; icon?:
   }, [open]);
 
   return (
-    <div className="menu" ref={ref}>
+    <div className="menu" ref={ref} data-tour={tour}>
       <button type="button" className={`btn${primary ? ' btn--primary' : ' btn--ghost'}`} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}>
         {icon}
         {label}
@@ -48,11 +48,18 @@ export function MenuItem({ icon, hint, onClick, children }: { icon?: ReactNode; 
 }
 
 /**
- * A small floating panel opened from an icon button. It is positioned against
- * the viewport so it is never clipped by a narrow column or a scrolling panel.
+ * A small floating panel opened from a button. It is positioned against the
+ * viewport so it is never clipped by a narrow column or a scrolling panel.
  * `children` gets a `close` function for actions that should dismiss it.
+ * The trigger is an icon button unless `className` says otherwise.
  */
-export function Popover({ title, icon, children, width = 260 }: { title: string; icon: ReactNode; children: (close: () => void) => ReactNode; width?: number }) {
+export function Popover({ title, icon, children, width = 260, className = 'icon-btn' }: {
+  title: string;
+  icon: ReactNode;
+  children: (close: () => void) => ReactNode;
+  width?: number;
+  className?: string;
+}) {
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -80,19 +87,33 @@ export function Popover({ title, icon, children, width = 260 }: { title: string;
     };
   }, [pos]);
 
+  // Keep the panel on screen once its height is known (it can change as it is used).
+  useLayoutEffect(() => {
+    const el = panel.current;
+    const r = button.current?.getBoundingClientRect();
+    if (!pos || !el || !r) return;
+    const fit = () => {
+      const h = el.offsetHeight;
+      const below = r.bottom + 4;
+      const top = below + h <= window.innerHeight - 8 ? below : Math.max(8, Math.min(r.top - h - 4, window.innerHeight - h - 8));
+      el.style.top = `${top}px`;
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [pos]);
+
   const toggle = () => {
     if (pos) return setPos(null);
     const r = button.current?.getBoundingClientRect();
     if (!r) return;
-    const left = Math.max(8, Math.min(r.right - width, window.innerWidth - width - 8));
-    const below = r.bottom + 4;
-    // Open upwards when there is little room below.
-    setPos({ top: below + 280 > window.innerHeight ? Math.max(8, r.top - 284) : below, left });
+    setPos({ top: r.bottom + 4, left: Math.max(8, Math.min(r.right - width, window.innerWidth - width - 8)) });
   };
 
   return (
     <>
-      <button ref={button} type="button" className="icon-btn" title={title} aria-label={title} aria-haspopup="dialog" aria-expanded={!!pos} onClick={toggle}>
+      <button ref={button} type="button" className={className} title={title} aria-label={className === 'icon-btn' ? title : undefined} aria-haspopup="dialog" aria-expanded={!!pos} onClick={toggle}>
         {icon}
       </button>
       {pos && (

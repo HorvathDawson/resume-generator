@@ -1,9 +1,9 @@
 import { createContext, useContext, useRef, useState } from 'react';
 import type { DragEvent, PointerEvent as ReactPointerEvent, ReactNode } from 'react';
-import { ArrowDown, ArrowLeftRight, ArrowUp, GripVertical, MoreHorizontal, Pencil, Plus, Scissors, Trash2, TriangleAlert, Wand2, X } from 'lucide-react';
-import type { FooterType, Page, Placement, ResumeDocument, Row, Shade } from '../model/types';
-import { itemCount, newPage, newRow } from '../model/defaults';
-import { addToLayout, dropInto, findSection, locatePlacement, move, movePlacementToPage, pagesShowing, splitPlacement, takePlacement } from '../model/edit';
+import { ArrowDown, ArrowLeftRight, ArrowUp, ChevronDown, GripVertical, Merge, MoreHorizontal, Pencil, Plus, Scissors, Trash2, TriangleAlert, Wand2, X } from 'lucide-react';
+import type { FooterType, Page, Placement, ResumeDocument, Row, Section, Shade } from '../model/types';
+import { itemCount, itemLabels, newPage, newRow } from '../model/defaults';
+import { addToLayout, dropInto, findSection, joinParts, locatePlacement, move, movePlacementToPage, pagesShowing, sectionParts, splitPlacement, takePlacement } from '../model/edit';
 import type { DragItem } from '../model/edit';
 import { arrangeLayout, getTemplate } from '../model/templates';
 import { FOOTERS, SECTION_TYPE_LABELS } from '../model/variants';
@@ -117,7 +117,7 @@ export function LayoutPanel({ doc, update, overflow, onEditSection, onAutoFit, n
     <DragContext.Provider value={drag}>
       <div className="panel-stack layout-panel">
         <p className="hint">
-          Drag sections to arrange them. Pick a shape for each row, and drag the line between two columns to change their widths.
+          Drag sections to arrange them, or click one for its options, including splitting it across pages. Pick a shape for each row, and drag the line between two columns to change their widths.
         </p>
 
         <Tray doc={doc} update={update} />
@@ -470,17 +470,13 @@ function PlacementChip({ doc, placement, pageIndex, index, count, two, update, o
   const drag = useDrag();
   const section = findSection(doc, placement.sectionId);
   if (!section) return null;
+  const name = section.title || SECTION_TYPE_LABELS[section.type];
   const total = itemCount(section);
   const from = placement.from ?? 0;
   const to = Math.min(placement.to ?? total, total);
   const partial = total > 0 && (from > 0 || to < total);
   const dragging = !!drag.item && 'placementId' in drag.item && drag.item.placementId === placement.id;
 
-  const editPlacement = (fn: (p: Placement) => void) =>
-    update((d) => {
-      const loc = locatePlacement(d, placement.id);
-      if (loc) fn(d.pages[loc.page].rows[loc.row].columns[loc.col][loc.index]);
-    });
   const shift = (delta: number) =>
     update((d) => {
       const loc = locatePlacement(d, placement.id);
@@ -500,15 +496,26 @@ function PlacementChip({ doc, placement, pageIndex, index, count, two, update, o
       onDragEnd={drag.end}
     >
       <GripVertical size={13} className="chip-grip" />
-      <button type="button" className="chip-title" title="Edit the text of this section" onClick={() => onEditSection(section.id)}>
-        <span className="chip-name">{section.title || SECTION_TYPE_LABELS[section.type]}</span>
-        {partial && <span className="chip-range">{to - from === 1 ? `item ${to}` : `items ${from + 1}–${to}`}</span>}
-      </button>
-      <Popover title="Section options" icon={<MoreHorizontal size={14} />} width={270}>
+      <Popover
+        title={`${name}: options`}
+        className="chip-title"
+        width={300}
+        icon={
+          <>
+            <span className="chip-name">{name}</span>
+            {partial && <span className="chip-range">{to - from === 1 ? `item ${to}` : `items ${from + 1}–${to}`}</span>}
+            <ChevronDown size={12} className="chip-caret" />
+          </>
+        }
+      >
         {(close) => (
           <div className="popover-menu">
+            <div className="popover-head">
+              <strong>{name}</strong>
+              <span>{SECTION_TYPE_LABELS[section.type]}</span>
+            </div>
             <PopItem icon={<Pencil size={14} />} onClick={() => { onEditSection(section.id); close(); }}>
-              Edit text
+              Edit its text
             </PopItem>
             <div className="popover-buttons">
               <button type="button" className="btn btn--ghost btn--sm" disabled={index === 0} onClick={() => shift(-1)}>
@@ -551,59 +558,77 @@ function PlacementChip({ doc, placement, pageIndex, index, count, two, update, o
                 <option value={doc.pages.length}>A new page</option>
               </select>
             </label>
-            {total > 1 && (
-              <>
-                <div className="popover-field">
-                  <span>Show items</span>
-                  <div className="inline-select">
-                    <select aria-label="First item" value={from} onChange={(e) => editPlacement((p) => void (p.from = Number(e.target.value) || undefined))}>
-                      {Array.from({ length: to }, (_, i) => (
-                        <option key={i} value={i}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </select>
-                    <span>to</span>
-                    <select aria-label="Last item" value={to} onChange={(e) => editPlacement((p) => void (p.to = Number(e.target.value) >= total ? undefined : Number(e.target.value)))}>
-                      {Array.from({ length: total - from }, (_, i) => from + i + 1).map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                    <span>of {total}</span>
-                  </div>
-                </div>
-                {to - from > 1 && (
-                  <label className="popover-field">
-                    <span>
-                      <Scissors size={12} /> Continue on the next page after item
-                    </span>
-                    <select
-                      value=""
-                      onChange={(e) => {
-                        const at = Number(e.target.value);
-                        if (at) update((d) => splitPlacement(d, placement.id, at));
-                        close();
-                      }}
-                    >
-                      <option value="">Choose…</option>
-                      {Array.from({ length: to - from - 1 }, (_, i) => from + i + 1).map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-              </>
-            )}
+            {total > 1 && <SplitControl doc={doc} section={section} placement={placement} from={from} to={to} total={total} update={update} />}
             <PopItem icon={<X size={14} />} danger onClick={() => { update((d) => void takePlacement(d, placement.id)); close(); }}>
               Take off the page (keeps the text)
             </PopItem>
           </div>
         )}
       </Popover>
+    </div>
+  );
+}
+
+/**
+ * Splitting a section across pages: the items of this part are listed, and
+ * clicking the gap between two of them moves the rest to the next page.
+ */
+function SplitControl({ doc, section, placement, from, to, total, update }: {
+  doc: ResumeDocument;
+  section: Section;
+  placement: Placement;
+  from: number;
+  to: number;
+  total: number;
+  update: Props['update'];
+}) {
+  const labels = itemLabels(section);
+  const parts = sectionParts(doc, section.id, total).filter((p) => p.to > p.from);
+  const split = parts.length > 1;
+  const range = (a: number, b: number) => (b - a === 1 ? `item ${b}` : `items ${a + 1}–${b}`);
+
+  return (
+    <div className="split">
+      <div className="split-title">
+        <Scissors size={12} /> Split across pages
+      </div>
+      {split && (
+        <div className="split-parts">
+          {parts.map((p) => (
+            <div key={p.placementId} className={`split-part${p.placementId === placement.id ? ' is-current' : ''}`}>
+              Page {p.page + 1}: {range(p.from, p.to)}
+              {p.placementId === placement.id && <span> (this one)</span>}
+            </div>
+          ))}
+          <button type="button" className="btn btn--ghost btn--sm" onClick={() => update((d) => joinParts(d, placement.id))}>
+            <Merge size={14} /> Put it back together here
+          </button>
+        </div>
+      )}
+      {to - from > 1 ? (
+        <>
+          <p className="split-hint">Click between two items to move the rest to the next page.</p>
+          <ol className="split-items" start={from + 1}>
+            {labels.slice(from, to).map((label, i) => (
+              <li key={from + i}>
+                <span className="split-label">{label}</span>
+                {from + i + 1 < to && (
+                  <button
+                    type="button"
+                    className="split-gap"
+                    title={`Keep ${range(from, from + i + 1)} here and continue on the next page`}
+                    onClick={() => update((d) => splitPlacement(d, placement.id, from + i + 1))}
+                  >
+                    <Scissors size={11} /> <span>Continue on next page from here</span>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ol>
+        </>
+      ) : (
+        !split && <p className="split-hint">This part has only one item.</p>
+      )}
     </div>
   );
 }

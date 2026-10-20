@@ -188,3 +188,20 @@ export function sliceSection(section: Section, from = 0, to?: number): Section {
       return section;
   }
 }
+
+/** A short name for each item of a section (job title, skill group, ...), for menus. */
+export function itemLabels(section: Section): string[] {
+  switch (section.type) {
+    case 'experience':
+    case 'education':
+      return section.items.map((e, i) => [e.title, e.subtitle].filter(Boolean).join(', ') || `Item ${i + 1}`);
+    case 'skills':
+      return section.groups.map((g, i) => g.name || g.skills.slice(0, 3).join(', ') || `Group ${i + 1}`);
+    case 'list':
+      return section.items.map((t, i) => t || `Line ${i + 1}`);
+    case 'references':
+      return section.items.map((r, i) => r.name || `Reference ${i + 1}`);
+    default:
+      return [];
+  }
+}

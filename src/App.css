@@ -1141,6 +1141,8 @@ button:disabled {
 .popover {
   position: fixed;
   z-index: 60;
+  max-height: calc(100vh - 16px);
+  overflow: auto;
   padding: 6px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -1406,11 +1408,213 @@ button:disabled {
   }
 }
 
-/* Keep chip names readable in narrow columns: the options button appears on hover. */
-@media (hover: hover) {
-  .sheet-col .chip:not(:hover):not(:focus-within):not(:has([aria-expanded='true'])) > .icon-btn {
-    width: 0;
-    opacity: 0;
-    overflow: hidden;
+.chip-title .chip-caret {
+  flex: none;
+  margin-left: auto;
+  align-self: center;
+  color: var(--text-3);
+}
+
+.chip-title {
+  cursor: pointer;
+}
+
+.popover-head {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 10px 8px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--border);
+}
+
+.popover-head span {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.split {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0;
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.split-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.split-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.split-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.split-part.is-current {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.split-parts .btn {
+  align-self: flex-start;
+  margin-top: 3px;
+  gap: 5px;
+}
+
+.split-items {
+  margin: 0;
+  padding: 0 0 0 20px;
+  font-size: 12.5px;
+}
+
+.split-items li {
+  padding: 2px 0;
+}
+
+.split-label {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.split-gap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: calc(100% + 20px);
+  margin: 3px 0 1px -20px;
+  padding: 2px 6px;
+  border: none;
+  border-top: 1px dashed var(--border-strong);
+  background: none;
+  color: var(--text-3);
+  font-size: 11px;
+  text-align: left;
+}
+
+.split-gap span {
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.split-gap:hover,
+.split-gap:focus-visible {
+  border-top-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.split-gap:hover span,
+.split-gap:focus-visible span {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .split-gap span {
+    opacity: 1;
   }
+}
+
+/* ---- Tour ------------------------------------------------------------------------- */
+
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.tour--center {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.tour-spotlight {
+  position: fixed;
+  border-radius: 10px;
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.55);
+  outline: 2px solid #a5b4fc;
+  pointer-events: none;
+  transition: top 0.2s, left 0.2s, width 0.2s, height 0.2s;
+}
+
+.tour-card {
+  position: fixed;
+  width: min(340px, calc(100vw - 32px));
+  padding: 16px 18px 14px;
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.3);
+  transition: top 0.2s, left 0.2s;
+}
+
+.tour-count {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand);
+}
+
+.tour-card h2 {
+  margin: 4px 0 6px;
+  font-size: 17px;
+}
+
+.tour-body {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.tour-body p {
+  margin: 0 0 6px;
+}
+
+.tour-dots {
+  display: flex;
+  gap: 5px;
+  margin: 12px 0 10px;
+}
+
+.tour-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.tour-dots i.is-active {
+  width: 16px;
+  border-radius: 3px;
+  background: var(--brand);
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tour-spacer {
+  flex: 1;
+}
+
+.tour-skip {
+  color: var(--text-3);
+  font-weight: 500;
 }

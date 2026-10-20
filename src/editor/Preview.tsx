@@ -37,7 +37,7 @@ export function Preview({ doc, overflow, selectedId, onSelectSection }: Props) {
   const step = (delta: number) => setZoom(Math.max(0.3, Math.min(2, Math.round((scale + delta) * 10) / 10)));
 
   return (
-    <div className="preview">
+    <div className="preview" data-tour="preview">
       <div className="preview-bar">
         <span className="preview-pages">
           {doc.pages.length} {doc.pages.length === 1 ? 'page' : 'pages'}

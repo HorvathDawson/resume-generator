@@ -139,3 +139,40 @@ export function dropInto(doc: ResumeDocument, item: DragItem, pageId: string, ro
   const column = row.columns[Math.min(col, row.columns.length - 1)];
   column.splice(Math.max(0, Math.min(index, column.length)), 0, p);
 }
+
+export interface SectionPart {
+  placementId: string;
+  /** 0-based page index. */
+  page: number;
+  from: number;
+  to: number;
+}
+
+/** Every place a section is shown, in item order, with the items each one shows. */
+export function sectionParts(doc: ResumeDocument, sectionId: string, total: number): SectionPart[] {
+  const parts: SectionPart[] = [];
+  doc.pages.forEach((page, pi) =>
+    page.rows.forEach((row) =>
+      row.columns.forEach((col) =>
+        col.forEach((p) => {
+          if (p.sectionId === sectionId) parts.push({ placementId: p.id, page: pi, from: p.from ?? 0, to: Math.min(p.to ?? total, total) });
+        }),
+      ),
+    ),
+  );
+  return parts.sort((a, b) => a.from - b.from || a.page - b.page);
+}
+
+/** Undo splitting: this placement shows the whole section again and the other parts are removed. */
+export function joinParts(doc: ResumeDocument, placementId: string): void {
+  const loc = locatePlacement(doc, placementId);
+  if (!loc) return;
+  const p = doc.pages[loc.page].rows[loc.row].columns[loc.col][loc.index];
+  for (const page of doc.pages) {
+    for (const row of page.rows) {
+      row.columns = row.columns.map((c) => c.filter((x) => x === p || x.sectionId !== p.sectionId || (x.from === undefined && x.to === undefined)));
+    }
+  }
+  delete p.from;
+  delete p.to;
+}

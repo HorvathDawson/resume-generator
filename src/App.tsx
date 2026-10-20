@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderOpen, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowUpRight, CircleHelp, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderOpen, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
 import type { ResumeDocument } from './model/types';
 import { blankDocument } from './model/defaults';
 import { ImportError, clearSharedLink, downloadFile, fetchResume, fileStem, loadFromStorage, parseResumeJson, saveToStorage, serializeDocument, sharedLinkFromUrl } from './model/io';
@@ -16,6 +16,8 @@ import { DesignPanel } from './editor/DesignPanel';
 import { Preview } from './editor/Preview';
 import { Menu, MenuItem } from './editor/Menu';
 import { Dialog } from './editor/Dialog';
+import { Tour } from './editor/Tour';
+import type { TourStep } from './editor/Tour';
 import './App.css';
 
 type Tab = 'content' | 'layout' | 'design';
@@ -31,6 +33,16 @@ function ownStoredResume(other: ResumeDocument): ResumeDocument | null {
   return text === serializeDocument(other) || text === serializeDocument(sampleDocument()) ? null : local;
 }
 const PRINT_TIP_KEY = 'resume-generator:hide-print-tip';
+const TOUR_KEY = 'resume-generator:tour-seen';
+
+function tourSeen(): boolean {
+  try {
+    return localStorage.getItem(TOUR_KEY) === '1';
+  } catch {
+    // Storage blocked: don't show the tour on every visit.
+    return true;
+  }
+}
 
 interface PendingOpen {
   doc: ResumeDocument;
@@ -70,6 +82,8 @@ export default function App() {
   const [loadingShared, setLoadingShared] = useState(!!shared);
   const [viewOnly, setViewOnly] = useState(!!shared?.view);
   const [confirmEdit, setConfirmEdit] = useState<ResumeDocument | null>(null);
+  // The walkthrough runs on the first visit, and again from the help button.
+  const [touring, setTouring] = useState(() => !shared?.view && !tourSeen());
 
   const notify = useCallback((message: string, undoable = false, action?: ToastAction) => {
     setToast({ id: Date.now(), message, undoable, action, tone: 'info' });
@@ -134,7 +148,71 @@ export default function App() {
     setConfirmEdit(null);
     clearSharedLink();
     setViewOnly(false);
+    if (!tourSeen()) setTouring(true);
   };
+
+  const endTour = useCallback(() => {
+    setTouring(false);
+    setTab('content');
+    try {
+      localStorage.setItem(TOUR_KEY, '1');
+    } catch {
+      // Ignore: it just shows again next visit.
+    }
+  }, []);
+
+  const tourSteps: TourStep[] = useMemo(
+    () => [
+      {
+        title: 'Welcome to Resume Builder',
+        body: <p>Make a polished A4 resume, then download it as a PDF. This short tour shows you where everything is.</p>,
+      },
+      {
+        target: 'editor',
+        title: 'Write your content',
+        body: <p>Fill in your details and add sections like experience, education and skills. Click any section in the preview to jump straight to it.</p>,
+        before: () => setTab('content'),
+      },
+      {
+        target: 'preview',
+        title: 'See it as you go',
+        body: <p>The preview shows exactly what you’ll download. A red outline means a page is too full.</p>,
+      },
+      {
+        target: 'editor',
+        title: 'Arrange the layout',
+        body: (
+          <p>
+            Drag sections between rows, columns and pages. Click a section to move it, or to split a long one across two pages. Drag the line between columns to resize
+            them.
+          </p>
+        ),
+        before: () => setTab('layout'),
+      },
+      {
+        target: 'editor',
+        title: 'Choose a design',
+        body: <p>Pick one of ten templates, then adjust fonts, colors, spacing and the page footer.</p>,
+        before: () => setTab('design'),
+      },
+      {
+        target: 'file',
+        title: 'Keep a copy',
+        body: <p>Your work saves in this browser automatically. Use Save as JSON to back it up or move it to another computer, then open it here again.</p>,
+      },
+      {
+        target: 'download',
+        title: 'Download your resume',
+        body: <p>Get a PDF in one click. Print to PDF gives the sharpest text, and you can also export a web page.</p>,
+      },
+      {
+        target: 'help',
+        title: 'Need a refresher?',
+        body: <p>Click here to see this tour again any time.</p>,
+      },
+    ],
+    [],
+  );
 
   // Load the fonts the resume uses.
   const fontsUrl = googleFontsUrl([doc.theme.font, doc.theme.headingFont]);
@@ -336,7 +414,7 @@ export default function App() {
                 onChange={(e) => update((d) => void (d.title = e.target.value), 'title')}
                 onBlur={() => !doc.title.trim() && update((d) => void (d.title = 'My resume'))}
               />
-              <div className="topbar-group">
+              <div className="topbar-group" data-tour="undo">
                 <button type="button" className="icon-btn" title="Undo (Ctrl+Z)" aria-label="Undo" disabled={!canUndo} onClick={undo}>
                   <Undo2 size={17} />
                 </button>
@@ -351,14 +429,19 @@ export default function App() {
           )}
           <div className="topbar-group topbar-right">
             {!viewOnly && (
-              <Menu label="File">
+              <button type="button" className="icon-btn" title="Show the tour" aria-label="Show the tour" data-tour="help" onClick={() => setTouring(true)}>
+                <CircleHelp size={18} />
+              </button>
+            )}
+            {!viewOnly && (
+              <Menu label="File" tour="file">
                 <MenuItem icon={<FilePlus size={16} />} onClick={() => startNew('blank')}>New blank resume</MenuItem>
                 <MenuItem icon={<FileText size={16} />} onClick={() => startNew('sample')}>Load sample resume</MenuItem>
                 <MenuItem icon={<FolderOpen size={16} />} hint="Ctrl+O" onClick={() => fileInput.current?.click()}>Open JSON file…</MenuItem>
                 <MenuItem icon={<FileJson size={16} />} hint="Ctrl+S" onClick={saveJson}>Save as JSON</MenuItem>
               </Menu>
             )}
-            <Menu label="Download" primary={!viewOnly} icon={<Download size={16} />}>
+            <Menu label="Download" primary={!viewOnly} tour="download" icon={<Download size={16} />}>
               <MenuItem icon={<FileDown size={16} />} onClick={savePdf}>PDF</MenuItem>
               <MenuItem icon={<Printer size={16} />} hint="Ctrl+P" onClick={requestPdf}>Print to PDF (sharpest text)</MenuItem>
               <MenuItem icon={<FileCode size={16} />} onClick={saveHtml}>HTML web page</MenuItem>
@@ -375,7 +458,7 @@ export default function App() {
         <main className={`workspace${viewOnly ? ' workspace--view' : ''}`}>
           {loadingShared && <div className="loading-cover">Opening resume…</div>}
           {!viewOnly && (
-            <aside className="editor">
+            <aside className="editor" data-tour="editor">
               <nav className="tabs" role="tablist">
                 {(['content', 'layout', 'design'] as Tab[]).map((t) => (
                   <button key={t} type="button" role="tab" aria-selected={tab === t} className={tab === t ? 'is-active' : ''} onClick={() => setTab(t)}>
@@ -435,6 +518,8 @@ export default function App() {
             )}
           </Dialog>
         )}
+
+        {touring && !viewOnly && !loadingShared && <Tour steps={tourSteps} onClose={endTour} />}
 
         {confirmEdit && (
           <Dialog

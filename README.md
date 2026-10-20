@@ -6,10 +6,10 @@ A browser app for building clean, printable A4 resumes. Live at
 ## Using it
 
 - **Content**: your details plus sections (experience, education, skills, lists, references, free text). Click any section in the preview to jump to it.
-- **Layout**: each page is drawn as a small sheet. Drag sections between columns, rows and pages; pick a row shape (one column, narrow left, even, narrow right); drag the line between two columns to set their widths. The ⋯ menus hold the rest: sidebar color, split a long section across pages, show only some items. **Move it to the next page** fixes any page that overflows.
+- **Layout**: each page is drawn as a small sheet. Drag sections between columns, rows and pages; pick a row shape (one column, narrow left, even, narrow right); drag the line between two columns to set their widths. Click a section for its options: edit its text, move it, or split a long one across pages by clicking between two of its items (and put it back together later). The row and page ⋯ menus hold sidebar color, reordering and delete. **Move it to the next page** fixes any page that overflows.
 - **Design**: pick one of ten templates (some put the name beside the summary, some use a banner, some add a footer), then tune fonts, size, spacing, heading style and colors. Templates rearrange sections too, unless you tick "Keep my current layout".
 
-Everything autosaves in your browser. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
+A short guided tour runs on the first visit; the ? button in the top bar replays it. Everything autosaves in your browser. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
 
 ### Getting your resume out
 
