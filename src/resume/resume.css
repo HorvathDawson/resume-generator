@@ -1,0 +1,803 @@
+/*
+ * Resume styles. Everything is scoped under .rg-doc and driven by the CSS
+ * variables set from the theme (see themeVars.ts), so the same file styles the
+ * live preview, the print/PDF output and the standalone HTML export.
+ */
+
+.rg-doc {
+  --rg-section-gap: calc(0.5cm * var(--rg-space));
+  --rg-item-gap: calc(0.3cm * var(--rg-space));
+  --rg-footer-h: 0cm;
+  font-family: var(--rg-font);
+  font-size: var(--rg-fs);
+  line-height: var(--rg-lh);
+  color: var(--rg-text);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  text-rendering: optimizeLegibility;
+}
+
+.rg-doc *,
+.rg-doc *::before,
+.rg-doc *::after {
+  box-sizing: border-box;
+}
+
+.rg-doc h1,
+.rg-doc h2,
+.rg-doc h3,
+.rg-doc p,
+.rg-doc ul {
+  margin: 0;
+  padding: 0;
+}
+
+.rg-doc a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---- Page ---------------------------------------------------------------- */
+
+.rg-page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  padding: var(--rg-m) var(--rg-m) calc(var(--rg-m) + var(--rg-footer-h));
+  display: flex;
+  flex-direction: column;
+}
+
+.rg-page-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* Lets shaded columns bleed into the margins. */
+  overflow: visible;
+}
+
+.rg-row + .rg-row {
+  margin-top: var(--rg-section-gap);
+}
+
+/* The last row stretches so a sidebar background reaches the page bottom. */
+.rg-row:last-child {
+  flex: 1 0 auto;
+}
+
+.rg-row--split {
+  display: grid;
+  column-gap: var(--rg-gap);
+  align-items: stretch;
+}
+
+.rg-col {
+  min-width: 0;
+}
+
+.rg-section + .rg-section {
+  margin-top: var(--rg-section-gap);
+}
+
+/* ---- Shaded sidebar column ------------------------------------------------ */
+
+.rg-col--shaded {
+  --rg-text: var(--rg-shade-text);
+  --rg-accent: var(--rg-shade-accent);
+  --rg-muted: color-mix(in srgb, var(--rg-shade-text) 72%, transparent);
+  background: var(--rg-shade);
+  color: var(--rg-shade-text);
+  padding-top: calc(0.4cm * var(--rg-space));
+  padding-bottom: calc(0.4cm * var(--rg-space));
+}
+
+.rg-shade-left > .rg-col--shaded {
+  margin-left: calc(-1 * var(--rg-m));
+  padding-left: var(--rg-m);
+  padding-right: calc(var(--rg-gap) * 0.6);
+}
+
+.rg-shade-right > .rg-col--shaded {
+  margin-right: calc(-1 * var(--rg-m));
+  padding-right: var(--rg-m);
+  padding-left: calc(var(--rg-gap) * 0.6);
+}
+
+.rg-page-body > .rg-row:first-child > .rg-col--shaded {
+  margin-top: calc(-1 * var(--rg-m));
+  padding-top: var(--rg-m);
+}
+
+.rg-page-body > .rg-row:last-child > .rg-col--shaded {
+  margin-bottom: calc(-1 * (var(--rg-m) + var(--rg-footer-h)));
+  padding-bottom: calc(var(--rg-m) + var(--rg-footer-h));
+}
+
+/* ---- Section headings ----------------------------------------------------- */
+
+.rg-heading {
+  font-family: var(--rg-heading-font);
+  font-size: 1.18em;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--rg-accent);
+  margin-bottom: calc(0.22cm * var(--rg-space)) !important;
+  break-after: avoid;
+}
+
+.rg-continued {
+  font-weight: 400;
+  font-size: 0.8em;
+  color: var(--rg-muted);
+}
+
+.rg-hs-underline .rg-heading {
+  padding-bottom: 0.08cm;
+  border-bottom: 0.04cm solid color-mix(in srgb, var(--rg-accent) 55%, transparent);
+}
+
+.rg-hs-bar .rg-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.18cm;
+}
+
+.rg-hs-bar .rg-heading::before {
+  content: '';
+  flex: none;
+  width: 0.12cm;
+  height: 1em;
+  border-radius: 0.06cm;
+  background: var(--rg-accent);
+}
+
+.rg-hs-caps .rg-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.25cm;
+  font-size: 0.95em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rg-hs-caps .rg-heading::after {
+  content: '';
+  flex: 1;
+  height: 0.03cm;
+  background: color-mix(in srgb, var(--rg-accent) 35%, transparent);
+}
+
+.rg-hs-boxed .rg-heading {
+  padding: 0.08cm 0.2cm;
+  border-radius: 0.08cm;
+  background: color-mix(in srgb, var(--rg-accent) 12%, transparent);
+}
+
+.rg-hs-plain .rg-heading {
+  font-size: 1em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---- Header (name) -------------------------------------------------------- */
+
+.rg-name {
+  font-family: var(--rg-heading-font);
+  font-size: 2.7em;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--rg-accent);
+}
+
+.rg-row--split .rg-name {
+  font-size: 2.1em;
+}
+
+.rg-headline {
+  margin-top: 0.12cm !important;
+  font-size: 1.2em;
+  color: var(--rg-muted);
+}
+
+.rg-header--centered {
+  text-align: center;
+}
+
+.rg-header--rule .rg-name {
+  padding-bottom: 0.18cm;
+  border-bottom: 0.12cm solid var(--rg-accent);
+  display: inline-block;
+}
+
+.rg-header--caps .rg-name {
+  font-size: 2.2em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rg-text);
+}
+
+.rg-header--caps .rg-headline {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95em;
+  color: var(--rg-accent);
+}
+
+.rg-header--banner {
+  --rg-muted: rgba(255, 255, 255, 0.85);
+  background: var(--rg-accent);
+  color: #fff;
+  padding: 0.7cm var(--rg-m);
+}
+
+.rg-header--banner .rg-name {
+  color: #fff;
+}
+
+/* Banners run edge to edge when they sit in a full-width row. */
+.rg-row--full .rg-header--banner {
+  margin-left: calc(-1 * var(--rg-m));
+  margin-right: calc(-1 * var(--rg-m));
+}
+
+.rg-page-body > .rg-row--full:first-child > .rg-col > .rg-header--banner:first-child {
+  margin-top: calc(-1 * var(--rg-m));
+  padding-top: calc(0.4cm + var(--rg-m));
+}
+
+/* ---- Contact -------------------------------------------------------------- */
+
+.rg-contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.14cm;
+}
+
+.rg-contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.2cm;
+  min-width: 0;
+}
+
+.rg-contact-list li > :last-child {
+  overflow-wrap: anywhere;
+}
+
+.rg-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--rg-accent);
+}
+
+.rg-contact--inline .rg-contact-list,
+.rg-contact--centered .rg-contact-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 0.45cm;
+  row-gap: 0.08cm;
+}
+
+.rg-contact--centered .rg-contact-list {
+  justify-content: center;
+}
+
+.rg-contact--inline .rg-contact-list li,
+.rg-contact--centered .rg-contact-list li {
+  gap: 0.12cm;
+}
+
+/* Two-column grid of contact details. */
+.rg-contact--grid .rg-contact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.1cm 0.4cm;
+}
+
+.rg-col .rg-contact--grid .rg-contact-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rg-row--full .rg-contact--grid .rg-contact-list,
+.rg-row--split .rg-col:only-child .rg-contact--grid .rg-contact-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rg-contact--pills .rg-contact-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.12cm;
+}
+
+.rg-contact--pills .rg-contact-list li {
+  gap: 0.12cm;
+  padding: 0.06cm 0.22cm;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rg-accent) 10%, transparent);
+  font-size: 0.92em;
+}
+
+/* Contact details directly under a header sit closer to it. */
+.rg-header + .rg-contact {
+  margin-top: calc(0.25cm * var(--rg-space));
+}
+
+.rg-header--banner + .rg-contact {
+  margin-top: calc(0.3cm * var(--rg-space));
+}
+
+/* ---- Text ------------------------------------------------------------------ */
+
+.rg-paragraph + .rg-paragraph,
+.rg-paragraph + .rg-bullets,
+.rg-bullets + .rg-paragraph {
+  margin-top: 0.15cm;
+}
+
+.rg-text--accent > :not(.rg-heading) {
+  padding-left: 0.3cm;
+  border-left: 0.08cm solid color-mix(in srgb, var(--rg-accent) 45%, transparent);
+}
+
+.rg-text--lead .rg-paragraph {
+  font-size: 1.1em;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--rg-text) 85%, var(--rg-muted));
+}
+
+.rg-text--callout > :not(.rg-heading) {
+  padding: 0.25cm 0.3cm;
+  border-radius: 0.12cm;
+  background: color-mix(in srgb, var(--rg-accent) 8%, transparent);
+}
+
+.rg-text--callout > .rg-paragraph + .rg-paragraph {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.rg-muted {
+  color: var(--rg-muted);
+}
+
+/* ---- Lists ------------------------------------------------------------------ */
+
+.rg-bullets {
+  padding-left: 1.1em !important;
+}
+
+.rg-bullets li {
+  padding-left: 0.1em;
+}
+
+.rg-bullets li + li {
+  margin-top: 0.05cm;
+}
+
+.rg-bullets li::marker {
+  color: var(--rg-accent);
+}
+
+.rg-bullets--columns {
+  columns: 2;
+  column-gap: var(--rg-gap);
+}
+
+.rg-bullets--columns li {
+  break-inside: avoid;
+}
+
+.rg-plain-list {
+  list-style: none;
+}
+
+.rg-plain-list li + li {
+  margin-top: 0.06cm;
+}
+
+.rg-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1cm;
+}
+
+.rg-tags li {
+  padding: 0.03cm 0.17cm;
+  border-radius: 0.1cm;
+  font-size: 0.88em;
+  line-height: 1.45;
+  background: color-mix(in srgb, var(--rg-accent) 11%, transparent);
+  color: color-mix(in srgb, var(--rg-accent) 80%, var(--rg-text));
+}
+
+.rg-col--shaded .rg-tags li {
+  background: color-mix(in srgb, var(--rg-shade-accent) 16%, transparent);
+  color: var(--rg-shade-text);
+}
+
+/* ---- Entries (experience, education) ---------------------------------------- */
+
+.rg-entry {
+  break-inside: avoid;
+}
+
+.rg-entry + .rg-entry {
+  margin-top: var(--rg-item-gap);
+}
+
+.rg-entry-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3cm;
+}
+
+.rg-entry-title {
+  font-size: 1.05em;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rg-text);
+}
+
+.rg-entry-dates {
+  flex: none;
+  font-size: 0.92em;
+  font-weight: 500;
+  color: var(--rg-muted);
+  white-space: nowrap;
+}
+
+.rg-entry-org {
+  font-weight: 600;
+  color: var(--rg-accent);
+}
+
+.rg-entry-loc,
+.rg-entry-meta,
+.rg-entry-note {
+  font-size: 0.92em;
+  color: var(--rg-muted);
+}
+
+.rg-entry-subrow {
+  margin-top: 0.02cm;
+}
+
+.rg-entry-desc {
+  margin-top: 0.08cm !important;
+}
+
+.rg-entry .rg-bullets,
+.rg-entry .rg-tags {
+  margin-top: 0.1cm;
+}
+
+/* Compact: title, organization and location on one line. */
+.rg-entry-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.18cm;
+  min-width: 0;
+}
+
+.rg-entry-line .rg-entry-title {
+  display: inline;
+}
+
+.rg-entry-line .rg-entry-org::before,
+.rg-entry-line .rg-entry-loc::before {
+  content: '·';
+  margin-right: 0.18cm;
+  color: var(--rg-muted);
+  font-weight: 400;
+}
+
+/* Dates in left margin: a fixed column for when and where. */
+.rg-experience--dates-left .rg-entry,
+.rg-education--dates-left .rg-entry {
+  display: grid;
+  grid-template-columns: 2.9cm minmax(0, 1fr);
+  column-gap: 0.4cm;
+}
+
+.rg-entry-when {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.04cm;
+}
+
+.rg-entry-when .rg-entry-dates {
+  white-space: normal;
+  color: var(--rg-accent);
+  font-weight: 600;
+}
+
+.rg-col .rg-experience--dates-left .rg-entry,
+.rg-col .rg-education--dates-left .rg-entry {
+  grid-template-columns: 2.4cm minmax(0, 1fr);
+}
+
+/* Cards: each entry in a softly tinted box. */
+.rg-experience--cards .rg-entry,
+.rg-education--cards .rg-entry,
+.rg-references--cards .rg-reference {
+  padding: 0.22cm 0.3cm;
+  border-radius: 0.12cm;
+  background: color-mix(in srgb, var(--rg-accent) 6%, transparent);
+  border-left: 0.07cm solid var(--rg-accent);
+}
+
+.rg-col--shaded .rg-experience--cards .rg-entry,
+.rg-col--shaded .rg-education--cards .rg-entry,
+.rg-col--shaded .rg-references--cards .rg-reference {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* Timeline: a rule with a dot beside each entry. */
+.rg-experience--timeline .rg-entries,
+.rg-education--timeline .rg-entries {
+  border-left: 0.04cm solid color-mix(in srgb, var(--rg-accent) 35%, transparent);
+  margin-left: 0.12cm;
+}
+
+.rg-experience--timeline .rg-entry,
+.rg-education--timeline .rg-entry {
+  position: relative;
+  padding-left: 0.45cm;
+}
+
+.rg-experience--timeline .rg-entry::before,
+.rg-education--timeline .rg-entry::before {
+  content: '';
+  position: absolute;
+  left: -0.12cm;
+  top: 0.38em;
+  width: 0.2cm;
+  height: 0.2cm;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.05cm solid var(--rg-accent);
+}
+
+/* Stacked: everything on its own line, for narrow columns. */
+.rg-experience--stacked .rg-entry-org,
+.rg-education--stacked .rg-entry-org {
+  font-weight: 500;
+}
+
+/* ---- Skills ------------------------------------------------------------------- */
+
+.rg-skill-group + .rg-skill-group {
+  margin-top: calc(0.2cm * var(--rg-space));
+}
+
+.rg-skill-group .rg-skill-name {
+  font-size: 0.95em;
+  font-weight: 600;
+  margin-bottom: 0.08cm;
+}
+
+.rg-skills--outline .rg-tags li,
+.rg-col--shaded .rg-skills--outline .rg-tags li {
+  background: transparent;
+  border: 0.03cm solid color-mix(in srgb, var(--rg-accent) 45%, transparent);
+  color: var(--rg-text);
+}
+
+.rg-skills--dots .rg-skill-name {
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rg-accent);
+  margin-bottom: 0.04cm;
+}
+
+.rg-skill-line + .rg-skill-line {
+  margin-top: 0.08cm;
+}
+
+.rg-skills--lines .rg-skill-name::after {
+  content: ':';
+}
+
+.rg-skills--lines .rg-skill-name {
+  margin-right: 0.15cm;
+}
+
+.rg-skills--grid .rg-skill-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(0.18cm * var(--rg-space)) var(--rg-gap);
+}
+
+.rg-skills--grid .rg-skill-line + .rg-skill-line {
+  margin-top: 0;
+}
+
+.rg-skills--grid .rg-skill-name {
+  display: block;
+  font-size: 0.95em;
+}
+
+.rg-skills--grid .rg-skill-list {
+  color: var(--rg-muted);
+}
+
+/* ---- References ------------------------------------------------------------- */
+
+.rg-reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rg-item-gap);
+}
+
+.rg-references--grid .rg-reference-list,
+.rg-references--cards .rg-reference-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5cm, 1fr));
+}
+
+.rg-reference {
+  break-inside: avoid;
+}
+
+/* ---- Footers ---------------------------------------------------------------- */
+
+.rg-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--rg-footer-h);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.footer-default .foot-back {
+  position: absolute;
+  bottom: -6.2cm;
+  left: 1.45cm;
+  width: 100%;
+  height: 5.4cm;
+  transform: rotate(-12deg);
+  background: var(--rg-text);
+}
+
+.footer-default .foot-front .left {
+  position: absolute;
+  bottom: -3.6cm;
+  left: -2cm;
+  width: 17cm;
+  height: 5cm;
+  transform: rotate(5deg);
+  background: var(--rg-accent);
+}
+
+.footer-default .foot-front .right {
+  position: absolute;
+  bottom: -6.2cm;
+  left: 13.5cm;
+  width: 10cm;
+  height: 5cm;
+  transform: rotate(24deg);
+  background: var(--rg-accent);
+}
+
+.footer-modern .footer-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.footer-modern .footer-line {
+  width: 60%;
+  height: 0.05cm;
+  background: linear-gradient(90deg, transparent, var(--rg-accent), transparent);
+}
+
+.footer-modern .footer-text,
+.footer-modern .footer-gradient {
+  display: none;
+}
+
+.footer-minimal .footer-simple {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.footer-minimal .footer-dot {
+  width: 0.25cm;
+  height: 0.25cm;
+  border-radius: 50%;
+  background: var(--rg-accent);
+  opacity: 0.6;
+}
+
+.footer-mountains,
+.footer-mountains .mountains-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.footer-mountains .mountain {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.footer-mountains .mountain-1 {
+  left: 0;
+  border-width: 0 2cm 1.4cm;
+  border-bottom-color: var(--rg-accent);
+  opacity: 0.9;
+}
+
+.footer-mountains .mountain-2 {
+  left: 3cm;
+  border-width: 0 1.5cm 1.6cm;
+  border-bottom-color: color-mix(in srgb, var(--rg-accent) 45%, #fff);
+}
+
+.footer-mountains .mountain-3 {
+  left: 7cm;
+  border-width: 0 2.5cm 1.5cm;
+  border-bottom-color: var(--rg-accent);
+  opacity: 0.8;
+}
+
+.footer-mountains .mountain-4 {
+  left: 13cm;
+  border-width: 0 1.8cm 1.2cm;
+  border-bottom-color: color-mix(in srgb, var(--rg-accent) 45%, #fff);
+}
+
+.footer-mountains .mountain-5 {
+  right: 0;
+  border-width: 0 3cm 1.6cm;
+  border-bottom-color: var(--rg-accent);
+  opacity: 0.9;
+}
+
+.footer-fish,
+.footer-salmon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.footer-fish svg,
+.footer-salmon svg {
+  width: 1.4cm;
+  height: 1.4cm;
+}
+
+/* ---- Print ------------------------------------------------------------------- */
+
+@media print {
+  .rg-page {
+    break-after: page;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  .rg-page:last-child {
+    break-after: auto;
+  }
+}

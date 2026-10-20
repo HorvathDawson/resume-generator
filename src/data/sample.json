@@ -1,0 +1,554 @@
+{
+  "schema": "resume-generator",
+  "version": 2,
+  "id": "sample-resume",
+  "title": "Sample resume",
+  "updatedAt": "2026-10-20T00:00:00.000Z",
+  "profile": {
+    "name": "Alex Johnson",
+    "headline": "Senior Software Engineer",
+    "email": "alex.johnson@email.com",
+    "phone": "(555) 234-5678",
+    "location": "San Francisco, CA",
+    "website": "www.alexjohnson.dev",
+    "linkedin": "linkedin.com/in/alexjohnson",
+    "github": "github.com/alexjohnson"
+  },
+  "sections": [
+    {
+      "id": "header",
+      "title": "Name",
+      "variant": "left",
+      "showTitle": false,
+      "type": "header"
+    },
+    {
+      "id": "contact",
+      "title": "Contact",
+      "variant": "stacked",
+      "showTitle": false,
+      "type": "contact"
+    },
+    {
+      "id": "summary",
+      "title": "Summary",
+      "variant": "plain",
+      "showTitle": true,
+      "type": "text",
+      "body": "Results-driven software engineer with 5+ years of experience building scalable web applications and cloud infrastructure. Passionate about creating efficient solutions and mentoring junior developers. Proven track record of delivering high-quality software products in fast-paced environments."
+    },
+    {
+      "id": "experience",
+      "title": "Experience",
+      "variant": "standard",
+      "showTitle": true,
+      "type": "experience",
+      "items": [
+        {
+          "id": "experience-1",
+          "title": "Senior Software Engineer",
+          "subtitle": "TechCorp Solutions",
+          "location": "San Francisco, CA",
+          "dates": "March 2022 - Present",
+          "note": "",
+          "description": "",
+          "bullets": [
+            "Led development of microservices architecture serving 1M+ daily users",
+            "Mentored 3 junior developers and improved team code review process",
+            "Reduced API response times by 40% through database optimization",
+            "Implemented CI/CD pipelines reducing deployment time from 2 hours to 15 minutes"
+          ],
+          "tags": [],
+          "url": ""
+        },
+        {
+          "id": "experience-2",
+          "title": "Full Stack Developer",
+          "subtitle": "StartupXYZ",
+          "location": "San Francisco, CA",
+          "dates": "June 2020 - February 2022",
+          "note": "",
+          "description": "",
+          "bullets": [
+            "Built responsive web applications using React, Node.js, and PostgreSQL",
+            "Collaborated with product team to define technical requirements",
+            "Developed RESTful APIs serving mobile and web clients",
+            "Increased test coverage from 60% to 95% across all services"
+          ],
+          "tags": [],
+          "url": ""
+        },
+        {
+          "id": "experience-3",
+          "title": "Junior Developer",
+          "subtitle": "Digital Agency",
+          "location": "Oakland, CA",
+          "dates": "January 2019 - May 2020",
+          "note": "",
+          "description": "",
+          "bullets": [
+            "Created custom WordPress themes and plugins for client websites",
+            "Collaborated with design team to implement pixel-perfect interfaces",
+            "Optimized website performance resulting in 30% faster load times"
+          ],
+          "tags": [],
+          "url": ""
+        }
+      ]
+    },
+    {
+      "id": "projects",
+      "title": "Key Projects",
+      "variant": "standard",
+      "showTitle": true,
+      "type": "experience",
+      "items": [
+        {
+          "id": "projects-1",
+          "title": "E-commerce Platform",
+          "subtitle": "Personal Project",
+          "location": "",
+          "dates": "2023",
+          "note": "",
+          "description": "Full-stack e-commerce solution with React frontend and Node.js backend",
+          "bullets": [
+            "Processed $500K+ in transactions within first 6 months",
+            "Implemented real-time inventory management",
+            "Built admin dashboard with analytics and reporting"
+          ],
+          "tags": [
+            "React",
+            "Node.js",
+            "PostgreSQL",
+            "Stripe API"
+          ],
+          "url": "https://github.com/alexjohnson/ecommerce-platform"
+        },
+        {
+          "id": "projects-2",
+          "title": "Task Management API",
+          "subtitle": "Open Source",
+          "location": "",
+          "dates": "2022",
+          "note": "",
+          "description": "RESTful API for team collaboration and project management",
+          "bullets": [
+            "Supports 100+ concurrent users with sub-200ms response times",
+            "Comprehensive API documentation with Swagger",
+            "Deployed using Docker containers on AWS ECS"
+          ],
+          "tags": [
+            "Express.js",
+            "MongoDB",
+            "JWT",
+            "Docker"
+          ],
+          "url": "https://github.com/alexjohnson/task-api"
+        }
+      ]
+    },
+    {
+      "id": "education",
+      "title": "Education",
+      "variant": "stacked",
+      "showTitle": true,
+      "type": "education",
+      "items": [
+        {
+          "id": "education-1",
+          "title": "Bachelor of Science in Computer Science",
+          "subtitle": "University of California, Berkeley",
+          "location": "Berkeley, CA",
+          "dates": "August 2015 - May 2019",
+          "note": "GPA: 3.7/4.0",
+          "description": "",
+          "bullets": [
+            "Dean's List (Fall 2017, Spring 2018)",
+            "Relevant Coursework: Data Structures, Algorithms, Database Systems, Software Engineering"
+          ],
+          "tags": [],
+          "url": ""
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "title": "Skills",
+      "variant": "tags",
+      "showTitle": true,
+      "type": "skills",
+      "groups": [
+        {
+          "id": "skills-1",
+          "name": "Programming Languages",
+          "skills": [
+            "JavaScript",
+            "TypeScript",
+            "Python",
+            "Java",
+            "Go"
+          ]
+        },
+        {
+          "id": "skills-2",
+          "name": "Frontend Technologies",
+          "skills": [
+            "React",
+            "Vue.js",
+            "HTML5/CSS3",
+            "Tailwind CSS",
+            "Webpack"
+          ]
+        },
+        {
+          "id": "skills-3",
+          "name": "Backend Technologies",
+          "skills": [
+            "Node.js",
+            "Express.js",
+            "Django",
+            "Flask",
+            "RESTful APIs",
+            "GraphQL"
+          ]
+        },
+        {
+          "id": "skills-4",
+          "name": "Databases",
+          "skills": [
+            "PostgreSQL",
+            "MongoDB",
+            "Redis",
+            "MySQL",
+            "Elasticsearch"
+          ]
+        },
+        {
+          "id": "skills-5",
+          "name": "Cloud & DevOps",
+          "skills": [
+            "AWS",
+            "Docker",
+            "Kubernetes",
+            "Jenkins",
+            "Terraform",
+            "Git"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "certifications",
+      "title": "Certifications",
+      "variant": "stacked",
+      "showTitle": true,
+      "type": "experience",
+      "items": [
+        {
+          "id": "certifications-1",
+          "title": "AWS Solutions Architect Associate",
+          "subtitle": "Amazon Web Services",
+          "location": "",
+          "dates": "March 2023 - March 2026",
+          "note": "ID: AWS-SAA-123456789",
+          "description": "",
+          "bullets": [
+            "Validates expertise in designing distributed systems on AWS",
+            "Covers compute, networking, storage, and database AWS services"
+          ],
+          "tags": [],
+          "url": ""
+        },
+        {
+          "id": "certifications-2",
+          "title": "Certified Kubernetes Administrator (CKA)",
+          "subtitle": "Cloud Native Computing Foundation",
+          "location": "",
+          "dates": "August 2022 - August 2025",
+          "note": "ID: CKA-789456123",
+          "description": "",
+          "bullets": [
+            "Demonstrates skills in Kubernetes administration",
+            "Hands-on certification with performance-based tasks"
+          ],
+          "tags": [],
+          "url": ""
+        }
+      ]
+    },
+    {
+      "id": "volunteer",
+      "title": "Volunteer Experience",
+      "variant": "compact",
+      "showTitle": true,
+      "type": "experience",
+      "items": [
+        {
+          "id": "volunteer-1",
+          "title": "Volunteer Developer",
+          "subtitle": "Code for America",
+          "location": "San Francisco, CA",
+          "dates": "January 2021 - Present",
+          "note": "",
+          "description": "Contribute to open-source projects that help government services work better for everyone",
+          "bullets": [
+            "Built accessibility features for voter information website",
+            "Mentored new volunteers in web development best practices"
+          ],
+          "tags": [],
+          "url": ""
+        },
+        {
+          "id": "volunteer-2",
+          "title": "Workshop Instructor",
+          "subtitle": "Girls Who Code",
+          "location": "San Francisco, CA",
+          "dates": "September 2020 - December 2022",
+          "note": "",
+          "description": "Taught coding fundamentals to high school students",
+          "bullets": [
+            "Led weekly Python and web development workshops",
+            "Helped 15+ students complete their first coding projects"
+          ],
+          "tags": [],
+          "url": ""
+        }
+      ]
+    },
+    {
+      "id": "publications",
+      "title": "Speaking & Writing",
+      "variant": "compact",
+      "showTitle": true,
+      "type": "experience",
+      "items": [
+        {
+          "id": "publications-1",
+          "title": "Microservices Architecture Patterns for Scalable Web Applications",
+          "subtitle": "Tech Blog",
+          "location": "",
+          "dates": "September 2023",
+          "note": "",
+          "description": "",
+          "bullets": [
+            "Technical deep-dive into microservices design patterns",
+            "Read by 10,000+ developers, featured in weekly newsletter"
+          ],
+          "tags": [],
+          "url": "https://techblog.com/microservices-patterns"
+        },
+        {
+          "id": "publications-2",
+          "title": "Building Resilient APIs with Node.js",
+          "subtitle": "Bay Area JavaScript Meetup",
+          "location": "",
+          "dates": "June 2023",
+          "note": "",
+          "description": "",
+          "bullets": [
+            "Presented to 200+ developers on API design best practices",
+            "Covered error handling, rate limiting, and monitoring strategies"
+          ],
+          "tags": [],
+          "url": ""
+        }
+      ]
+    },
+    {
+      "id": "awards",
+      "title": "Awards",
+      "variant": "stacked",
+      "showTitle": true,
+      "type": "experience",
+      "items": [
+        {
+          "id": "awards-1",
+          "title": "Employee of the Quarter",
+          "subtitle": "TechCorp Solutions",
+          "location": "",
+          "dates": "Q2 2023",
+          "note": "",
+          "description": "Recognized for outstanding performance in leading the API optimization project and delivering 40% performance improvement ahead of schedule",
+          "bullets": [],
+          "tags": [],
+          "url": ""
+        },
+        {
+          "id": "awards-2",
+          "title": "Best Hack for Social Good",
+          "subtitle": "SF Hackathon 2022",
+          "location": "",
+          "dates": "October 2022",
+          "note": "",
+          "description": "Won first place for developing an accessibility-focused mobile application built in 48 hours with team of 4 developers",
+          "bullets": [],
+          "tags": [],
+          "url": ""
+        }
+      ]
+    },
+    {
+      "id": "languages",
+      "title": "Languages",
+      "variant": "bullets",
+      "showTitle": true,
+      "type": "list",
+      "items": [
+        "English (Native)",
+        "Spanish (Conversational)",
+        "French (Basic)"
+      ]
+    },
+    {
+      "id": "references",
+      "title": "References",
+      "variant": "grid",
+      "showTitle": true,
+      "type": "references",
+      "items": [
+        {
+          "id": "references-1",
+          "name": "Sarah Martinez",
+          "role": "Engineering Manager",
+          "organization": "TechCorp Solutions",
+          "email": "sarah.martinez@techcorp.com",
+          "phone": "(555) 987-6543",
+          "note": "Direct Manager. Can speak to technical leadership and project management skills. Worked together for 2+ years on multiple high-impact projects"
+        },
+        {
+          "id": "references-2",
+          "name": "Michael Chen",
+          "role": "Senior Technical Lead",
+          "organization": "StartupXYZ",
+          "email": "michael.chen@startupxyz.com",
+          "phone": "(555) 456-7890",
+          "note": "Former Colleague. Can provide insight into technical skills and team collaboration. Collaborated on full-stack development projects for 18 months"
+        }
+      ],
+      "emptyText": "Available upon request."
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-1",
+      "footer": "none",
+      "rows": [
+        {
+          "id": "row-1",
+          "columns": [
+            [
+              {
+                "id": "p1",
+                "sectionId": "header"
+              }
+            ]
+          ],
+          "split": 32,
+          "shade": "none"
+        },
+        {
+          "id": "row-2",
+          "columns": [
+            [
+              {
+                "id": "p2",
+                "sectionId": "contact"
+              },
+              {
+                "id": "p3",
+                "sectionId": "education"
+              },
+              {
+                "id": "p4",
+                "sectionId": "skills"
+              },
+              {
+                "id": "p5",
+                "sectionId": "languages"
+              }
+            ],
+            [
+              {
+                "id": "p6",
+                "sectionId": "summary"
+              },
+              {
+                "id": "p7",
+                "sectionId": "experience"
+              }
+            ]
+          ],
+          "split": 32,
+          "shade": "left"
+        }
+      ]
+    },
+    {
+      "id": "page-2",
+      "footer": "none",
+      "rows": [
+        {
+          "id": "row-3",
+          "columns": [
+            [
+              {
+                "id": "p8",
+                "sectionId": "certifications"
+              },
+              {
+                "id": "p9",
+                "sectionId": "awards"
+              }
+            ],
+            [
+              {
+                "id": "p10",
+                "sectionId": "projects"
+              },
+              {
+                "id": "p11",
+                "sectionId": "volunteer"
+              },
+              {
+                "id": "p12",
+                "sectionId": "publications"
+              }
+            ]
+          ],
+          "split": 32,
+          "shade": "left"
+        },
+        {
+          "id": "row-4",
+          "columns": [
+            [
+              {
+                "id": "p13",
+                "sectionId": "references"
+              }
+            ]
+          ],
+          "split": 32,
+          "shade": "none"
+        }
+      ]
+    }
+  ],
+  "theme": {
+    "template": "sidebar",
+    "font": "Inter",
+    "headingFont": "Inter",
+    "fontSize": 9.5,
+    "lineHeight": 1.4,
+    "spacing": 1,
+    "headingStyle": "underline",
+    "accent": "#2c5aa0",
+    "text": "#1f2937",
+    "muted": "#6b7280",
+    "shade": "#f1f5f9",
+    "shadeText": "#1f2937",
+    "shadeAccent": "#2c5aa0",
+    "margin": 1.2,
+    "columnGap": 0.7
+  }
+}
