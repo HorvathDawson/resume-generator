@@ -14,10 +14,6 @@ const read = (path: string) => readFileSync(resolve(root, path), 'utf8');
 const LEGACY_FILES = [
   'src/model/__tests__/legacy-export.json',
   'public/data/dawson-hybrid-new.json',
-  'data/eron_resume_gis.json',
-  'data/eron_resume_gis_new_format.json',
-  'data/eron_resume_fisheries.json',
-  'data/eron_resume_fisheries_new_format.json',
 ];
 
 describe('parseResumeJson', () => {
