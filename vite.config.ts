@@ -18,10 +18,11 @@ function siteUrls(): Plugin {
 // https://vitejs.dev/config/
 export default defineConfig({
   // Relative asset paths so the build works at dawsonhorvath.com/resume-generator/
-  // (GitHub Pages serves the docs/ folder) and anywhere else it's copied.
+  // and anywhere else it's copied. Nested under resume-generator/ because the
+  // Cloudflare Worker serves dist/ by path (see wrangler.jsonc).
   base: './',
   build: {
-    outDir: 'docs',
+    outDir: 'dist/resume-generator',
     emptyOutDir: true,
   },
   define: {

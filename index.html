@@ -44,6 +44,22 @@
       }
     </script>
 
+    <script>
+      // Embedded (?mode=embed) the page stays transparent and skips the intro
+      // text below, so the host page shows through until the resume renders.
+      if (new URLSearchParams(location.search).get('mode') === 'embed') {
+        document.documentElement.classList.add('rg-embedded');
+      }
+    </script>
+    <style>
+      /* One page per frame height, snapping page to page; no scrollbar. */
+      .rg-embedded { overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; }
+      .rg-embedded::-webkit-scrollbar { display: none; }
+      .rg-embedded body { margin: 0; }
+      .rg-embedded #root > main { display: none; }
+      .rg-embedded .rg-embed { cursor: pointer; }
+      .rg-embedded .rg-page { scroll-snap-align: start; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
