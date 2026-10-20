@@ -12,10 +12,11 @@ interface Props {
   doc: ResumeDocument;
   overflow: Record<string, number>;
   selectedId: string | null;
-  onSelectSection: (id: string) => void;
+  /** Leave out for a read-only preview. */
+  onSelectSection?: (id: string) => void;
 }
 
-/** Live, zoomable preview. Click a section to edit it. */
+/** Live, zoomable preview. Click a section to edit it (unless read-only). */
 export function Preview({ doc, overflow, selectedId, onSelectSection }: Props) {
   const scroller = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(0.7);
@@ -56,8 +57,9 @@ export function Preview({ doc, overflow, selectedId, onSelectSection }: Props) {
       </div>
       <div
         ref={scroller}
-        className="preview-scroll"
+        className={`preview-scroll${onSelectSection ? ' is-editable' : ''}`}
         onClick={(e) => {
+          if (!onSelectSection) return;
           const target = (e.target as HTMLElement).closest<HTMLElement>('[data-section-id]');
           if (target?.dataset.sectionId) {
             e.preventDefault();

@@ -140,6 +140,22 @@ function EntryView({ entry, variant }: { entry: Entry; variant: string }) {
     );
   }
 
+  if (variant === 'dates-left') {
+    return (
+      <div className="rg-entry" data-item>
+        <div className="rg-entry-when">
+          {dates && <span className="rg-entry-dates">{dates}</span>}
+          {loc && <span className="rg-entry-loc">{loc}</span>}
+        </div>
+        <div className="rg-entry-main">
+          <EntryTitle entry={entry} />
+          {sub && <div className="rg-entry-org">{sub}</div>}
+          <EntryBody entry={entry} />
+        </div>
+      </div>
+    );
+  }
+
   if (variant === 'stacked') {
     return (
       <div className="rg-entry" data-item>
@@ -151,7 +167,7 @@ function EntryView({ entry, variant }: { entry: Entry; variant: string }) {
     );
   }
 
-  // standard and timeline share markup; timeline differs only in CSS.
+  // standard, timeline and cards share markup; they differ only in CSS.
   return (
     <div className="rg-entry" data-item>
       <div className="rg-entry-row">
@@ -181,6 +197,18 @@ function Entries({ section }: { section: EntriesSection }) {
 
 function Skills({ section }: { section: SkillsSection }) {
   const groups = section.groups.filter((g) => g.name.trim() || clean(g.skills).length);
+  if (section.variant === 'dots') {
+    return (
+      <div className="rg-skill-groups">
+        {groups.map((g) => (
+          <div key={g.id} className="rg-skill-group" data-item>
+            {g.name.trim() && <h3 className="rg-skill-name">{g.name}</h3>}
+            <p className="rg-skill-list">{clean(g.skills).join('  ·  ')}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
   if (section.variant === 'lines' || section.variant === 'grid') {
     return (
       <div className="rg-skill-groups">
@@ -257,8 +285,9 @@ function SectionBody({ section, profile }: { section: Section; profile: Profile 
     case 'list': {
       const items = clean(section.items);
       if (section.variant === 'inline') return <p className="rg-paragraph rg-inline-list">{items.join('  ·  ')}</p>;
+      if (section.variant === 'tags') return <Tags items={items} />;
       return (
-        <ul className={section.variant === 'plain' ? 'rg-plain-list' : 'rg-bullets'}>
+        <ul className={section.variant === 'plain' ? 'rg-plain-list' : section.variant === 'columns' ? 'rg-bullets rg-bullets--columns' : 'rg-bullets'}>
           {items.map((t, i) => (
             <li key={i} data-item>
               {t}

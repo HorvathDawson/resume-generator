@@ -6,8 +6,8 @@ A browser app for building clean, printable A4 resumes. Live at
 ## Using it
 
 - **Content**: your details plus sections (experience, education, skills, lists, references, free text). Click any section in the preview to jump to it.
-- **Layout**: pages are made of rows; a row has one column or two. Move sections between columns and pages, split a long section across pages, or let **Move it to the next page** fix any page that overflows.
-- **Design**: pick a template (Sidebar, Classic, Minimal, Banner, Slate), then tune fonts, size, spacing, heading style and colors. Templates change the look only; "Use its layout too" rearranges sections as well.
+- **Layout**: each page is drawn as a small sheet. Drag sections between columns, rows and pages; pick a row shape (one column, narrow left, even, narrow right); drag the line between two columns to set their widths. The ⋯ menus hold the rest: sidebar color, split a long section across pages, show only some items. **Move it to the next page** fixes any page that overflows.
+- **Design**: pick one of ten templates (some put the name beside the summary, some use a banner, some add a footer), then tune fonts, size, spacing, heading style and colors. Templates rearrange sections too, unless you tick "Keep my current layout".
 
 Everything autosaves in your browser. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
 
@@ -15,9 +15,22 @@ Everything autosaves in your browser. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
 
 | | |
 |---|---|
-| **PDF** | Download → PDF opens the print dialog. Choose *Save as PDF*, margins *None*, and turn on *Background graphics*. Text stays selectable and links work. |
+| **PDF** | Download → PDF saves a PDF straight away. Text stays selectable and links work. |
+| **Print to PDF** | The backup, with the sharpest text: opens the print dialog. Choose *Save as PDF*, margins *None*, and turn on *Background graphics*. |
 | **HTML** | A single self-contained web page you can host anywhere. |
 | **JSON** | The editable source. Open it again with File → Open (or drag it onto the window). |
+
+### Linking to a resume
+
+Add `?resume=` to the app's address to open a resume straight away, for example from a personal website:
+
+| Link | Opens |
+|---|---|
+| `…/resume-generator/?resume=dawson` | `public/resumes/dawson.json` in the editor |
+| `…/resume-generator/?resume=dawson&mode=view` | the same resume read-only, with Download and "Edit in the builder" buttons |
+| `…/resume-generator/?resume=https://example.com/me.json` | a resume from another site (that site must allow cross-origin requests) |
+
+To publish a resume, save it as JSON (File → Save as JSON) into `public/resumes/<name>.json` and rebuild. Opening a link never silently replaces a visitor's own work: if they have a different resume saved in their browser, they're asked first.
 
 Files saved by the previous version of the app (and the files in `data/`) still open; they're converted to the current format on import.
 
@@ -30,6 +43,8 @@ npm test         # import/export and layout tests
 npm run lint
 npm run build    # writes the GitHub Pages build to docs/
 ```
+
+The page's canonical URL and the "back to site" link default to `https://dawsonhorvath.com/resume-generator/` and `https://dawsonhorvath.com/`. Set `RG_SITE_URL` and `RG_HOME_URL` when building to change them.
 
 ## How it's put together
 

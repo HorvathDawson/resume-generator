@@ -207,6 +207,27 @@
   text-align: center;
 }
 
+.rg-header--rule .rg-name {
+  padding-bottom: 0.18cm;
+  border-bottom: 0.12cm solid var(--rg-accent);
+  display: inline-block;
+}
+
+.rg-header--caps .rg-name {
+  font-size: 2.2em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rg-text);
+}
+
+.rg-header--caps .rg-headline {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95em;
+  color: var(--rg-accent);
+}
+
 .rg-header--banner {
   --rg-muted: rgba(255, 255, 255, 0.85);
   background: var(--rg-accent);
@@ -272,6 +293,36 @@
   gap: 0.12cm;
 }
 
+/* Two-column grid of contact details. */
+.rg-contact--grid .rg-contact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.1cm 0.4cm;
+}
+
+.rg-col .rg-contact--grid .rg-contact-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rg-row--full .rg-contact--grid .rg-contact-list,
+.rg-row--split .rg-col:only-child .rg-contact--grid .rg-contact-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rg-contact--pills .rg-contact-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.12cm;
+}
+
+.rg-contact--pills .rg-contact-list li {
+  gap: 0.12cm;
+  padding: 0.06cm 0.22cm;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rg-accent) 10%, transparent);
+  font-size: 0.92em;
+}
+
 /* Contact details directly under a header sit closer to it. */
 .rg-header + .rg-contact {
   margin-top: calc(0.25cm * var(--rg-space));
@@ -294,6 +345,23 @@
   border-left: 0.08cm solid color-mix(in srgb, var(--rg-accent) 45%, transparent);
 }
 
+.rg-text--lead .rg-paragraph {
+  font-size: 1.1em;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--rg-text) 85%, var(--rg-muted));
+}
+
+.rg-text--callout > :not(.rg-heading) {
+  padding: 0.25cm 0.3cm;
+  border-radius: 0.12cm;
+  background: color-mix(in srgb, var(--rg-accent) 8%, transparent);
+}
+
+.rg-text--callout > .rg-paragraph + .rg-paragraph {
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .rg-muted {
   color: var(--rg-muted);
 }
@@ -314,6 +382,15 @@
 
 .rg-bullets li::marker {
   color: var(--rg-accent);
+}
+
+.rg-bullets--columns {
+  columns: 2;
+  column-gap: var(--rg-gap);
+}
+
+.rg-bullets--columns li {
+  break-inside: avoid;
 }
 
 .rg-plain-list {
@@ -423,6 +500,47 @@
   font-weight: 400;
 }
 
+/* Dates in left margin: a fixed column for when and where. */
+.rg-experience--dates-left .rg-entry,
+.rg-education--dates-left .rg-entry {
+  display: grid;
+  grid-template-columns: 2.9cm minmax(0, 1fr);
+  column-gap: 0.4cm;
+}
+
+.rg-entry-when {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.04cm;
+}
+
+.rg-entry-when .rg-entry-dates {
+  white-space: normal;
+  color: var(--rg-accent);
+  font-weight: 600;
+}
+
+.rg-col .rg-experience--dates-left .rg-entry,
+.rg-col .rg-education--dates-left .rg-entry {
+  grid-template-columns: 2.4cm minmax(0, 1fr);
+}
+
+/* Cards: each entry in a softly tinted box. */
+.rg-experience--cards .rg-entry,
+.rg-education--cards .rg-entry,
+.rg-references--cards .rg-reference {
+  padding: 0.22cm 0.3cm;
+  border-radius: 0.12cm;
+  background: color-mix(in srgb, var(--rg-accent) 6%, transparent);
+  border-left: 0.07cm solid var(--rg-accent);
+}
+
+.rg-col--shaded .rg-experience--cards .rg-entry,
+.rg-col--shaded .rg-education--cards .rg-entry,
+.rg-col--shaded .rg-references--cards .rg-reference {
+  background: rgba(255, 255, 255, 0.55);
+}
+
 /* Timeline: a rule with a dot beside each entry. */
 .rg-experience--timeline .rg-entries,
 .rg-education--timeline .rg-entries {
@@ -467,6 +585,21 @@
   margin-bottom: 0.08cm;
 }
 
+.rg-skills--outline .rg-tags li,
+.rg-col--shaded .rg-skills--outline .rg-tags li {
+  background: transparent;
+  border: 0.03cm solid color-mix(in srgb, var(--rg-accent) 45%, transparent);
+  color: var(--rg-text);
+}
+
+.rg-skills--dots .rg-skill-name {
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rg-accent);
+  margin-bottom: 0.04cm;
+}
+
 .rg-skill-line + .rg-skill-line {
   margin-top: 0.08cm;
 }
@@ -506,7 +639,8 @@
   gap: var(--rg-item-gap);
 }
 
-.rg-references--grid .rg-reference-list {
+.rg-references--grid .rg-reference-list,
+.rg-references--cards .rg-reference-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(5.5cm, 1fr));
 }

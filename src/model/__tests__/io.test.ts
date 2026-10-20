@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ImportError, fileStem, parseResumeJson, serializeDocument } from '../io';
+import { ImportError, fileStem, parseResumeJson, serializeDocument, sharedLinkFromUrl } from '../io';
 import { normalizeDocument } from '../normalize';
 import { blankDocument, itemCount } from '../defaults';
 import { splitPlacement, pagesShowing } from '../edit';
@@ -92,12 +92,33 @@ describe('layout helpers', () => {
     const doc = arrangeLayout(normalizeDocument(sample), id);
     expect(doc.theme.template).toBe(id);
     for (const s of doc.sections) expect(pagesShowing(doc, s.id)).toEqual([1]);
-    expect(applyTemplate(doc, id).pages).toEqual(doc.pages);
+    expect(applyTemplate(doc, id, false).pages).toEqual(doc.pages);
   });
 
   it('builds file names from the person’s name', () => {
     const doc = blankDocument();
     doc.profile.name = 'Zoë O’Brien';
     expect(fileStem(doc)).toBe('zoe-o-brien-resume');
+  });
+});
+
+describe('sharedLinkFromUrl', () => {
+  it('maps a name to a resume served with the app', () => {
+    expect(sharedLinkFromUrl('?resume=dawson')).toEqual({ url: './resumes/dawson.json', view: false });
+    expect(sharedLinkFromUrl('?resume=dawson&mode=view')).toEqual({ url: './resumes/dawson.json', view: true });
+  });
+
+  it('accepts a full URL and rejects anything else', () => {
+    expect(sharedLinkFromUrl('?resume=https://example.com/me.json')?.url).toBe('https://example.com/me.json');
+    expect(sharedLinkFromUrl('?resume=../secret')).toBeNull();
+    expect(sharedLinkFromUrl('?resume=javascript:alert(1)')).toBeNull();
+    expect(sharedLinkFromUrl('')).toBeNull();
+  });
+
+  it('opens the bundled resume file', () => {
+    const text = read('public/resumes/dawson.json');
+    const { doc, migrated } = parseResumeJson(text);
+    expect(migrated).toBe(false);
+    expect(doc.profile.name).toBe('Dawson Horvath');
   });
 });

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Download, FileCode, FileJson, FilePlus, FileText, FolderOpen, Printer, Redo2, Undo2 } from 'lucide-react';
+import { ArrowUpRight, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderOpen, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
 import type { ResumeDocument } from './model/types';
 import { blankDocument } from './model/defaults';
-import { ImportError, downloadFile, fileStem, loadFromStorage, parseResumeJson, saveToStorage, serializeDocument } from './model/io';
+import { ImportError, clearSharedLink, downloadFile, fetchResume, fileStem, loadFromStorage, parseResumeJson, saveToStorage, serializeDocument, sharedLinkFromUrl } from './model/io';
 import { normalizeDocument } from './model/normalize';
 import { fitPages, measurePages } from './model/autofit';
 import { googleFontsUrl } from './model/variants';
@@ -21,6 +21,15 @@ import './App.css';
 type Tab = 'content' | 'layout' | 'design';
 
 const sampleDocument = () => normalizeDocument(sample);
+const HOME_LABEL = __HOME_URL__.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+/** A resume kept in this browser that the visitor would lose if it were replaced. */
+function ownStoredResume(other: ResumeDocument): ResumeDocument | null {
+  const local = loadFromStorage();
+  if (!local) return null;
+  const text = serializeDocument(local);
+  return text === serializeDocument(other) || text === serializeDocument(sampleDocument()) ? null : local;
+}
 const PRINT_TIP_KEY = 'resume-generator:hide-print-tip';
 
 interface PendingOpen {
@@ -56,6 +65,11 @@ export default function App() {
   const overflow = usePageOverflow(printRoot, doc);
   // Rounds of "fix overflow" left to run; each round re-measures the result of the last.
   const [fitRounds, setFitRounds] = useState(0);
+  // A resume opened from a link (?resume=...), and whether it is shown without the editor.
+  const [shared] = useState(() => sharedLinkFromUrl(window.location.search));
+  const [loadingShared, setLoadingShared] = useState(!!shared);
+  const [viewOnly, setViewOnly] = useState(!!shared?.view);
+  const [confirmEdit, setConfirmEdit] = useState<ResumeDocument | null>(null);
 
   const notify = useCallback((message: string, undoable = false, action?: ToastAction) => {
     setToast({ id: Date.now(), message, undoable, action, tone: 'info' });
@@ -70,11 +84,57 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // Autosave to this browser shortly after each change.
+  // Autosave to this browser shortly after each change. A resume opened just to
+  // view isn't saved, so it can't replace the visitor's own.
   useEffect(() => {
+    if (viewOnly || loadingShared) return;
     const timer = setTimeout(() => setStored({ doc, ok: saveToStorage(doc) }), 400);
     return () => clearTimeout(timer);
-  }, [doc]);
+  }, [doc, viewOnly, loadingShared]);
+
+  useEffect(() => {
+    if (!shared) return;
+    let cancelled = false;
+    fetchResume(shared.url)
+      .then((parsed) => {
+        if (cancelled) return;
+        if (shared.view) {
+          replace(parsed.doc);
+          return;
+        }
+        clearSharedLink();
+        if (ownStoredResume(parsed.doc)) setPending({ ...parsed, fileName: 'the linked resume' });
+        else replace(parsed.doc);
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        clearSharedLink();
+        setViewOnly(false);
+        showError(err instanceof ImportError ? err.message : "Couldn't open the linked resume.");
+      })
+      .finally(() => !cancelled && setLoadingShared(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [shared, replace, showError]);
+
+  // Name the browser tab after the resume being viewed.
+  useEffect(() => {
+    if (!viewOnly || loadingShared) return;
+    const previous = document.title;
+    document.title = doc.profile.name ? `${doc.profile.name} – Resume` : doc.title;
+    return () => {
+      document.title = previous;
+    };
+  }, [viewOnly, loadingShared, doc.profile.name, doc.title]);
+
+  const startEditing = (force = false) => {
+    const own = ownStoredResume(doc);
+    if (own && !force) return setConfirmEdit(own);
+    setConfirmEdit(null);
+    clearSharedLink();
+    setViewOnly(false);
+  };
 
   // Load the fonts the resume uses.
   const fontsUrl = googleFontsUrl([doc.theme.font, doc.theme.headingFont]);
@@ -82,6 +142,8 @@ export default function App() {
     if (!fontsUrl) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
+    // Lets the PDF export read and embed the font files.
+    link.crossOrigin = 'anonymous';
     link.href = fontsUrl;
     document.head.appendChild(link);
     return () => link.remove();
@@ -162,6 +224,29 @@ export default function App() {
     else setPrintTip(true);
   }, [overflow, print]);
 
+  const [pdfProgress, setPdfProgress] = useState<string | null>(null);
+  const savePdf = async () => {
+    const root = printRoot.current;
+    if (!root || pdfProgress) return;
+    setPdfProgress('Preparing PDF…');
+    try {
+      const { buildPdf } = await import('./export/exportPdf');
+      const blob = await buildPdf(root, doc.profile.name ? `${doc.profile.name} – Resume` : doc.title, (page, total) =>
+        setPdfProgress(`Making PDF: page ${page} of ${total}…`),
+      );
+      downloadFile(`${fileStem(doc)}.pdf`, blob, 'application/pdf');
+      notify(
+        overflowPages.length
+          ? `Downloaded the PDF. Page ${overflowPages.join(', ')} has content cut off; fix it on the Layout tab.`
+          : 'Downloaded the PDF. For the sharpest text, use Download → Print to PDF.',
+      );
+    } catch {
+      showError("Couldn't make the PDF here. Use Download → Print to PDF instead.");
+    } finally {
+      setPdfProgress(null);
+    }
+  };
+
   const saveHtml = async () => {
     // Loaded on demand: it pulls in React's server renderer.
     const { buildStandaloneHtml } = await import('./export/exportHtml');
@@ -175,6 +260,13 @@ export default function App() {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey)) return;
       const key = e.key.toLowerCase();
+      if (viewOnly) {
+        if (key === 'p') {
+          e.preventDefault();
+          requestPdf();
+        }
+        return;
+      }
       if (key === 'z' && !e.shiftKey) {
         e.preventDefault();
         undo();
@@ -194,7 +286,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [undo, redo, saveJson, requestPdf]);
+  }, [undo, redo, saveJson, requestPdf, viewOnly]);
 
   const editSection = (id: string) => {
     setTab('content');
@@ -229,56 +321,82 @@ export default function App() {
             <FileText size={18} />
             <span>Resume Builder</span>
           </div>
-          <input
-            className="title-input"
-            value={doc.title}
-            aria-label="Resume name"
-            onChange={(e) => update((d) => void (d.title = e.target.value), 'title')}
-            onBlur={() => !doc.title.trim() && update((d) => void (d.title = 'My resume'))}
-          />
-          <div className="topbar-group">
-            <button type="button" className="icon-btn" title="Undo (Ctrl+Z)" aria-label="Undo" disabled={!canUndo} onClick={undo}>
-              <Undo2 size={17} />
-            </button>
-            <button type="button" className="icon-btn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled={!canRedo} onClick={redo}>
-              <Redo2 size={17} />
-            </button>
-          </div>
-          <span className={`save-status save-status--${saved}`} title="Your work is kept in this browser. Use Save JSON to keep a file.">
-            {saved === 'failed' ? 'Not saved in browser' : saved === 'saving' ? 'Saving…' : 'Saved in browser'}
-          </span>
+          <a className="home-link" href={__HOME_URL__} title={`Back to ${HOME_LABEL}`}>
+            {HOME_LABEL}
+            <ArrowUpRight size={13} />
+          </a>
+          {viewOnly ? (
+            <span className="view-title">{doc.profile.name || doc.title}</span>
+          ) : (
+            <>
+              <input
+                className="title-input"
+                value={doc.title}
+                aria-label="Resume name"
+                onChange={(e) => update((d) => void (d.title = e.target.value), 'title')}
+                onBlur={() => !doc.title.trim() && update((d) => void (d.title = 'My resume'))}
+              />
+              <div className="topbar-group">
+                <button type="button" className="icon-btn" title="Undo (Ctrl+Z)" aria-label="Undo" disabled={!canUndo} onClick={undo}>
+                  <Undo2 size={17} />
+                </button>
+                <button type="button" className="icon-btn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled={!canRedo} onClick={redo}>
+                  <Redo2 size={17} />
+                </button>
+              </div>
+              <span className={`save-status save-status--${saved}`} title="Your work is kept in this browser. Use Save JSON to keep a file.">
+                {saved === 'failed' ? 'Not saved in browser' : saved === 'saving' ? 'Saving…' : 'Saved in browser'}
+              </span>
+            </>
+          )}
           <div className="topbar-group topbar-right">
-            <Menu label="File">
-              <MenuItem icon={<FilePlus size={16} />} onClick={() => startNew('blank')}>New blank resume</MenuItem>
-              <MenuItem icon={<FileText size={16} />} onClick={() => startNew('sample')}>Load sample resume</MenuItem>
-              <MenuItem icon={<FolderOpen size={16} />} hint="Ctrl+O" onClick={() => fileInput.current?.click()}>Open JSON file…</MenuItem>
-              <MenuItem icon={<FileJson size={16} />} hint="Ctrl+S" onClick={saveJson}>Save as JSON</MenuItem>
-            </Menu>
-            <Menu label="Download" primary icon={<Download size={16} />}>
-              <MenuItem icon={<Printer size={16} />} hint="Ctrl+P" onClick={requestPdf}>PDF</MenuItem>
+            {!viewOnly && (
+              <Menu label="File">
+                <MenuItem icon={<FilePlus size={16} />} onClick={() => startNew('blank')}>New blank resume</MenuItem>
+                <MenuItem icon={<FileText size={16} />} onClick={() => startNew('sample')}>Load sample resume</MenuItem>
+                <MenuItem icon={<FolderOpen size={16} />} hint="Ctrl+O" onClick={() => fileInput.current?.click()}>Open JSON file…</MenuItem>
+                <MenuItem icon={<FileJson size={16} />} hint="Ctrl+S" onClick={saveJson}>Save as JSON</MenuItem>
+              </Menu>
+            )}
+            <Menu label="Download" primary={!viewOnly} icon={<Download size={16} />}>
+              <MenuItem icon={<FileDown size={16} />} onClick={savePdf}>PDF</MenuItem>
+              <MenuItem icon={<Printer size={16} />} hint="Ctrl+P" onClick={requestPdf}>Print to PDF (sharpest text)</MenuItem>
               <MenuItem icon={<FileCode size={16} />} onClick={saveHtml}>HTML web page</MenuItem>
               <MenuItem icon={<FileJson size={16} />} onClick={saveJson}>JSON (to edit later)</MenuItem>
             </Menu>
+            {viewOnly && (
+              <button type="button" className="btn btn--primary" onClick={() => startEditing()}>
+                <Pencil size={15} /> Edit in the builder
+              </button>
+            )}
           </div>
         </header>
 
-        <main className="workspace">
-          <aside className="editor">
-            <nav className="tabs" role="tablist">
-              {(['content', 'layout', 'design'] as Tab[]).map((t) => (
-                <button key={t} type="button" role="tab" aria-selected={tab === t} className={tab === t ? 'is-active' : ''} onClick={() => setTab(t)}>
-                  {t === 'content' ? 'Content' : t === 'layout' ? 'Layout' : 'Design'}
-                  {t === 'layout' && overflowPages.length > 0 && <span className="tab-dot" title="A page has content cut off" />}
-                </button>
-              ))}
-            </nav>
-            <div className="editor-scroll">
-              {tab === 'content' && <ContentPanel doc={doc} update={update} openId={openId} setOpenId={setOpenId} notify={notify} />}
-              {tab === 'layout' && <LayoutPanel doc={doc} update={update} overflow={overflow} onEditSection={editSection} onAutoFit={autoFit} notify={notify} />}
-              {tab === 'design' && <DesignPanel doc={doc} update={update} onAutoFit={autoFit} notify={notify} />}
-            </div>
-          </aside>
-          <Preview doc={doc} overflow={overflow} selectedId={tab === 'content' ? openId : null} onSelectSection={editSection} />
+        <main className={`workspace${viewOnly ? ' workspace--view' : ''}`}>
+          {loadingShared && <div className="loading-cover">Opening resume…</div>}
+          {!viewOnly && (
+            <aside className="editor">
+              <nav className="tabs" role="tablist">
+                {(['content', 'layout', 'design'] as Tab[]).map((t) => (
+                  <button key={t} type="button" role="tab" aria-selected={tab === t} className={tab === t ? 'is-active' : ''} onClick={() => setTab(t)}>
+                    {t === 'content' ? 'Content' : t === 'layout' ? 'Layout' : 'Design'}
+                    {t === 'layout' && overflowPages.length > 0 && <span className="tab-dot" title="A page has content cut off" />}
+                  </button>
+                ))}
+              </nav>
+              <div className="editor-scroll">
+                {tab === 'content' && <ContentPanel doc={doc} update={update} openId={openId} setOpenId={setOpenId} notify={notify} />}
+                {tab === 'layout' && <LayoutPanel doc={doc} update={update} overflow={overflow} onEditSection={editSection} onAutoFit={autoFit} notify={notify} />}
+                {tab === 'design' && <DesignPanel doc={doc} update={update} onAutoFit={autoFit} notify={notify} />}
+              </div>
+            </aside>
+          )}
+          <Preview
+            doc={doc}
+            overflow={viewOnly ? {} : overflow}
+            selectedId={!viewOnly && tab === 'content' ? openId : null}
+            onSelectSection={viewOnly ? undefined : editSection}
+          />
         </main>
 
         <input
@@ -315,6 +433,27 @@ export default function App() {
             {pending.migrated && (
               <p className="hint">This file is from an older version of Resume Builder. It’s been converted; check the layout and save a new copy.</p>
             )}
+          </Dialog>
+        )}
+
+        {confirmEdit && (
+          <Dialog
+            title="Replace the resume saved in this browser?"
+            onClose={() => setConfirmEdit(null)}
+            actions={
+              <>
+                <button type="button" className="btn btn--ghost" onClick={() => setConfirmEdit(null)}>Cancel</button>
+                <button type="button" className="btn btn--ghost" onClick={() => downloadFile(`${fileStem(confirmEdit)}.json`, serializeDocument(confirmEdit), 'application/json')}>
+                  Download mine first
+                </button>
+                <button type="button" className="btn btn--primary" autoFocus onClick={() => startEditing(true)}>Edit this one</button>
+              </>
+            }
+          >
+            <p>
+              You already have a resume{confirmEdit.profile.name && <> for <strong>{confirmEdit.profile.name}</strong></>} saved in this browser. Editing this one replaces it.
+              Download yours first if you want to keep it.
+            </p>
           </Dialog>
         )}
 
@@ -370,7 +509,13 @@ export default function App() {
           </Dialog>
         )}
 
-        {toast && (
+        {pdfProgress && (
+          <div className="toast" role="status">
+            <span>{pdfProgress}</span>
+          </div>
+        )}
+
+        {toast && !pdfProgress && (
           <div key={toast.id} className={`toast toast--${toast.tone}`} role="status">
             <span>{toast.message}</span>
             {toast.action && (

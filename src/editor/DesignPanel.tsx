@@ -1,18 +1,18 @@
+import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { HeadingStyle, ResumeDocument, Theme } from '../model/types';
 import { TEMPLATES, applyTemplate, arrangeLayout } from '../model/templates';
 import { FONTS, HEADING_STYLES } from '../model/variants';
 import type { Updater } from '../hooks/useHistory';
-import type { ToastAction } from '../App';
 import { PageView } from '../resume/ResumeView';
 import { themeVars } from '../resume/themeVars';
-import { ColorField, SelectField, SliderField } from './fields';
+import { Checkbox, ColorField, SelectField, SliderField } from './fields';
 
 interface Props {
   doc: ResumeDocument;
   update: (fn: Updater, key?: string) => void;
   onAutoFit: () => void;
-  notify: (message: string, undoable?: boolean, action?: ToastAction) => void;
+  notify: (message: string, undoable?: boolean) => void;
 }
 
 const ACCENTS = ['#2c5aa0', '#0f766e', '#7c3aed', '#be123c', '#c2410c', '#1f2937', '#0e7490', '#15803d'];
@@ -20,6 +20,7 @@ const FONT_OPTIONS = FONTS.map((f) => ({ id: f.id, label: f.label }));
 
 export function DesignPanel({ doc, update, onAutoFit, notify }: Props) {
   const t = doc.theme;
+  const [keepLayout, setKeepLayout] = useState(false);
   const set = <K extends keyof Theme>(key: K, value: Theme[K]) => update((d) => void (d.theme[key] = value), `theme.${key}`);
   const fontOptions = FONT_OPTIONS.some((f) => f.id === t.font) ? FONT_OPTIONS : [...FONT_OPTIONS, { id: t.font, label: t.font }];
   const headingOptions = FONT_OPTIONS.some((f) => f.id === t.headingFont) ? FONT_OPTIONS : [...FONT_OPTIONS, { id: t.headingFont, label: t.headingFont }];
@@ -29,37 +30,39 @@ export function DesignPanel({ doc, update, onAutoFit, notify }: Props) {
       <section className="card">
         <div className="card-head">
           <span className="card-title">Template</span>
-          <span className="card-sub">Changes the look only. Your layout stays put.</span>
+          <span className="card-sub">Sets the layout, fonts, colors and footer</span>
         </div>
-        <div className="card-body template-grid">
-          {TEMPLATES.map((tpl) => {
-            const preview = applyTemplate(doc, tpl.id);
-            return (
-              <button
-                key={tpl.id}
-                type="button"
-                className={`template-card${t.template === tpl.id ? ' is-active' : ''}`}
-                onClick={() => {
-                  update((d) => applyTemplate(d, tpl.id));
-                  notify(`Applied the ${tpl.name} look. Your layout is unchanged.`, true, {
-                    label: `Use its layout too`,
-                    run: () => {
+        <div className="card-body">
+          <Checkbox label="Keep my current layout (only change the look)" checked={keepLayout} onChange={setKeepLayout} />
+          <div className="template-grid">
+            {TEMPLATES.map((tpl) => {
+              const preview = keepLayout ? applyTemplate(doc, tpl.id) : arrangeLayout(doc, tpl.id);
+              return (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  className={`template-card${t.template === tpl.id ? ' is-active' : ''}`}
+                  onClick={() => {
+                    if (keepLayout) {
+                      update((d) => applyTemplate(d, tpl.id));
+                    } else {
                       update((d) => arrangeLayout(d, tpl.id));
                       onAutoFit();
-                    },
-                  });
-                }}
-              >
-                <div className="template-thumb" aria-hidden="true">
-                  <div className={`rg-doc rg-hs-${preview.theme.headingStyle}`} style={{ ...themeVars(preview.theme), zoom: 0.15 } as CSSProperties}>
-                    {preview.pages[0] && <PageView page={preview.pages[0]} doc={preview} />}
+                    }
+                    notify(`Applied the ${tpl.name} template.`, true);
+                  }}
+                >
+                  <div className="template-thumb" aria-hidden="true">
+                    <div className={`rg-doc rg-hs-${preview.theme.headingStyle}`} style={{ ...themeVars(preview.theme), zoom: 0.15 } as CSSProperties}>
+                      {preview.pages[0] && <PageView page={preview.pages[0]} doc={preview} />}
+                    </div>
                   </div>
-                </div>
-                <span className="template-name">{tpl.name}</span>
-                <span className="template-desc">{tpl.description}</span>
-              </button>
-            );
-          })}
+                  <span className="template-name">{tpl.name}</span>
+                  <span className="template-desc">{tpl.description}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 

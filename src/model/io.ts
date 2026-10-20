@@ -51,8 +51,8 @@ export function fileStem(doc: ResumeDocument): string {
   return slug.includes('resume') ? slug : `${slug || 'my'}-resume`;
 }
 
-export function downloadFile(name: string, contents: string, type: string): void {
-  const url = URL.createObjectURL(new Blob([contents], { type }));
+export function downloadFile(name: string, contents: string | Blob, type: string): void {
+  const url = URL.createObjectURL(contents instanceof Blob ? contents : new Blob([contents], { type }));
   const a = document.createElement('a');
   a.href = url;
   a.download = name;
@@ -84,4 +84,51 @@ export function saveToStorage(doc: ResumeDocument): boolean {
   } catch {
     return false;
   }
+}
+
+// ---- Shared links -------------------------------------------------------------
+
+export interface SharedLink {
+  url: string;
+  /** Open in the read-only viewer instead of the editor. */
+  view: boolean;
+}
+
+/**
+ * Read a resume link from the page address:
+ *   ?resume=jane          → ./resumes/jane.json, served with the app
+ *   ?resume=https://…json → any URL that allows cross-origin requests
+ * Add &mode=view to show the resume without the editor.
+ */
+export function sharedLinkFromUrl(search: string): SharedLink | null {
+  const params = new URLSearchParams(search);
+  const value = params.get('resume')?.trim();
+  if (!value) return null;
+  let url: string | null = null;
+  if (/^https?:\/\//i.test(value)) url = value;
+  else if (/^[\w-]+$/.test(value)) url = `./resumes/${value}.json`;
+  if (!url) return null;
+  return { url, view: params.get('mode') === 'view' };
+}
+
+/** Remove the resume link from the address bar so a reload doesn't fetch it again. */
+export function clearSharedLink(): void {
+  const url = new URL(window.location.href);
+  url.searchParams.delete('resume');
+  url.searchParams.delete('mode');
+  window.history.replaceState(null, '', url);
+}
+
+export async function fetchResume(url: string): Promise<ParsedFile> {
+  let response: Response;
+  try {
+    response = await fetch(url, { cache: 'no-cache' });
+  } catch {
+    throw new ImportError("Couldn't download the linked resume. Check the link, or that its site allows it to be loaded here.");
+  }
+  // Single-page hosts answer missing files with the app's own HTML page.
+  const missing = response.status === 404 || response.headers.get('content-type')?.includes('text/html');
+  if (missing) throw new ImportError("The linked resume wasn't found.");
+  if (!response.ok) throw new ImportError(`Couldn't download the linked resume (error ${response.status}).`);
+  return parseResumeJson(await response.text());
 }

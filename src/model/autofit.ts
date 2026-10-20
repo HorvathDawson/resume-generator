@@ -47,9 +47,12 @@ export function fitPages(doc: ResumeDocument, measured: MeasuredPage[]): boolean
             columns[ci].push(p);
             return;
           }
-          // Straddles the edge: split after the last item that fits.
+          // Straddles the edge: split after the last item that fits. Short
+          // items (skills, list lines) only split when two or more land on each side.
           const fits = box.items.filter((b) => b <= m.limit + SLACK).length;
-          if (fits > 0 && fits < box.items.length) {
+          const section = doc.sections.find((s) => s.id === p.sectionId);
+          const min = section && (section.type === 'experience' || section.type === 'education') ? 1 : 2;
+          if (fits >= min && box.items.length - fits >= min) {
             const at = (p.from ?? 0) + fits;
             const rest: Placement = { ...newPlacement(p.sectionId), from: at };
             if (p.to !== undefined) rest.to = p.to;
