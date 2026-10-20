@@ -33,7 +33,7 @@ Add `?resume=` to the app's address to open a resume straight away, for example 
 
 To publish a resume, save it as JSON (File → Save as JSON) into `public/resumes/<name>.json` and rebuild. Opening a link never silently replaces a visitor's own work: if they have a different resume saved in their browser, they're asked first.
 
-Files saved by the previous version of the app (and the files in `data/`) still open; they're converted to the current format on import.
+Files saved by the previous version of the app still open; they're converted to the current format on import.
 
 ## Development
 
