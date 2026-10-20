@@ -1,119 +1,53 @@
-# Resume Builder - TypeScript React Application
+# Resume Builder
 
-A modern, user-friendly resume builder built with TypeScript and React. This application follows a **datatype-first approach** where comprehensive TypeScript interfaces drive the entire application architecture.
+A browser app for building clean, printable A4 resumes. Live at
+[dawsonhorvath.com/resume-generator](https://dawsonhorvath.com/resume-generator/).
 
-## 🎯 Key Features
+## Using it
 
-- **Visual Layout Builder**: Drag-and-drop interface for organizing sections into left column, right column, or whole page layouts
-- **Template System**: Multiple templates for each section type (education, experience, projects, etc.)
-- **Manual Page Breaks**: User-controlled section splitting with visual page break insertion
-- **A4 Optimized**: All measurements in cm, optimized for A4 paper (21cm x 29.7cm)
-- **Live Preview**: Real-time preview that fits entire A4 page on screen
-- **Type-Safe**: Comprehensive TypeScript types for all data structures
-- **Serializable**: Complete project state can be saved and reloaded
+- **Content**: your details plus sections (experience, education, skills, lists, references, free text). Click any section in the preview to jump to it.
+- **Layout**: pages are made of rows; a row has one column or two. Move sections between columns and pages, split a long section across pages, or let **Move it to the next page** fix any page that overflows.
+- **Design**: pick a template (Sidebar, Classic, Minimal, Banner, Slate), then tune fonts, size, spacing, heading style and colors. Templates change the look only; "Use its layout too" rearranges sections as well.
 
-## 🏗️ Architecture
+Everything autosaves in your browser. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
 
-### Datatype-First Design
+### Getting your resume out
 
-The application is built around comprehensive TypeScript interfaces that define:
+| | |
+|---|---|
+| **PDF** | Download → PDF opens the print dialog. Choose *Save as PDF*, margins *None*, and turn on *Background graphics*. Text stays selectable and links work. |
+| **HTML** | A single self-contained web page you can host anywhere. |
+| **JSON** | The editable source. Open it again with File → Open (or drag it onto the window). |
 
-- **Resume Data**: Complete resume content with sections, items, and metadata
-- **Styling System**: Global styles, page-specific styles, and column overrides
-- **Template System**: Configurable templates for different section types
-- **Layout System**: Visual layout builder with drag-and-drop support
+Files saved by the previous version of the app (and the files in `data/`) still open; they're converted to the current format on import.
 
-### Core Types
-
-- `ResumeData` - Complete resume structure
-- `Section` & `SectionItem` - Content organization
-- `GlobalStyles` & `PageStyles` - Styling system with cm-based measurements
-- `LayoutBuilderState` - Visual layout management
-- `TemplateLibrary` - Template system for sections
-
-### Styling System
-
-- **A4 Format**: 21cm x 29.7cm pages
-- **CM Measurements**: All spacing, fonts, and margins in centimeters
-- **Screen Optimized**: Preview scaled to fit on screen while maintaining A4 proportions
-- **Flexible Styling**: Global styles with page and column-specific overrides
-
-## 🚀 Getting Started
-
-### Development
+## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm run dev      # http://localhost:5173
+npm test         # import/export and layout tests
+npm run lint
+npm run build    # writes the GitHub Pages build to docs/
 ```
 
-### Usage
-
-1. **Edit Content**: Use the left panel to manage sections and content
-2. **Arrange Layout**: Drag sections between columns and pages
-3. **Insert Page Breaks**: Add manual breaks to split sections across pages
-4. **Preview**: View real-time A4-formatted preview on the right
-5. **Export**: Generate PDF when ready
-
-## 📁 Project Structure
+## How it's put together
 
 ```
 src/
-├── types/           # Comprehensive TypeScript definitions
-│   ├── resume.ts    # Core resume data types
-│   ├── styles.ts    # Styling system types
-│   ├── template.ts  # Template system types
-│   ├── layout.ts    # Layout builder types
-│   └── index.ts     # Type exports
-├── components/      # React components
-│   ├── ResumeEditor.tsx
-│   └── PreviewPanel.tsx
-├── utils/           # Utility functions
-│   └── defaults.ts  # Default data generators
-└── App.tsx          # Main application
+├── model/          the resume document and everything that changes it
+│   ├── types.ts      ResumeDocument: profile, sections, pages → rows → columns → placements, theme
+│   ├── io.ts         JSON open/save, browser autosave
+│   ├── normalize.ts  repairs any loaded data into a valid document
+│   ├── migrate.ts    converts the old app's file formats
+│   ├── templates.ts  design templates and auto-arrange
+│   ├── autofit.ts    moves/splits content that runs off a page
+│   └── edit.ts       layout editing helpers
+├── resume/         renders a document (preview, print and HTML export share it)
+├── editor/         the Content / Layout / Design panels and preview
+├── export/         standalone HTML export
+└── data/sample.json
 ```
 
-## 🎨 Design Philosophy
-
-1. **Type Safety**: Every data structure is strongly typed
-2. **Serializability**: Complete application state can be saved/loaded
-3. **Flexibility**: Templates and layouts are configurable
-4. **User Control**: Manual page breaks and layout control
-5. **Professional Output**: A4-optimized for print quality
-
-## 🔧 Development
-
-The application is built with:
-
-- **Vite** - Fast build tool
-- **React 18** - Modern React with hooks
-- **TypeScript** - Type safety and better DX
-- **CSS** - Custom styling with cm measurements
-
-## Current Status
-
-✅ **Complete**: Core TypeScript types and data structures
-✅ **Complete**: Basic application architecture
-✅ **Complete**: Development environment setup
-✅ **Complete**: Basic preview functionality
-🔄 **In Progress**: Visual layout builder
-🔄 **In Progress**: Template selection system
-🔄 **In Progress**: Section management UI
-
-## Next Steps
-
-1. Implement drag-and-drop layout builder
-2. Build template selection interface
-3. Add section editing capabilities
-4. Implement manual page break insertion
-5. Add PDF export functionality
-
-## 📄 License
-
-This project is part of a resume generator system.
+The JSON file format is the `ResumeDocument` type in `src/model/types.ts`, tagged with
+`"schema": "resume-generator"` and a `version` number.
