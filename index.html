@@ -52,8 +52,13 @@
       }
     </script>
     <style>
-      .rg-embedded body { margin: 0; overflow: hidden; }
+      /* One page per frame height, snapping page to page; no scrollbar. */
+      .rg-embedded { overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; }
+      .rg-embedded::-webkit-scrollbar { display: none; }
+      .rg-embedded body { margin: 0; }
       .rg-embedded #root > main { display: none; }
+      .rg-embedded .rg-embed { cursor: pointer; }
+      .rg-embedded .rg-page { scroll-snap-align: start; }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

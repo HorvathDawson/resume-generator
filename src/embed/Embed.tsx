@@ -7,11 +7,20 @@ import { ResumeView } from '../resume/ResumeView';
 /** An A4 page (210mm) in CSS pixels. */
 const PAGE_WIDTH_PX = (210 / 25.4) * 96;
 
+/** The same resume in the read-only viewer, for clicks on the embed. */
+function viewerUrl(): string {
+  const url = new URL(window.location.href);
+  url.searchParams.set('mode', 'view');
+  return url.href;
+}
+
 /**
- * ?resume=…&mode=embed: only the resume's first page, scaled to fill the
- * frame's width, with no editor around it. For showing a resume inside
- * another page (e.g. an <iframe> on a personal site). Renders nothing if the
- * resume can't be loaded, so the host page's own fallback stays visible.
+ * ?resume=…&mode=embed: the resume's pages, each scaled to fill the frame's
+ * width, with no editor around it. For showing a resume inside another page
+ * (e.g. an <iframe> on a personal site): scrolling moves a page at a time,
+ * and a click opens the resume in the viewer, replacing the host page.
+ * Renders nothing if the resume can't be loaded, so the host page's own
+ * fallback stays visible.
  */
 export function Embed({ url }: { url: string }) {
   const [doc, setDoc] = useState<ResumeDocument | null>(null);
@@ -45,8 +54,8 @@ export function Embed({ url }: { url: string }) {
 
   if (!doc) return null;
   return (
-    <div style={{ zoom }}>
-      <ResumeView doc={doc} pages={doc.pages.slice(0, 1)} />
+    <div className="rg-embed" style={{ zoom }} onClick={() => window.top!.location.assign(viewerUrl())}>
+      <ResumeView doc={doc} />
     </div>
   );
 }

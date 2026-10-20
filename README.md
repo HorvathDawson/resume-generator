@@ -28,7 +28,7 @@ Add `?resume=` to the app's address to open a resume straight away, for example 
 |---|---|
 | `…/resume-generator/?resume=dawson` | `public/resumes/dawson.json` in the editor |
 | `…/resume-generator/?resume=dawson&mode=view` | the same resume read-only, with Download and "Edit in the builder" buttons |
-| `…/resume-generator/?resume=dawson&mode=embed` | only the first page, scaled to fit, with nothing around it (for an `<iframe>` on another page) |
+| `…/resume-generator/?resume=dawson&mode=embed` | just the pages, each scaled to the frame's width and scrolling a page at a time; a click opens the viewer (for an `<iframe>` on another page) |
 | `…/resume-generator/?resume=https://example.com/me.json` | a resume from another site (that site must allow cross-origin requests) |
 
 To publish a resume, save it as JSON (File → Save as JSON) into `public/resumes/<name>.json` and rebuild. Opening a link never silently replaces a visitor's own work: if they have a different resume saved in their browser, they're asked first.

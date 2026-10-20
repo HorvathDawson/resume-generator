@@ -92,7 +92,7 @@ export interface SharedLink {
   url: string;
   /** Open in the read-only viewer instead of the editor. */
   view: boolean;
-  /** Show only the first page, with nothing around it, for embedding in another page. */
+  /** Show only the pages, sized to the frame, for embedding in another page. */
   embed: boolean;
 }
 
@@ -101,7 +101,7 @@ export interface SharedLink {
  *   ?resume=jane          → ./resumes/jane.json, served with the app
  *   ?resume=https://…json → any URL that allows cross-origin requests
  * Add &mode=view to show the resume without the editor, or &mode=embed for
- * just its first page (for an <iframe> on another site).
+ * just its pages, sized to the frame (for an <iframe> on another site).
  */
 export function sharedLinkFromUrl(search: string): SharedLink | null {
   const params = new URLSearchParams(search);
