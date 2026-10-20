@@ -99,3 +99,6 @@ generated-resumes/
 
 # Test coverage
 coverage/
+
+# Wrangler
+.wrangler/

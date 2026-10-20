@@ -28,6 +28,7 @@ Add `?resume=` to the app's address to open a resume straight away, for example 
 |---|---|
 | `…/resume-generator/?resume=dawson` | `public/resumes/dawson.json` in the editor |
 | `…/resume-generator/?resume=dawson&mode=view` | the same resume read-only, with Download and "Edit in the builder" buttons |
+| `…/resume-generator/?resume=dawson&mode=embed` | only the first page, scaled to fit, with nothing around it (for an `<iframe>` on another page) |
 | `…/resume-generator/?resume=https://example.com/me.json` | a resume from another site (that site must allow cross-origin requests) |
 
 To publish a resume, save it as JSON (File → Save as JSON) into `public/resumes/<name>.json` and rebuild. Opening a link never silently replaces a visitor's own work: if they have a different resume saved in their browser, they're asked first.
@@ -41,8 +42,16 @@ npm install
 npm run dev      # http://localhost:5173
 npm test         # import/export and layout tests
 npm run lint
-npm run build    # writes the GitHub Pages build to docs/
+npm run build    # writes dist/resume-generator/
+npm run preview  # build, then serve it locally at http://localhost:8787/resume-generator/
 ```
+
+## Deployment
+
+Cloudflare Workers Builds deploys `main` to the `resume-generator` Worker
+(`wrangler.jsonc`), which serves `dist/` by path. dawsonhorvath.com reaches it
+through the portfolio site's Worker, which forwards `/resume-generator/*` here
+over a service binding, so the Worker's name must stay `resume-generator`.
 
 The page's canonical URL and the "back to site" link default to `https://dawsonhorvath.com/resume-generator/` and `https://dawsonhorvath.com/`. Set `RG_SITE_URL` and `RG_HOME_URL` when building to change them.
 

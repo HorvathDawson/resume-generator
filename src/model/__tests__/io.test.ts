@@ -104,8 +104,9 @@ describe('layout helpers', () => {
 
 describe('sharedLinkFromUrl', () => {
   it('maps a name to a resume served with the app', () => {
-    expect(sharedLinkFromUrl('?resume=dawson')).toEqual({ url: './resumes/dawson.json', view: false });
-    expect(sharedLinkFromUrl('?resume=dawson&mode=view')).toEqual({ url: './resumes/dawson.json', view: true });
+    expect(sharedLinkFromUrl('?resume=dawson')).toEqual({ url: './resumes/dawson.json', view: false, embed: false });
+    expect(sharedLinkFromUrl('?resume=dawson&mode=view')).toEqual({ url: './resumes/dawson.json', view: true, embed: false });
+    expect(sharedLinkFromUrl('?resume=dawson&mode=embed')).toEqual({ url: './resumes/dawson.json', view: false, embed: true });
   });
 
   it('accepts a full URL and rejects anything else', () => {

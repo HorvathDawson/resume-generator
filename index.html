@@ -44,6 +44,17 @@
       }
     </script>
 
+    <script>
+      // Embedded (?mode=embed) the page stays transparent and skips the intro
+      // text below, so the host page shows through until the resume renders.
+      if (new URLSearchParams(location.search).get('mode') === 'embed') {
+        document.documentElement.classList.add('rg-embedded');
+      }
+    </script>
+    <style>
+      .rg-embedded body { margin: 0; overflow: hidden; }
+      .rg-embedded #root > main { display: none; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>

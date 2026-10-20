@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // The portfolio site's service binding refers to this Worker by name.
+  "name": "resume-generator",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-27",
+  "observability": {
+    "enabled": true
+  },
+  // The build nests the app under resume-generator/ so asset paths match the
+  // public URL, dawsonhorvath.com/resume-generator/.
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  }
+}
