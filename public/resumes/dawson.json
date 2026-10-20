@@ -373,12 +373,12 @@
     "lineHeight": 1.4,
     "spacing": 1.15,
     "headingStyle": "caps",
-    "accent": "#5b2fc0",
-    "text": "#1e293b",
-    "muted": "#64748b",
-    "shade": "#0f172a",
-    "shadeText": "#e2e8f0",
-    "shadeAccent": "#47e98d",
+    "accent": "#44403c",
+    "text": "#292524",
+    "muted": "#78716c",
+    "shade": "#f1efeb",
+    "shadeText": "#292524",
+    "shadeAccent": "#57534e",
     "margin": 1.1,
     "columnGap": 0.7
   }
