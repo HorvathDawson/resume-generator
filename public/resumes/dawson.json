@@ -6,7 +6,7 @@
   "updatedAt": "2026-10-20T20:42:34.130Z",
   "profile": {
     "name": "Dawson Horvath",
-    "headline": "",
+    "headline": "Mechatronics Engineer",
     "email": "horvath.dawson@gmail.com",
     "phone": "1-250-306-0343",
     "location": "Vancouver, BC, Canada",
@@ -139,8 +139,8 @@
       "items": [
         {
           "id": "item-aea840ed",
-          "title": "Open Source",
-          "subtitle": "Open Sim2Real Project",
+          "title": "Open Sim2Real Project",
+          "subtitle": "Open source",
           "location": "",
           "dates": "2022",
           "note": "",
@@ -154,8 +154,8 @@
         },
         {
           "id": "item-2b9e7e7b",
-          "title": "Personal Project",
-          "subtitle": "1950 Austin A40 Restoration",
+          "title": "1950 Austin A40 Restoration",
+          "subtitle": "Personal project",
           "location": "",
           "dates": "2019 – Current",
           "note": "",
@@ -169,8 +169,8 @@
         },
         {
           "id": "item-e07a97aa",
-          "title": "UBC Engineering Physics",
-          "subtitle": "Simulated Gazebo Robot",
+          "title": "Simulated Gazebo Robot",
+          "subtitle": "UBC Engineering Physics",
           "location": "",
           "dates": "2019",
           "note": "",
@@ -183,8 +183,8 @@
         },
         {
           "id": "item-17df748b",
-          "title": "UBC Engineering Physics",
-          "subtitle": "Robot Design Competition",
+          "title": "Robot Design Competition",
+          "subtitle": "UBC Engineering Physics",
           "location": "",
           "dates": "2019",
           "note": "",
@@ -197,8 +197,8 @@
         },
         {
           "id": "item-582e670b",
-          "title": "Personal Project",
-          "subtitle": "DIY Electric Skateboard",
+          "title": "DIY Electric Skateboard",
+          "subtitle": "Personal project",
           "location": "",
           "dates": "2017",
           "note": "",
@@ -214,7 +214,7 @@
     {
       "id": "skills-949bd978",
       "title": "Skills",
-      "variant": "tags",
+      "variant": "dots",
       "showTitle": true,
       "type": "skills",
       "groups": [
@@ -279,7 +279,7 @@
     {
       "id": "list-06c22f6a",
       "title": "Certifications",
-      "variant": "bullets",
+      "variant": "plain",
       "showTitle": true,
       "type": "list",
       "items": [
@@ -289,7 +289,7 @@
     {
       "id": "references-f091cd32",
       "title": "References",
-      "variant": "grid",
+      "variant": "list",
       "showTitle": true,
       "type": "references",
       "items": [],
@@ -298,109 +298,88 @@
   ],
   "pages": [
     {
-      "id": "page-de4ceb75",
+      "id": "page-1",
       "rows": [
         {
-          "id": "row-59ccab80",
+          "id": "row-1",
           "columns": [
             [
               {
-                "id": "place-64cc1897",
+                "id": "place-10",
                 "sectionId": "header-5d31dd31"
-              }
-            ]
-          ],
-          "split": 32,
-          "shade": "none"
-        },
-        {
-          "id": "row-46fa5575",
-          "columns": [
-            [
+              },
               {
-                "id": "place-10aae831",
+                "id": "place-11",
                 "sectionId": "contact-0aab769e"
               },
               {
-                "id": "place-280e955c",
+                "id": "place-12",
                 "sectionId": "education-905900f0"
+              },
+              {
+                "id": "place-13",
+                "sectionId": "list-06c22f6a"
               }
             ],
             [
               {
-                "id": "place-0c197d7f",
+                "id": "place-1a",
                 "sectionId": "text-37fa269e"
               },
               {
-                "id": "place-eebacaab",
-                "sectionId": "skills-949bd978"
-              }
-            ]
-          ],
-          "split": 30,
-          "shade": "left"
-        },
-        {
-          "id": "row-7021c4ff",
-          "columns": [
-            [
-              {
-                "id": "place-41495836",
+                "id": "place-1b",
                 "sectionId": "experience-70a6ab40",
-                "to": 1
+                "to": 3
               }
             ]
           ],
-          "split": 32,
-          "shade": "none"
+          "split": 33,
+          "shade": "left"
         }
       ],
       "footer": "none"
     },
     {
-      "id": "page-142962b8",
+      "id": "page-2",
       "rows": [
         {
-          "id": "row-2b5a8535",
+          "id": "row-2",
           "columns": [
             [
               {
-                "id": "place-a710e6b6",
-                "sectionId": "experience-70a6ab40",
-                "from": 1
-              },
+                "id": "place-20",
+                "sectionId": "skills-949bd978"
+              }
+            ],
+            [
               {
-                "id": "place-3f7d9b6e",
+                "id": "place-2c",
                 "sectionId": "experience-a4013e70"
-              },
-              {
-                "id": "place-d9a432f4",
-                "sectionId": "list-06c22f6a"
               }
             ]
           ],
-          "split": 32,
-          "shade": "none"
+          "split": 33,
+          "shade": "left"
         }
       ],
       "footer": "none"
     }
   ],
   "theme": {
-    "template": "sidebar",
-    "font": "Roboto",
-    "headingFont": "Roboto",
-    "fontSize": 9.5,
+    "template": "slate",
+    "font": "Source Sans 3",
+    "headingFont": "Poppins",
+    "fontSize": 10.5,
     "lineHeight": 1.4,
-    "spacing": 1,
-    "headingStyle": "underline",
-    "accent": "#2c5aa0",
-    "text": "#333333",
-    "muted": "#6b7280",
-    "shade": "#f8f9fa",
-    "shadeText": "#333333",
-    "shadeAccent": "#2c5aa0",
-    "margin": 1,
+    "spacing": 1.15,
+    "headingStyle": "caps",
+    "accent": "#5b2fc0",
+    "text": "#1e293b",
+    "muted": "#64748b",
+    "shade": "#0f172a",
+    "shadeText": "#e2e8f0",
+    "shadeAccent": "#47e98d",
+    "margin": 1.1,
     "columnGap": 0.7
   }
 }
