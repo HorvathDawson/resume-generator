@@ -9,6 +9,11 @@ import { themeVars } from '../resume/themeVars';
 const PAGE_WIDTH_PX = (210 / 25.4) * 96;
 const PAGE_HEIGHT_PX = (297 / 25.4) * 96;
 
+/** Scale that makes a page as wide as the frame (its layout width, which unlike innerWidth ignores pinch zoom). */
+function frameScale(): number {
+  return (document.documentElement.clientWidth || window.innerWidth) / PAGE_WIDTH_PX;
+}
+
 /** The same resume in the read-only viewer, for clicks on the embed. */
 function viewerUrl(): string {
   const url = new URL(window.location.href);
@@ -26,7 +31,7 @@ function viewerUrl(): string {
  */
 export function Embed({ url }: { url: string }) {
   const [doc, setDoc] = useState<ResumeDocument | null>(null);
-  const [scale, setScale] = useState(() => window.innerWidth / PAGE_WIDTH_PX);
+  const [scale, setScale] = useState(frameScale);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,9 +44,10 @@ export function Embed({ url }: { url: string }) {
   }, [url]);
 
   useEffect(() => {
-    const fit = () => setScale(window.innerWidth / PAGE_WIDTH_PX);
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
+    const fit = () => setScale(frameScale());
+    const observer = new ResizeObserver(fit);
+    observer.observe(document.documentElement);
+    return () => observer.disconnect();
   }, []);
 
   const fontsUrl = doc ? googleFontsUrl([doc.theme.font, doc.theme.headingFont]) : null;
