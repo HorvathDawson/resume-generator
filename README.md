@@ -1,23 +1,31 @@
 # Resume Builder
 
-A browser app for making clean, printable A4 resumes, and keeping a version for every job you
-apply to. Nothing to install and no account: your resumes stay in your browser or in a folder
-on your computer.
+Make a clean, printable A4 resume in your browser, then keep a tailored copy for every job you
+apply to. Free, no sign-up, and nothing is uploaded: your resumes stay on your own computer.
 
-**Try it:** [dawsonhorvath.com/resume-generator](https://dawsonhorvath.com/resume-generator/)
+**[Open Resume Builder →](https://dawsonhorvath.com/resume-generator/)**
 
 <table>
 <tr>
 <td width="62%"><img src="docs/images/editor.png" alt="The editor: sections on the left, the live page on the right"></td>
-<td width="38%"><img src="docs/images/showcase.png" alt="A resume made with it: Stone template with the paraglider footer"><br><sub>Made with it: <a href="https://dawsonhorvath.com/resume-generator/?resume=dawson&mode=view">Dawson's resume</a>, Stone template.</sub></td>
+<td width="38%"><img src="docs/images/showcase.png" alt="A resume made with Resume Builder, using the Stone template"><br><sub>A resume made with it (<a href="https://dawsonhorvath.com/resume-generator/?resume=dawson&mode=view">view it live</a>), Stone template.</sub></td>
 </tr>
 </table>
 
+## Getting started
+
+1. Open the app. It starts with a sample resume and a short tour (the **?** button replays it).
+2. On **Content**, replace the sample with your details and experience.
+3. On **Templates**, click through the designs: each one previews your own resume, and nothing
+   changes until you click **Apply**.
+4. Click **Download → PDF**.
+
+Everything saves automatically in your browser as you go.
+
 ## Templates
 
-Twelve starting points. Click one on the **Templates** tab to see your own resume in it;
-nothing changes until you apply it. Every font, colour, section style and footer can be changed
-afterwards on the **Design** tab.
+Twelve designs to start from. Every font, colour, section style and footer can be changed
+afterwards.
 
 <table>
 <tr>
@@ -40,22 +48,25 @@ afterwards on the **Design** tab.
 </tr>
 </table>
 
-## Using it
+## What you can do
 
-- **Resumes**: keep several resumes in one library: a main one plus copies tailored to particular jobs. **Make a copy for a job** records which resume it came from and what it's for, and folders group them.
-- **Content**: your details plus sections (experience, education, skills, lists, references, free text). Click any section in the preview to jump to it.
-- **Templates**: preview a template on your resume, then **Apply** it or go **Back to my design**. Templates rearrange sections too, unless you tick "Keep my current layout". **Match another resume** gives this one the look of another resume in your library.
-- **Layout**: each page is drawn as a small sheet. Drag sections between columns, rows and pages; pick a row shape; drag the line between two columns to set their widths. Click a section to edit it, move it, or split a long one across pages. **Move it to the next page** fixes any page that overflows.
-- **Design**: fonts, size, spacing, heading style, colours, margins and the page footer, including [your own](#your-own-footer).
+**Write once, tailor for each job.** The **Resumes** tab holds all your resumes. Use **Make a
+copy for a job** to start a version for a specific application: it remembers which resume it
+came from and what it's for, and folders keep things tidy (say, one folder per kind of role).
 
-A short guided tour runs on the first visit; the ? button in the top bar replays it. Everything
-autosaves. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
+**Lay it out your way.** On **Layout**, each page is a small sheet you can rearrange: drag
+sections between columns, rows and pages, change column widths, or split a long section across
+two pages. If something no longer fits, the page is outlined in red and **Move it to the next
+page** fixes it.
 
-### Your own footer
+**Make it look like you.** **Templates** changes the whole design at once (tick "Keep my current
+layout" to change only the look), and **Match another resume** copies the design of another
+resume in your library. **Design** fine-tunes fonts, size, spacing, colours, margins and the
+footer at the bottom of each page.
 
-Design → Footer → **Upload image…** puts any PNG, JPEG, WebP or SVG at the bottom of every page;
-set its height and position (full width, left, center, right). Or choose **Write HTML or SVG…**
-and draw one in code. It can use the resume's colours, so it follows the theme:
+**Add your own footer.** Under **Design → Footer**, upload an image (PNG, JPEG, WebP or SVG), or
+choose **Write HTML or SVG…** and draw one. Drawings can use the resume's colours so they follow
+the theme:
 
 ```html
 <svg viewBox="0 0 600 40" preserveAspectRatio="none">
@@ -64,116 +75,111 @@ and draw one in code. It can use the resume's colours, so it follows the theme:
 </svg>
 ```
 
-Available colours: `var(--rg-accent)`, `var(--rg-text)`, `var(--rg-muted)`, `var(--rg-shade)`,
-`var(--rg-shade-accent)`. The footer is saved inside the resume file, so it travels with it.
-Because resume files get shared, the markup is cleaned before it's drawn: scripts, event
-handlers, forms, frames, `<style>` blocks and anything loaded from another site are removed.
+The colours available are `var(--rg-accent)`, `var(--rg-text)`, `var(--rg-muted)`,
+`var(--rg-shade)` and `var(--rg-shade-accent)`. For safety, scripts, forms and anything loaded
+from another website are removed before a footer is shown.
 
-### Keeping resumes in a folder (git, AI agents)
+Undo and redo work everywhere (Ctrl+Z / Ctrl+Shift+Z).
 
-In Chrome or Edge, **File → Set up a resume folder…** writes your library into a folder on your computer and keeps saving there:
-
-```
-library.json                     library name, default resume, short guide
-resumes/main.resume.json         one resume per file
-resumes/applications/acme.resume.json
-AGENTS.md                        how an AI agent should read and edit the files
-README.md                        how to open the folder, and a git workflow
-resume.schema.json               JSON Schema for a .resume.json file
-```
-
-Edits made in the folder by other programs (an AI agent, an editor, `git pull`) show up in the builder within a few seconds; if the open resume was also edited in the builder, it asks which to keep. The builder never connects to GitHub or any server, so a private repo stays private. Next visit, the browser asks once to reopen the folder. Other browsers use **File → Download library** / **Open file** with a single `.library.json` file instead.
-
-### Getting your resume out
+## Getting your resume out
 
 | | |
 |---|---|
-| **PDF** | Download → PDF saves a PDF straight away. Text stays selectable and links work. |
-| **Print to PDF** | The backup, with the sharpest text: opens the print dialog. Choose *Save as PDF*, margins *None*, and turn on *Background graphics*. |
-| **HTML** | A single self-contained web page you can host anywhere. |
-| **Resume file** | One resume as `.resume.json`, the editable source. Open it again with File → Open file (or drag it onto the window); it's added to your library. |
-| **Library file** | File → Download library: every resume in one `.library.json` file. |
+| **PDF** | **Download → PDF** saves a PDF straight away. Text stays selectable and links work. |
+| **Print to PDF** | For the sharpest text: opens your browser's print dialog. Choose *Save as PDF*, margins *None*, and turn on *Background graphics*. |
+| **Web page** | One self-contained HTML file you can put on any website. |
+| **Resume file** | **File → Save this resume as a file** saves an editable `.resume.json`. Open it later with **File → Open file** or by dragging it onto the window. |
+| **All your resumes** | **File → Download library** saves every resume in one `.library.json` file, handy for moving to another computer or browser. |
 
-### Linking to a resume
+## Where your resumes are kept
 
-Add `?resume=` to the app's address to open a resume straight away, for example from a personal website:
+By default they're saved in your browser, on your computer only. Nothing is sent to a server.
+Clearing your browser's site data would remove them, so download a copy now and then.
 
-| Link | Opens |
+**Or keep them in a folder (Chrome and Edge).** **File → Set up a resume folder…** saves your
+resumes as files in a folder you choose and keeps it up to date:
+
+```
+library.json                        library name and which resume is the main one
+resumes/main.resume.json            one file per resume
+resumes/applications/acme.resume.json
+README.md                           how to use the folder, including with git
+AGENTS.md                           instructions for AI assistants
+resume.schema.json                  the file format, for tools that check it
+```
+
+That makes it easy to:
+
+- **Keep a history with git.** Put the folder in a private repository to see what changed and
+  what you sent where (the folder's README has a simple workflow).
+- **Let an AI assistant help.** Point an assistant at the folder and ask, for example, "make a
+  copy of my main resume tailored to this job posting". `AGENTS.md` explains the format and
+  tells it never to invent experience. Switch back to the builder and the new resume appears.
+
+Changes made in the folder by other programs show up in the builder within a few seconds; if
+you were editing the same resume, you're asked which version to keep. Next visit, your browser
+asks once to reopen the folder.
+
+## Sharing a link to a resume
+
+A resume can be opened straight from a link, which is handy for a personal website:
+
+| Add to the app's address | What it shows |
 |---|---|
-| `…/resume-generator/?resume=dawson` | `public/resumes/dawson.json` in the editor |
-| `…/resume-generator/?resume=dawson&mode=view` | the same resume read-only, with Download and "Edit in the builder" buttons |
-| `…/resume-generator/?resume=dawson&mode=embed` | just the pages, each scaled to the frame's width and scrolling a page at a time; a click opens the viewer (for an `<iframe>` on another page) |
-| `…/resume-generator/?resume=https://example.com/me.json` | a resume from another site (that site must allow cross-origin requests) |
+| `?resume=https://example.com/me.json` | your resume (from any site that allows it) in the editor |
+| `…&mode=view` | read-only, with **Download** and **Edit in the builder** buttons |
+| `…&mode=embed` | just the pages, sized to fit a frame and scrolling a page at a time, for embedding with an `<iframe>`; clicking opens the full view |
 
-To publish a resume, save it with File → Save this resume as a file, put it at `public/resumes/<name>.json` and rebuild. Opening a link never silently replaces a visitor's own work: if they have a different resume saved in their browser, they're asked first.
+Opening a link never replaces a visitor's own resumes; theirs stay in their library.
 
-Files saved by earlier versions of the app (single `.json` resumes, and the older format) still open; they're added to your library. A resume saved in the browser by an earlier version becomes the first resume in the library.
+## Running your own copy
 
-## Make it yours (for developers)
-
-The app is plain React + TypeScript; each of these is a small, local change.
-
-**A template** is one entry in `TEMPLATES` (`src/model/templates.ts`): a theme (fonts, colours,
-spacing), a style for each section type, a row structure built from slots (`header`, `contact`,
-`about`, `main`, `side`) and a footer. It shows up on the Templates tab automatically. With
-`npm run preview` running, `node scripts/readme-images.cjs` refreshes the screenshots above
-(it needs Playwright).
-
-**A built-in footer:**
-1. Add its id to `FooterType` (`src/model/types.ts`).
-2. Add it to `FOOTERS` and `FOOTER_HEIGHT` (`src/model/variants.ts`).
-3. Draw it in `src/resume/Footer.tsx` (SVG using the `--rg-*` colour variables) and style it in `src/resume/resume.css`.
-
-**A section style** (say, a new look for skills):
-1. Add `{ id, label }` to that type in `SECTION_VARIANTS` (`src/model/variants.ts`).
-2. Each section renders with the classes `rg-<type> rg-<type>--<variant>`, so often CSS in `resume.css` is enough.
-3. For different markup, branch on `section.variant` in `src/resume/sections.tsx`.
-
-The file schema, `AGENTS.md` and the editor menus are generated from these lists, so they pick up
-new entries on their own. `npm test` checks that every template, footer and style still produces a
-valid file.
-
-## Development
+It's a static web app (React + TypeScript + Vite), so it can be hosted anywhere.
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm test         # import/export and layout tests
+npm test
 npm run lint
 npm run build    # writes dist/resume-generator/
-npm run preview  # build, then serve it locally at http://localhost:8787/resume-generator/
 ```
 
-## Deployment
+The build uses relative paths, so it works at any address. Set `RG_SITE_URL` (its public
+address) and `RG_HOME_URL` (the "back to site" link) when building. Resumes placed in
+`public/resumes/<name>.json` can be opened with `?resume=<name>`. The included `wrangler.jsonc` deploys it
+as a Cloudflare Worker (`npm run preview` runs that locally).
 
-Cloudflare Workers Builds deploys `main` to the `resume-generator` Worker
-(`wrangler.jsonc`), which serves `dist/` by path. dawsonhorvath.com reaches it
-through the portfolio site's Worker, which forwards `/resume-generator/*` here
-over a service binding, so the Worker's name must stay `resume-generator`.
+## Adding templates, footers and section styles
 
-The page's canonical URL and the "back to site" link default to `https://dawsonhorvath.com/resume-generator/` and `https://dawsonhorvath.com/`. Set `RG_SITE_URL` and `RG_HOME_URL` when building to change them.
+Each is a small change, and the editor menus, file format and AI guide pick it up automatically:
 
-## How it's put together
+- **A template** is one entry in `TEMPLATES` (`src/model/templates.ts`): colours and fonts, a
+  style for each kind of section, how sections are arranged, and a footer.
+- **A footer:** add its id to `FooterType` (`src/model/types.ts`), list it in `FOOTERS` and
+  `FOOTER_HEIGHT` (`src/model/variants.ts`), and draw it in `src/resume/Footer.tsx`.
+- **A section style:** add it to `SECTION_VARIANTS` (`src/model/variants.ts`). Sections render with
+  the classes `rg-<type> rg-<type>--<style>`, so CSS in `src/resume/resume.css` is often enough;
+  for different markup, see `src/resume/sections.tsx`.
+
+`npm test` checks that every template, footer and style still makes a valid resume file, and
+`node scripts/readme-images.cjs` (with Playwright, and `npm run preview` running) refreshes the
+screenshots in this README.
+
+<details>
+<summary>How the code is organised</summary>
 
 ```
 src/
-├── model/          the resume document and everything that changes it
-│   ├── types.ts      ResumeDocument: profile, sections, pages → rows → columns → placements, theme
-│   ├── io.ts         JSON open/save, browser autosave
-│   ├── normalize.ts  repairs any loaded data into a valid document
-│   ├── migrate.ts    converts the old app's file formats
-│   ├── templates.ts  design templates and auto-arrange
-│   ├── variants.ts   section styles, fonts, footers
-│   ├── autofit.ts    moves/splits content that runs off a page
-│   └── edit.ts       layout editing helpers
-├── resume/         renders a document (preview, print and HTML export share it); sanitize.ts cleans custom footer HTML
-├── editor/         the Resumes / Content / Templates / Layout / Design panels and preview
-├── library/        libraries: several resumes, folders on disk, the agent guide and schema
-├── export/         PDF and standalone HTML export
+├── model/      the resume document: types, file open/save, templates, styles, auto-fit
+├── resume/     draws a resume (the preview, printing and exports share it)
+├── editor/     the Resumes, Content, Templates, Layout and Design panels
+├── library/    several resumes, folders on disk, the AI guide and file schema
+├── export/     PDF and HTML export
 └── data/sample.json
-scripts/readme-images.cjs   screenshots for this README
 ```
 
-The JSON file format is the `ResumeDocument` type in `src/model/types.ts`, tagged with
-`"schema": "resume-generator"` and a `version` number. `resume.schema.json` (written into every
-resume folder) describes it for other tools.
+A resume file is the `ResumeDocument` type in `src/model/types.ts`, tagged
+`"schema": "resume-generator"` with a version number. Files from older versions of the app still
+open.
+
+</details>
