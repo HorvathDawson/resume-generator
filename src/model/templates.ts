@@ -35,7 +35,19 @@ export const TEMPLATES: DesignTemplate[] = [
     id: 'sidebar',
     name: 'Sidebar',
     description: 'Name across the top, tinted side column for contact and skills.',
-    theme: { ...DEFAULT_THEME },
+    theme: {
+      ...DEFAULT_THEME,
+      font: 'Inter',
+      headingFont: 'Inter',
+      headingStyle: 'caps',
+      accent: '#1d4e89',
+      text: '#18212f',
+      muted: '#5b6676',
+      shade: '#eef3f9',
+      shadeText: '#18212f',
+      shadeAccent: '#1d4e89',
+      fontSize: 9.5,
+    },
     variants: { header: 'left', contact: 'stacked', experience: 'standard', education: 'standard', skills: 'tags', list: 'bullets', text: 'plain', references: 'grid' },
     narrow: NARROW,
     rows: [{ cols: [['header']] }, { cols: [['contact', 'side'], ['about', 'main']], split: 32, shade: 'left' }],
@@ -85,7 +97,7 @@ export const TEMPLATES: DesignTemplate[] = [
       margin: 1.3,
       fontSize: 10,
     },
-    variants: { header: 'caps', contact: 'pills', text: 'callout', experience: 'dates-left', education: 'standard', skills: 'outline', list: 'bullets', references: 'list' },
+    variants: { header: 'caps', contact: 'pills', text: 'lead', experience: 'dates-left', education: 'standard', skills: 'outline', list: 'bullets', references: 'list' },
     narrow: { ...NARROW, text: 'plain' },
     rows: [
       { cols: [['header'], ['about']], split: 42 },
@@ -154,12 +166,12 @@ export const TEMPLATES: DesignTemplate[] = [
       font: 'Lato',
       headingFont: 'Lato',
       headingStyle: 'plain',
-      accent: '#0f766e',
+      accent: '#111827',
       text: '#1f2937',
       muted: '#6b7280',
-      shade: '#f0fdfa',
+      shade: '#f4f4f5',
       shadeText: '#1f2937',
-      shadeAccent: '#0f766e',
+      shadeAccent: '#111827',
       margin: 1.5,
       spacing: 1.1,
     },
@@ -176,12 +188,12 @@ export const TEMPLATES: DesignTemplate[] = [
       font: 'Work Sans',
       headingFont: 'Poppins',
       headingStyle: 'bar',
-      accent: '#6d28d9',
+      accent: '#3730a3',
       text: '#1f2937',
       muted: '#6b7280',
-      shade: '#f5f3ff',
+      shade: '#eef0fb',
       shadeText: '#1f2937',
-      shadeAccent: '#6d28d9',
+      shadeAccent: '#3730a3',
       margin: 1.2,
     },
     variants: { header: 'banner', contact: 'stacked', experience: 'timeline', education: 'stacked', skills: 'tags', list: 'bullets', text: 'accent', references: 'list' },
@@ -243,13 +255,13 @@ export const TEMPLATES: DesignTemplate[] = [
       ...DEFAULT_THEME,
       font: 'Roboto',
       headingFont: 'Roboto',
-      headingStyle: 'boxed',
-      accent: '#c2410c',
+      headingStyle: 'underline',
+      accent: '#334e68',
       text: '#1f2937',
-      muted: '#6b7280',
-      shade: '#fff7ed',
+      muted: '#627080',
+      shade: '#f0f4f8',
       shadeText: '#1f2937',
-      shadeAccent: '#c2410c',
+      shadeAccent: '#334e68',
       margin: 1,
       fontSize: 8.75,
       spacing: 0.8,
@@ -264,6 +276,52 @@ export const TEMPLATES: DesignTemplate[] = [
     ],
     footer: 'none',
   },
+  {
+    id: 'stone',
+    name: 'Stone',
+    description: 'Warm neutral sidebar, Poppins headings and a ridgeline footer with a paraglider.',
+    theme: {
+      ...DEFAULT_THEME,
+      font: 'Source Sans 3',
+      headingFont: 'Poppins',
+      headingStyle: 'caps',
+      accent: '#44403c',
+      text: '#292524',
+      muted: '#78716c',
+      shade: '#f1efeb',
+      shadeText: '#292524',
+      shadeAccent: '#57534e',
+      margin: 1.1,
+      spacing: 1.15,
+      fontSize: 10.5,
+    },
+    variants: { header: 'left', contact: 'stacked', text: 'plain', experience: 'standard', education: 'stacked', skills: 'dots', list: 'plain', references: 'list' },
+    narrow: NARROW,
+    rows: [{ cols: [['header', 'contact', 'side'], ['about', 'main']], split: 33, shade: 'left' }],
+    footer: 'paraglider',
+  },
+  {
+    id: 'deep',
+    name: 'Deep',
+    description: 'One column with a timeline down the side, ocean blues and a diver footer.',
+    theme: {
+      ...DEFAULT_THEME,
+      font: 'Open Sans',
+      headingFont: 'Merriweather',
+      headingStyle: 'underline',
+      accent: '#0b4f6c',
+      text: '#122330',
+      muted: '#587080',
+      shade: '#eaf3f7',
+      shadeText: '#122330',
+      shadeAccent: '#0b4f6c',
+      margin: 1.4,
+      fontSize: 9.75,
+    },
+    variants: { header: 'rule', contact: 'inline', text: 'accent', experience: 'timeline', education: 'timeline', skills: 'outline', list: 'inline', references: 'grid' },
+    rows: [{ cols: [['header', 'contact']] }, { cols: [['about', 'main', 'side']] }],
+    footer: 'diver',
+  },
 ];
 
 export function getTemplate(id: string): DesignTemplate {
@@ -275,6 +333,8 @@ export function themeFor(template: DesignTemplate, current?: Theme): Theme {
     ...template.theme,
     fontSize: template.theme.fontSize ?? current?.fontSize ?? DEFAULT_THEME.fontSize,
     template: template.id,
+    // An uploaded footer belongs to the person, not the template.
+    customFooter: current?.customFooter ?? null,
   };
 }
 
@@ -316,7 +376,8 @@ export function applyTemplate(doc: ResumeDocument, templateId: string, reshade =
     }),
     pages: doc.pages.map((p) => ({
       ...p,
-      footer: t.footer,
+      // A footer the person made themselves stays put.
+      footer: p.footer === 'custom' && doc.theme.customFooter ? 'custom' : t.footer,
       rows: reshade
         ? p.rows.map((r) => ({
             ...r,
@@ -385,6 +446,6 @@ export function arrangeLayout(doc: ResumeDocument, templateId: string): ResumeDo
   // Rows left empty (say, no summary) are dropped.
   const used = rows.filter((r) => r.columns.some((c) => c.length));
 
-  const page: Page = { id: doc.pages[0]?.id ?? uid('page'), rows: used.length ? used : [newRow(1)], footer: t.footer };
+  const page: Page = { id: doc.pages[0]?.id ?? uid('page'), rows: used.length ? used : [newRow(1)], footer: doc.pages[0]?.footer ?? t.footer };
   return applyTemplate({ ...doc, pages: [page] }, templateId, false);
 }

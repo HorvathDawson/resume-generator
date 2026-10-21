@@ -1,4 +1,5 @@
-import type { FooterType } from '../model/types';
+import type { CustomFooter, FooterType } from '../model/types';
+import { sanitizeHtml } from './sanitize';
 
 // Decorative page footers. Colors come from the resume theme variables.
 
@@ -198,8 +199,16 @@ const DefaultFooter = () => (
   </div>
 );
 
-export function Footer({ type }: { type: FooterType }) {
-  if (type === 'none') return null;
+/** The person's own footer: an image, or their HTML/SVG once it has been cleaned. */
+const CustomFooterView = ({ footer }: { footer: CustomFooter }) =>
+  footer.image ? (
+    <img className={`footer-custom footer-custom--${footer.align}`} src={footer.image} alt="" />
+  ) : (
+    <div className={`footer-custom footer-custom-html footer-custom--${footer.align}`} dangerouslySetInnerHTML={{ __html: sanitizeHtml(footer.html) }} />
+  );
+
+export function Footer({ type, custom }: { type: FooterType; custom: CustomFooter | null }) {
+  if (type === 'none' || (type === 'custom' && !custom)) return null;
   return (
     <div className={`rg-footer rg-footer--${type}`} aria-hidden="true">
       {type === 'default' && <DefaultFooter />}
@@ -210,6 +219,7 @@ export function Footer({ type }: { type: FooterType }) {
       {type === 'modern' && <ModernFooter />}
       {type === 'paraglider' && <ParagliderFooter />}
       {type === 'diver' && <DiverFooter />}
+      {type === 'custom' && custom && <CustomFooterView footer={custom} />}
     </div>
   );
 }

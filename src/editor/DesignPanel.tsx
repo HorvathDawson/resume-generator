@@ -1,7 +1,10 @@
-import type { HeadingStyle, ResumeDocument, Theme } from '../model/types';
-import { FONTS, HEADING_STYLES } from '../model/variants';
+import { useRef, useState } from 'react';
+import { Code, ImagePlus, Trash2 } from 'lucide-react';
+import type { CustomFooter, FooterType, HeadingStyle, ResumeDocument, Theme } from '../model/types';
+import { FONTS, FOOTERS, HEADING_STYLES } from '../model/variants';
+import { CUSTOM_FOOTER_HTML_MAX, CUSTOM_FOOTER_MAX } from '../model/normalize';
 import type { Updater } from '../hooks/useHistory';
-import { ColorField, SelectField, SliderField } from './fields';
+import { ColorField, Segmented, SelectField, SliderField } from './fields';
 
 interface Props {
   doc: ResumeDocument;
@@ -61,6 +64,158 @@ export function DesignPanel({ doc, update }: Props) {
           <SliderField label="Column gap" value={t.columnGap} min={0.2} max={1.5} step={0.05} onChange={(v) => set('columnGap', v)} format={(v) => `${v.toFixed(2)} cm`} />
         </div>
       </section>
+
+      <FooterCard doc={doc} update={update} />
     </div>
+  );
+}
+
+const ALIGN_OPTIONS: { id: CustomFooter['align']; label: string }[] = [
+  { id: 'stretch', label: 'Full width' },
+  { id: 'left', label: 'Left' },
+  { id: 'center', label: 'Center' },
+  { id: 'right', label: 'Right' },
+];
+
+const readAsDataUrl = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+
+/** The footer on every page, including an image the person uploads. */
+function FooterCard({ doc, update }: Props) {
+  const custom = doc.theme.customFooter;
+  const input = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState('');
+  const footers = new Set(doc.pages.map((p) => p.footer));
+  const shared = footers.size === 1 ? doc.pages[0].footer : '';
+  const options = [
+    ...(shared ? [] : [{ id: '', label: 'Different on each page' }]),
+    ...FOOTERS.filter((f) => f.id !== 'custom' || custom),
+  ];
+  const setAll = (footer: FooterType) => update((d) => d.pages.forEach((p) => void (p.footer = footer)));
+  const setCustom = (patch: Partial<CustomFooter>) =>
+    update((d) => void (d.theme.customFooter = d.theme.customFooter && { ...d.theme.customFooter, ...patch }), `theme.customFooter.${Object.keys(patch)[0]}`);
+
+  const upload = async (file: File) => {
+    setError('');
+    if (!/^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type)) return setError('Use a PNG, JPEG, WebP or SVG image.');
+    const image = await readAsDataUrl(file);
+    if (image.length > CUSTOM_FOOTER_MAX) return setError('That image is too large. Keep it under about 1.5 MB.');
+    update((d) => {
+      d.theme.customFooter = { image, html: '', height: d.theme.customFooter?.height ?? 1.6, align: d.theme.customFooter?.align ?? 'stretch' };
+      d.pages.forEach((p) => void (p.footer = 'custom'));
+    });
+    setWriting(false);
+  };
+
+  const [writing, setWriting] = useState(false);
+  const [draft, setDraft] = useState({ html: '', base: '' });
+  // Start the editor from the saved HTML whenever that changes from outside (undo, another resume).
+  const savedHtml = custom?.html ?? '';
+  if (draft.base !== savedHtml) setDraft({ html: savedHtml, base: savedHtml });
+  const useHtml = () => {
+    const html = draft.html.trim();
+    if (!html) return;
+    if (html.length > CUSTOM_FOOTER_HTML_MAX) return setError('That HTML is too long.');
+    setError('');
+    update((d) => {
+      d.theme.customFooter = { image: '', html, height: d.theme.customFooter?.height ?? 1.6, align: d.theme.customFooter?.align ?? 'stretch' };
+      d.pages.forEach((p) => void (p.footer = 'custom'));
+    });
+  };
+  const showHtml = writing || !!custom?.html;
+
+  return (
+    <section className="card">
+      <div className="card-head">
+        <span className="card-title">Footer</span>
+        <span className="card-sub">Pages can differ: see each page on the Layout tab</span>
+      </div>
+      <div className="card-body">
+        <SelectField<string>
+          label="Footer on every page"
+          value={shared}
+          options={options}
+          onChange={(v) => v && setAll(v as FooterType)}
+        />
+        <div className="field">
+          <span className="field-label">Your own footer</span>
+          <div className="custom-footer">
+            {custom?.image && <img className="custom-footer-thumb" src={custom.image} alt="Your footer image" />}
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => input.current?.click()}>
+              <ImagePlus size={15} /> {custom?.image ? 'Replace image…' : 'Upload image…'}
+            </button>
+            {!showHtml && (
+              <button type="button" className="btn btn--ghost btn--sm" onClick={() => setWriting(true)}>
+                <Code size={15} /> Write HTML or SVG…
+              </button>
+            )}
+            {custom && (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => {
+                  setWriting(false);
+                  update((d) => {
+                    d.theme.customFooter = null;
+                    d.pages.forEach((p) => void (p.footer === 'custom' && (p.footer = 'none')));
+                  });
+                }}
+              >
+                <Trash2 size={14} /> Remove
+              </button>
+            )}
+            <input
+              ref={input}
+              type="file"
+              hidden
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (file) void upload(file);
+              }}
+            />
+          </div>
+          <span className="field-hint">A drawing, a logo or a strip of photo. It's saved inside the resume file, so it goes wherever the resume goes.</span>
+        </div>
+        {showHtml && (
+          <div className="field">
+            <span className="field-label">Footer HTML or SVG</span>
+            <textarea
+              className="code-input"
+              rows={6}
+              spellCheck={false}
+              value={draft.html}
+              placeholder={'<svg viewBox="0 0 600 40" preserveAspectRatio="none">\n  <path d="M0 40 L150 10 L300 30 L450 5 L600 40 Z" fill="var(--rg-accent)" />\n</svg>'}
+              onChange={(e) => setDraft({ html: e.target.value, base: savedHtml })}
+            />
+            <span className="field-hint">
+              Use the resume's colours with <code>var(--rg-accent)</code>, <code>var(--rg-text)</code>, <code>var(--rg-muted)</code> and <code>var(--rg-shade)</code>. Scripts,
+              forms and anything loaded from other sites are removed.
+            </span>
+            <div className="custom-footer">
+              <button type="button" className="btn btn--primary btn--sm" disabled={!draft.html.trim() || draft.html.trim() === savedHtml} onClick={useHtml}>
+                Use this footer
+              </button>
+            </div>
+          </div>
+        )}
+        {error && <p className="field-error">{error}</p>}
+        {custom && (
+          <div className="grid-2">
+            <SliderField label="Height" value={custom.height} min={0.4} max={6} step={0.1} onChange={(v) => setCustom({ height: v })} format={(v) => `${v.toFixed(1)} cm`} />
+            <div className="field">
+              <span className="field-label">Position</span>
+              <Segmented label="Footer image position" value={custom.align} options={ALIGN_OPTIONS} onChange={(v) => setCustom({ align: v })} />
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

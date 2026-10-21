@@ -232,7 +232,7 @@ function PageCard({ doc, page, index, update, overflow, onEditSection, onAutoFit
         <label className="inline-select">
           <span>Footer</span>
           <select value={page.footer} onChange={(e) => editPage((p) => void (p.footer = e.target.value as FooterType))}>
-            {FOOTERS.map((f) => (
+            {FOOTERS.filter((f) => f.id !== 'custom' || doc.theme.customFooter || page.footer === 'custom').map((f) => (
               <option key={f.id} value={f.id}>
                 {f.label}
               </option>

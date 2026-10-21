@@ -141,6 +141,21 @@ export const RESUME_SCHEMA = {
         shadeAccent: color,
         margin: range(0, 5),
         columnGap: range(0, 5),
+        customFooter: {
+          description: 'Image for pages whose footer is "custom", or null.',
+          oneOf: [
+            { type: 'null' },
+            {
+              type: 'object',
+              properties: {
+                image: { type: 'string', pattern: '^(data:image/(png|jpeg|webp|svg\\+xml);base64,|$)', description: 'The image as a base64 data: URL, or "" when html is used.' },
+                html: { type: 'string', description: 'HTML or SVG markup for the footer, or "" when image is used. Scripts and external resources are removed when drawn.' },
+                height: range(0.4, 6),
+                align: { enum: ['stretch', 'left', 'center', 'right'] },
+              },
+            },
+          ],
+        },
       },
     },
   },

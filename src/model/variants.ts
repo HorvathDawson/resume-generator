@@ -103,6 +103,7 @@ export const FOOTERS: Option<FooterType>[] = [
   { id: 'diver', label: 'Seabed and diver' },
   { id: 'fish', label: 'Fish' },
   { id: 'salmon', label: 'Salmon' },
+  { id: 'custom', label: 'Your own image' },
 ];
 
 /** Height reserved at the bottom of the page for each footer, in cm. */
@@ -116,7 +117,14 @@ export const FOOTER_HEIGHT: Record<FooterType, number> = {
   diver: 1.6,
   fish: 1.6,
   salmon: 1.6,
+  custom: 1.6, // the image's own height is used instead, see footerHeight()
 };
+
+/** Height in cm reserved for a page's footer. */
+export function footerHeight(type: FooterType, custom: { height: number } | null): number {
+  if (type === 'custom') return custom ? custom.height : 0;
+  return FOOTER_HEIGHT[type];
+}
 
 export interface FontOption {
   id: string;
