@@ -725,6 +725,60 @@
   opacity: 0.6;
 }
 
+/* Paraglider and diver footers: faint ridgelines plus a small figure, all in
+   the theme's muted colour so they suit any palette. */
+.footer-scene,
+.footer-ridges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.footer-ridges path {
+  fill: var(--rg-muted);
+}
+
+.footer-ridges .ridge-back {
+  opacity: 0.14;
+}
+
+.footer-ridges .ridge-front {
+  opacity: 0.26;
+}
+
+.footer-figure {
+  position: absolute;
+  height: auto;
+  color: var(--rg-muted);
+  fill: currentColor;
+  opacity: 0.85;
+}
+
+.footer-figure .figure-lines {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.32;
+}
+
+.footer-figure .figure-bubble {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.5;
+}
+
+.footer-paraglider {
+  top: 0.02cm;
+  right: 3cm;
+  width: 1.4cm;
+}
+
+.footer-diver {
+  top: 0.15cm;
+  right: 3cm;
+  width: 2.1cm;
+}
+
 .footer-mountains,
 .footer-mountains .mountains-container {
   position: relative;

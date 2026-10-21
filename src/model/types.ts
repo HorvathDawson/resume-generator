@@ -108,7 +108,7 @@ export interface Row {
   shade: Shade;
 }
 
-export type FooterType = 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern';
+export type FooterType = 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern' | 'paraglider' | 'diver';
 
 export interface Page {
   id: string;

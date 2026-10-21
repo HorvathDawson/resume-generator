@@ -6,7 +6,7 @@
   "updatedAt": "2026-10-20T20:42:34.130Z",
   "profile": {
     "name": "Dawson Horvath",
-    "headline": "",
+    "headline": "Mechatronics Engineer",
     "email": "horvath.dawson@gmail.com",
     "phone": "1-250-306-0343",
     "location": "Vancouver, BC, Canada",
@@ -35,7 +35,7 @@
       "variant": "plain",
       "showTitle": true,
       "type": "text",
-      "body": "Innovative and adaptable Engineering Physicist with over three years of experience in robotics, mechatronics, and software engineering. Skilled in designing and building high-throughput automation systems, with expertise in real-time data acquisition, image processing, and instrument control. Proficient in Python, C++, LabVIEW, front-end languages, and Go, with a proven track record of delivering impactful solutions in robotics and automation. Experienced in developing advanced imaging systems, control software, and scalable dashboards, driving efficiency and enhancing data accuracy across multidisciplinary teams. A passionate problem-solver who thrives in dynamic environments, blending technical precision with creativity."
+      "body": "Engineering physicist who builds robots, imaging systems and the software that runs them. At AbCellera since 2020, working across instrument control, image processing, closed-loop liquid handling and internal dashboards. Equally at home in the machine shop and the codebase, mostly in Python, C++, LabVIEW and Go."
     },
     {
       "id": "education-905900f0",
@@ -86,13 +86,13 @@
           "note": "",
           "description": "",
           "bullets": [
-            "Built a real-time fleet management dashboard using Go, SQLite, HTML, CSS, and JavaScript to monitor robot metrics, environmental data, and experiment progress. Integrated a unified data schema and visualized recovered cell locations to improve cross-team collaboration.",
-            "Increased cell transportation speed 3x by transitioning liquid handling from open-loop to calibrated closed-loop control, leveraging vision-based measurements to ensure accuracy and maintain high cell viability.",
-            "Designed and implemented image processing pipelines with Python, C++, and LabVIEW, featuring meniscus detection in micro-capillaries, multi-exposure HDR, flat-field correction, and more, enhancing screening performance.",
-            "Engineered a custom schlieren imaging system using a lenticular lens array, inspired by \"Hand-Held Schlieren Photography with Light Field Probes,\" to capture transparent media refractions with commodity hardware.",
-            "Delivered new single-cell recovery instrument control software in LabVIEW and Python, incorporating robot routines, state machine logic, operator UIs, and imaging pipelines. Completed the project three weeks ahead of a critical demo day.",
-            "Developed a monitoring tool to verify past recovery states, enable retries for failed recoveries, and reduce potential cell loss by up to 50%. Automated data consolidation into a single PDF report with machine learning summaries for troubleshooting and communication.",
-            "Manufactured PDMS microfluidic devices in a Class 1000 cleanroom, critical for high-throughput single-cell screening. Conducted photolithography, mold preparation, and device assembly to ensure precision and reliability in biological assays."
+            "Increased cell transport speed 3x by moving liquid handling from open-loop to calibrated closed-loop control using vision-based measurements, while keeping cell viability high.",
+            "Delivered control software for a new single-cell recovery instrument in LabVIEW and Python (robot routines, state machines, operator UI, imaging), three weeks ahead of a key demo.",
+            "Built image processing pipelines in Python, C++ and LabVIEW, including meniscus detection in micro-capillaries, multi-exposure HDR and flat-field correction.",
+            "Built a tool to review past recoveries and retry failed ones, cutting potential cell loss by up to 50%, with auto-generated PDF reports and machine-learning summaries for troubleshooting.",
+            "Built a real-time fleet dashboard (Go, SQLite, JavaScript) for robot metrics, environmental data and experiment progress on a shared data schema, including maps of recovered cells.",
+            "Designed a schlieren imaging system from a lenticular lens array and commodity hardware to image refraction in transparent media.",
+            "Fabricated PDMS microfluidic devices for single-cell screening in a Class 1000 cleanroom: photolithography, mold preparation and assembly."
           ],
           "tags": [],
           "url": ""
@@ -106,9 +106,9 @@
           "note": "",
           "description": "",
           "bullets": [
-            "Led the design and implementation of a UHV induction furnace, enabling doping of niobium superconductors with gas compounds and removal of hydrides. Achieved a 10x improvement in the SRF cavity quench limit.",
-            "Developed an advanced magnetic field controller that integrates a 3-axis fluxgate magnetometer to dynamically adjust electromagnet currents, effectively neutralizing the Earth's ambient magnetic field.",
-            "Contributed to the maintenance and reassembly of cryostats in ultra-clean environments (Class 1000, 100, and 10 cleanrooms), ensuring optimal performance for precision applications."
+            "Led the design and build of a UHV induction furnace for doping niobium with gas compounds and removing hydrides, raising the SRF cavity quench limit 10x.",
+            "Built a magnetic field controller that reads a 3-axis fluxgate magnetometer and drives electromagnets to cancel Earth's field.",
+            "Maintained and reassembled cryostats in Class 1000, 100 and 10 cleanrooms."
           ],
           "tags": [],
           "url": ""
@@ -122,9 +122,8 @@
           "note": "",
           "description": "",
           "bullets": [
-            "Designed and implemented a full-stack web application using Node.js and AngularJS, automating previously manual workflows and significantly improving operational efficiency.",
-            "Enhanced the QA automation framework by completing Protractor scripts and extending helper classes, leading to more robust and efficient automated testing processes.",
-            "Collaborated closely with team members to identify and resolve technical challenges in the company's flagship product, ensuring smoother performance and higher reliability."
+            "Built a full-stack web app in Node.js and AngularJS that automated manual workflows.",
+            "Extended the QA automation framework with Protractor tests and new helper classes."
           ],
           "tags": [],
           "url": ""
@@ -140,78 +139,72 @@
       "items": [
         {
           "id": "item-aea840ed",
-          "title": "Open Source",
-          "subtitle": "Open Sim2Real Project",
+          "title": "Open Sim2Real Project",
+          "subtitle": "Open source",
           "location": "",
           "dates": "2022",
           "note": "",
           "description": "",
           "bullets": [
-            "Developed an open-source platform for Sim2Real research with a low-cost single-leg robot and simulation, supporting training in both real and simulated environments using the gym framework.",
-            "Handled embedded systems, drivers, backend development, and integration with the gym framework as part of a four-person team.",
-            "Made Sim2Real research more accessible for transitioning from simulation to real-world applications."
+            "Open-source platform for Sim2Real research: a low-cost single-leg robot and matching simulation, both trainable through the Gym interface.",
+            "One of four developers; owned the embedded systems, drivers, backend and Gym integration."
           ],
           "tags": [],
           "url": ""
         },
         {
           "id": "item-2b9e7e7b",
-          "title": "Personal Project",
-          "subtitle": "1950 Austin A40 Restoration",
+          "title": "1950 Austin A40 Restoration",
+          "subtitle": "Personal project",
           "location": "",
           "dates": "2019 – Current",
           "note": "",
           "description": "",
           "bullets": [
-            "Undertaking a frame-up restoration including SR20DET engine installation and upgrading to double wishbone suspension.",
-            "Features modern rack-and-pinion steering, upgraded brakes, and safety improvements like collapsible steering column, seatbelts, and roll cage.",
-            "Custom dash design blending modern functionality with classic aesthetic."
+            "Frame-up rebuild with an SR20DET swap, double-wishbone suspension, rack-and-pinion steering and upgraded brakes.",
+            "Adding a collapsible steering column, seatbelts and a roll cage, plus a custom dash that keeps the classic look."
           ],
           "tags": [],
           "url": ""
         },
         {
           "id": "item-e07a97aa",
-          "title": "UBC Engineering Physics",
-          "subtitle": "Simulated Gazebo Robot",
+          "title": "Simulated Gazebo Robot",
+          "subtitle": "UBC Engineering Physics",
           "location": "",
           "dates": "2019",
           "note": "",
           "description": "",
           "bullets": [
-            "Designed and simulated an autonomous robot in a Gazebo environment using ROS.",
-            "Implemented machine learning and computer vision algorithms to enable license plate reading, obstacle avoidance, and optimized navigation."
+            "Autonomous robot in ROS and Gazebo that reads license plates, avoids obstacles and plans its route using computer vision and machine learning."
           ],
           "tags": [],
           "url": ""
         },
         {
           "id": "item-17df748b",
-          "title": "UBC Engineering Physics",
-          "subtitle": "Robot Design Competition",
+          "title": "Robot Design Competition",
+          "subtitle": "UBC Engineering Physics",
           "location": "",
           "dates": "2019",
           "note": "",
           "description": "",
           "bullets": [
-            "Collaborated with a small team to engineer a fully autonomous robot for the Engineering Physics Robot Competition.",
-            "Led the design of custom drivetrain, SPI communication, control loop, and mechanical systems.",
-            "Followed rigorous review process emphasizing engineering communication, reliability, and testing."
+            "Built a fully autonomous robot in a small team; led the drivetrain, SPI communication, control loop and mechanical design."
           ],
           "tags": [],
           "url": ""
         },
         {
           "id": "item-582e670b",
-          "title": "Personal Project",
-          "subtitle": "DIY Electric Skateboard",
+          "title": "DIY Electric Skateboard",
+          "subtitle": "Personal project",
           "location": "",
           "dates": "2017",
           "note": "",
           "description": "",
           "bullets": [
-            "Designed and prototyped an electric skateboard capable of commuting 20+ km daily at speeds exceeding 30 km/h.",
-            "Engineered a robust powertrain system with optimized battery efficiency for extended reliability."
+            "Designed and built an electric skateboard for a 20+ km daily commute at over 30 km/h."
           ],
           "tags": [],
           "url": ""
@@ -221,7 +214,7 @@
     {
       "id": "skills-949bd978",
       "title": "Skills",
-      "variant": "tags",
+      "variant": "dots",
       "showTitle": true,
       "type": "skills",
       "groups": [
@@ -230,33 +223,32 @@
           "name": "Software Development",
           "skills": [
             "Python",
-            "LabVIEW",
             "C++",
             "Go",
+            "LabVIEW",
             "JavaScript",
             "MATLAB",
             "SQLite",
-            "Git",
-            "Linux",
             "PyTorch",
             "OpenCV",
-            "Machine Learning",
+            "ROS",
+            "Git",
+            "Linux",
             "Computer Vision",
-            "Data Analysis"
+            "Machine Learning"
           ]
         },
         {
           "id": "group-a03d66ec",
           "name": "Hardware & Prototyping",
           "skills": [
-            "Circuit Design",
-            "Arduino",
             "SolidWorks",
             "Onshape",
-            "Prototyping",
             "PCB Design",
+            "Circuit Design",
+            "Embedded Systems",
             "Sensor Integration",
-            "Embedded Systems"
+            "Arduino"
           ]
         },
         {
@@ -264,181 +256,130 @@
           "name": "Fabrication & Hands-On",
           "skills": [
             "Machining",
-            "Soldering",
+            "CNC Operation",
             "Welding",
+            "Soldering",
             "3D Printing",
             "Laser Cutting",
-            "Waterjet Cutting",
-            "CNC Operation",
-            "Mechanical Assembly"
+            "Waterjet Cutting"
           ]
         },
         {
           "id": "group-462ec312",
           "name": "Design & Media",
           "skills": [
-            "Web Development",
             "HTML",
             "CSS",
             "Photoshop",
-            "LaTeX",
-            "UI/UX Design"
+            "LaTeX"
           ]
         }
       ]
     },
     {
       "id": "list-06c22f6a",
-      "title": "Professional Certifications",
-      "variant": "bullets",
+      "title": "Certifications",
+      "variant": "plain",
       "showTitle": true,
       "type": "list",
       "items": [
-        "Engineering Physics Degree",
-        "Cleanroom Operations Certified",
-        "Full-Stack Web Development"
+        "Cleanroom Operations Certified"
       ]
     },
     {
       "id": "references-f091cd32",
       "title": "References",
-      "variant": "grid",
+      "variant": "list",
       "showTitle": true,
       "type": "references",
-      "items": [
-        {
-          "id": "ref-43071677",
-          "name": "Michael Humling",
-          "role": "",
-          "organization": "District Fisheries Biologist @ USDA",
-          "email": "MICHAEL.HUMLING@USDA.GOV",
-          "phone": "(509) 423-0533",
-          "note": ""
-        }
-      ],
+      "items": [],
       "emptyText": "Available upon request."
     }
   ],
   "pages": [
     {
-      "id": "page-de4ceb75",
+      "id": "page-1",
       "rows": [
         {
-          "id": "row-59ccab80",
+          "id": "row-1",
           "columns": [
             [
               {
-                "id": "place-64cc1897",
+                "id": "place-10",
                 "sectionId": "header-5d31dd31"
-              }
-            ]
-          ],
-          "split": 32,
-          "shade": "none"
-        },
-        {
-          "id": "row-46fa5575",
-          "columns": [
-            [
+              },
               {
-                "id": "place-10aae831",
+                "id": "place-11",
                 "sectionId": "contact-0aab769e"
               },
               {
-                "id": "place-280e955c",
+                "id": "place-12",
                 "sectionId": "education-905900f0"
+              },
+              {
+                "id": "place-13",
+                "sectionId": "list-06c22f6a"
               }
             ],
             [
               {
-                "id": "place-0c197d7f",
+                "id": "place-1a",
                 "sectionId": "text-37fa269e"
               },
               {
-                "id": "place-eebacaab",
-                "sectionId": "skills-949bd978"
-              }
-            ]
-          ],
-          "split": 30,
-          "shade": "left"
-        },
-        {
-          "id": "row-7021c4ff",
-          "columns": [
-            [
-              {
-                "id": "place-41495836",
+                "id": "place-1b",
                 "sectionId": "experience-70a6ab40",
-                "to": 1
+                "to": 3
               }
             ]
           ],
-          "split": 32,
-          "shade": "none"
+          "split": 33,
+          "shade": "left"
         }
       ],
-      "footer": "none"
+      "footer": "paraglider"
     },
     {
-      "id": "page-142962b8",
+      "id": "page-2",
       "rows": [
         {
-          "id": "row-2b5a8535",
+          "id": "row-2",
           "columns": [
             [
               {
-                "id": "place-a710e6b6",
-                "sectionId": "experience-70a6ab40",
-                "from": 1
-              },
+                "id": "place-20",
+                "sectionId": "skills-949bd978"
+              }
+            ],
+            [
               {
-                "id": "place-3f7d9b6e",
+                "id": "place-2c",
                 "sectionId": "experience-a4013e70"
               }
             ]
           ],
-          "split": 32,
-          "shade": "none"
+          "split": 33,
+          "shade": "left"
         }
       ],
-      "footer": "none"
-    },
-    {
-      "id": "page-3114cfa4",
-      "rows": [
-        {
-          "id": "row-c49f3a71",
-          "columns": [
-            [
-              {
-                "id": "place-d9a432f4",
-                "sectionId": "list-06c22f6a"
-              }
-            ]
-          ],
-          "split": 32,
-          "shade": "none"
-        }
-      ],
-      "footer": "none"
+      "footer": "paraglider"
     }
   ],
   "theme": {
-    "template": "sidebar",
-    "font": "Roboto",
-    "headingFont": "Roboto",
-    "fontSize": 9.5,
+    "template": "slate",
+    "font": "Source Sans 3",
+    "headingFont": "Poppins",
+    "fontSize": 10.5,
     "lineHeight": 1.4,
-    "spacing": 1,
-    "headingStyle": "underline",
-    "accent": "#2c5aa0",
-    "text": "#333333",
-    "muted": "#6b7280",
-    "shade": "#f8f9fa",
-    "shadeText": "#333333",
-    "shadeAccent": "#2c5aa0",
-    "margin": 1,
+    "spacing": 1.15,
+    "headingStyle": "caps",
+    "accent": "#44403c",
+    "text": "#292524",
+    "muted": "#78716c",
+    "shade": "#f1efeb",
+    "shadeText": "#292524",
+    "shadeAccent": "#57534e",
+    "margin": 1.1,
     "columnGap": 0.7
   }
 }
