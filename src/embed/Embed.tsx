@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import type { ResumeDocument } from '../model/types';
 import { fetchResume } from '../model/io';
 import { googleFontsUrl } from '../model/variants';
-import { ResumeView } from '../resume/ResumeView';
+import { PageView } from '../resume/ResumeView';
+import { themeVars } from '../resume/themeVars';
 
-/** An A4 page (210mm) in CSS pixels. */
+/** An A4 page (210 × 297 mm) in CSS pixels. */
 const PAGE_WIDTH_PX = (210 / 25.4) * 96;
+const PAGE_HEIGHT_PX = (297 / 25.4) * 96;
 
 /** The same resume in the read-only viewer, for clicks on the embed. */
 function viewerUrl(): string {
@@ -24,7 +26,7 @@ function viewerUrl(): string {
  */
 export function Embed({ url }: { url: string }) {
   const [doc, setDoc] = useState<ResumeDocument | null>(null);
-  const [zoom, setZoom] = useState(() => window.innerWidth / PAGE_WIDTH_PX);
+  const [scale, setScale] = useState(() => window.innerWidth / PAGE_WIDTH_PX);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,7 +39,7 @@ export function Embed({ url }: { url: string }) {
   }, [url]);
 
   useEffect(() => {
-    const fit = () => setZoom(window.innerWidth / PAGE_WIDTH_PX);
+    const fit = () => setScale(window.innerWidth / PAGE_WIDTH_PX);
     window.addEventListener('resize', fit);
     return () => window.removeEventListener('resize', fit);
   }, []);
@@ -53,9 +55,18 @@ export function Embed({ url }: { url: string }) {
   }, [fontsUrl]);
 
   if (!doc) return null;
+  // Each page is drawn at full A4 size and scaled down inside a box of the
+  // scaled size (CSS `zoom` sized pages differently in Safari). The boxes are
+  // what the frame scroll-snaps to.
   return (
-    <div className="rg-embed" style={{ zoom }} onClick={() => window.top!.location.assign(viewerUrl())}>
-      <ResumeView doc={doc} />
+    <div className={`rg-embed rg-doc rg-hs-${doc.theme.headingStyle}`} style={themeVars(doc.theme)} onClick={() => window.top!.location.assign(viewerUrl())}>
+      {doc.pages.map((page) => (
+        <div key={page.id} className="rg-embed-page" style={{ width: PAGE_WIDTH_PX * scale, height: PAGE_HEIGHT_PX * scale, overflow: 'hidden' }}>
+          <div style={{ width: PAGE_WIDTH_PX, transform: `scale(${scale})`, transformOrigin: '0 0' }}>
+            <PageView page={page} doc={doc} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
