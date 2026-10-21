@@ -136,11 +136,19 @@ const ParagliderFooter = () => (
       back="M0 60 V48 L60 43.8 105 46.2 170 38.4 225 42.6 270 40.2 335 46.8 400 41.4 470 34.8 520 39.6 565 37.8 640 45 700 40.8 760 43.2 820 36.6 880 42 935 39.6 1000 43.8 V60Z"
       front="M0 60 V54 L75 50.4 130 52.8 205 47.4 260 51 330 48.6 390 53.4 455 49.8 530 52.2 600 46.8 665 51 740 49.2 810 53.4 875 48.6 940 51.6 1000 49.8 V60Z"
     />
-    <svg className="footer-figure footer-paraglider" viewBox="0 0 48 34">
-      <path d="M3 11C12 2 36 2 45 11 36 6.6 12 6.6 3 11Z" />
-      <path className="figure-lines" d="M5 10.4 24 26M14 6.6 24 26M24 5.4V26M34 6.6 24 26M43 10.4 24 26" />
-      <circle cx="24" cy="25.6" r="1.7" />
-      <path d="M22.3 27.4h3.4l1.5 4.6h-6.4Z" />
+    <svg className="footer-figure footer-paraglider" viewBox="0 0 100 80">
+      {/* Wing: a thick arc with rounded tips and a light trailing edge */}
+      <path d="M6 42C9 24 29 9 51 8 73 7 91 20 95 37 96.2 41.6 92.4 43.4 90.6 39.4 85 26.5 70 17 51.5 17 33 17 17.5 27.5 11.4 42.6 9.6 47 5.2 46.4 6 42Z" />
+      <path d="M60 10.6C75 12.5 88 22 92.8 36.8" fill="none" stroke="#fff" strokeWidth="0.7" strokeLinecap="round" opacity="0.85" />
+      {/* Line cascades: pairs join part-way down, then run to the risers */}
+      <path
+        className="figure-lines"
+        d="M10.5 42.5 22 47M17 33 22 47M22 47 47 64M26 25 35 38M34 20.5 35 38M35 38 47.4 64M43 18.2 47.8 64M58 17.4 52.2 64M67 20 64 38M75 24.5 64 38M64 38 52.6 64M83 30 78 47M90.5 40.5 78 47M78 47 53 64"
+      />
+      {/* Pilot: hands up on the brakes, seated in the harness */}
+      <path d="M47.4 64 46.8 67.4 48.4 69.6M52.6 64 53.2 67.4 51.6 69.6" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="50" cy="68.4" r="1.75" />
+      <path d="M47.6 70.2C49 69.6 51 69.6 52.4 70.2 53.6 71.6 54.2 73.6 54.4 76 53.4 77.8 51.8 78.4 50 78.4 48.2 78.4 46.6 77.8 45.6 76 45.8 73.6 46.4 71.6 47.6 70.2Z" />
     </svg>
   </div>
 );
@@ -151,15 +159,23 @@ const DiverFooter = () => (
       back="M0 60 V49.2 C70 44.4 120 50.4 190 46.8 S320 42 390 46.2 520 51 600 45.6 740 42.6 820 46.8 940 50.4 1000 47.4 V60Z"
       front="M0 60 V54.6 C80 51 150 55.2 240 52.2 S380 49.8 460 53.4 600 55.8 690 51.6 830 50.4 900 54 970 52.8 1000 52.2 V60Z"
     />
-    <svg className="footer-figure footer-diver" viewBox="0 0 64 26">
-      <circle cx="6" cy="13" r="3.2" />
-      <path d="M8.5 10.6C14 9.4 26 9.6 34 11.4 36.5 12 36.5 14.4 34 15 26 16.6 14 16.4 8.5 15.2Z" />
-      <rect x="14" y="6.6" width="15" height="3.6" rx="1.8" />
-      <path d="M33 11.6 47 10.2 48 11.6 34.5 13.4ZM33 14.2 47 15.2 47.6 16.8 33.6 16.2Z" />
-      <path d="M46.4 9.4 58 6.4 56.6 11.6ZM46.8 14.6 59.2 15 56 19.6Z" />
-      <circle className="figure-bubble" cx="3.6" cy="7" r="1.1" />
-      <circle className="figure-bubble" cx="5.2" cy="3.4" r="0.8" />
-      <circle className="figure-bubble" cx="3" cy="0.9" r="0.6" />
+    <svg className="footer-figure footer-diver" viewBox="0 0 124 50">
+      {/* Sidemount diver in trim: body flat, knees bent, fins level, cylinder under the arm */}
+      <g opacity="0.7">
+        <path d="M58 33.4 78.4 31.6 81.6 17.6" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M79.4 14.4 83.4 19.6 108 17.4 107.4 12.6Z" />
+      </g>
+      <path d="M58 37.4 80.6 36.8 85 22.8" fill="none" stroke="currentColor" strokeWidth="5.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M82.4 19.6 86.8 25.2 118 23.4 117.2 18Z" />
+      <path d="M17.4 30.4C28 29 42 28.6 54 29.2 59.6 29.6 63 32 63 35.6 63 39.2 59.6 41 54.4 41.4 42 42 28 42 17.8 41.4 13.6 41.1 11.8 38.4 12 35.4 12.2 32.4 14.2 30.8 17.4 30.4Z" />
+      <circle cx="9.6" cy="33.6" r="4.4" />
+      <path d="M6 30.6C4.6 31.6 4.2 34.6 5.4 36.4L7.6 36.6 7.8 30.4Z" />
+      <path d="M17.6 40C14 41.8 10 43 6.4 43.4 4.6 43.6 3.8 45.6 5.4 46.4 10.4 46.4 15.4 44.8 20 42.6Z" />
+      <rect x="18.6" y="41.2" width="34" height="7" rx="3.5" opacity="0.45" />
+      <path d="M19 44.6 15.8 44.2" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <circle className="figure-bubble" cx="5.4" cy="24.4" r="1.4" />
+      <circle className="figure-bubble" cx="7.4" cy="19.8" r="1" />
+      <circle className="figure-bubble" cx="5.8" cy="16.2" r="0.7" />
     </svg>
   </div>
 );
