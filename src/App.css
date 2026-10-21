@@ -1407,20 +1407,6 @@ button:disabled {
   gap: 8px;
 }
 
-.design-rest {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: none;
-}
-
-.design-rest:disabled {
-  opacity: 0.5;
-}
-
 .template-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));

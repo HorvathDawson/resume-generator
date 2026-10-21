@@ -19,6 +19,7 @@ import { ResumeView } from './resume/ResumeView';
 import { ContentPanel } from './editor/ContentPanel';
 import { LayoutPanel } from './editor/LayoutPanel';
 import { DesignPanel } from './editor/DesignPanel';
+import { TemplatesPanel } from './editor/TemplatesPanel';
 import { Preview } from './editor/Preview';
 import { Menu, MenuItem, MenuSeparator } from './editor/Menu';
 import { Dialog } from './editor/Dialog';
@@ -26,9 +27,9 @@ import { Tour } from './editor/Tour';
 import type { TourStep } from './editor/Tour';
 import './App.css';
 
-type Tab = 'resumes' | 'content' | 'layout' | 'design';
+type Tab = 'resumes' | 'content' | 'templates' | 'layout' | 'design';
 
-const TAB_LABELS: Record<Tab, string> = { resumes: 'Resumes', content: 'Content', layout: 'Layout', design: 'Design' };
+const TAB_LABELS: Record<Tab, string> = { resumes: 'Resumes', content: 'Content', templates: 'Templates', layout: 'Layout', design: 'Design' };
 
 const sampleDocument = () => normalizeDocument(sample);
 const HOME_LABEL = __HOME_URL__.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -69,7 +70,7 @@ export default function App() {
   /** A template being tried out: shown in the preview only, until applied. */
   const [trialState, setTrial] = useState<{ templateId: string; base: ResumeDocument; doc: ResumeDocument } | null>(null);
   const setTab = useCallback((next: Tab) => {
-    if (next !== 'design') setTrial(null);
+    if (next !== 'templates') setTrial(null);
     setTabState(next);
   }, []);
   // A trial only applies to the exact resume it was made from: opening another
@@ -207,8 +208,14 @@ export default function App() {
       },
       {
         target: 'editor',
-        title: 'Choose a design',
-        body: <p>Pick one of ten templates, then adjust fonts, colors, spacing and the page footer.</p>,
+        title: 'Try a template',
+        body: <p>Click through the templates to preview your resume in each. Nothing changes until you apply one.</p>,
+        before: () => setTab('templates'),
+      },
+      {
+        target: 'editor',
+        title: 'Fine-tune the design',
+        body: <p>Adjust fonts, colors, spacing and the page footer.</p>,
         before: () => setTab('design'),
       },
       {
@@ -589,10 +596,9 @@ export default function App() {
                 {tab === 'resumes' && <LibraryPanel library={library} doc={doc} update={update} onNew={() => startNew('blank')} onPickFolder={chooseFolder} />}
                 {tab === 'content' && <ContentPanel doc={doc} update={update} openId={openId} setOpenId={setOpenId} notify={notify} />}
                 {tab === 'layout' && <LayoutPanel doc={doc} update={update} overflow={overflow} onEditSection={editSection} onAutoFit={autoFit} notify={notify} />}
-                {tab === 'design' && (
-                  <DesignPanel
+                {tab === 'templates' && (
+                  <TemplatesPanel
                     doc={doc}
-                    update={update}
                     trialId={trial?.templateId ?? null}
                     onTry={tryTemplate}
                     onApplyTrial={applyTrial}
@@ -601,6 +607,7 @@ export default function App() {
                     onCopyDesign={copyDesign}
                   />
                 )}
+                {tab === 'design' && <DesignPanel doc={doc} update={update} />}
               </div>
             </aside>
           )}
