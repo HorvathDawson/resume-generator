@@ -4,7 +4,7 @@ import type { ResumeDocument } from './model/types';
 import { blankDocument } from './model/defaults';
 import { ImportError, clearSharedLink, downloadFile, fetchResume, fileStem, sharedLinkFromUrl } from './model/io';
 import type { Library } from './library/library';
-import { findById, parseAnyFile, serializeResumeFile } from './library/library';
+import { findById, parseAnyFile, serializeResumeFile, sortedPaths, fileNameOf } from './library/library';
 import { bootLibrary, useLibrary } from './library/useLibrary';
 import { canUseFolders, pickFolder } from './library/storage';
 import { LibraryPanel } from './editor/LibraryPanel';
@@ -286,6 +286,33 @@ export default function App() {
     setTrial(null);
     update(() => applied);
     notify(`Applied the ${TEMPLATES.find((t) => t.id === trial.templateId)?.name ?? ''} template.`, true);
+  };
+
+  /** The other resumes, named by file too when titles repeat. */
+  const otherResumes = sortedPaths(library.lib)
+    .filter((p) => p !== library.activePath)
+    .map((p) => {
+      const title = library.lib.files[p].title;
+      const repeated = Object.values(library.lib.files).filter((d) => d.title === title).length > 1;
+      return { path: p, title: repeated ? `${title} (${fileNameOf(p)})` : title };
+    });
+
+  /** Give this resume another resume's look: its template's layout, theme and page footers. */
+  const copyDesign = (path: string) => {
+    const source = library.lib.files[path];
+    if (!source) return;
+    setTrial(null);
+    update((d) => {
+      // Lay the content out with the other resume's template, then take its exact look.
+      const next = arrangeLayout(d, source.theme.template);
+      next.theme = structuredClone(source.theme);
+      next.pages.forEach((page, i) => {
+        page.footer = source.pages[Math.min(i, source.pages.length - 1)]?.footer ?? page.footer;
+      });
+      return next;
+    });
+    setFitRounds(15);
+    notify(`Matched the design of “${source.title}”.`, true);
   };
 
   // ---- Files ---------------------------------------------------------------
@@ -570,6 +597,8 @@ export default function App() {
                     onTry={tryTemplate}
                     onApplyTrial={applyTrial}
                     onCancelTrial={() => setTrial(null)}
+                    others={otherResumes}
+                    onCopyDesign={copyDesign}
                   />
                 )}
               </div>

@@ -16,12 +16,15 @@ interface Props {
   onTry: (templateId: string, keepLayout: boolean) => void;
   onApplyTrial: () => void;
   onCancelTrial: () => void;
+  /** Other resumes in the library, whose design can be copied onto this one. */
+  others: { path: string; title: string }[];
+  onCopyDesign: (path: string) => void;
 }
 
 const ACCENTS = ['#2c5aa0', '#0f766e', '#7c3aed', '#be123c', '#c2410c', '#1f2937', '#0e7490', '#15803d'];
 const FONT_OPTIONS = FONTS.map((f) => ({ id: f.id, label: f.label }));
 
-export function DesignPanel({ doc, update, trialId, onTry, onApplyTrial, onCancelTrial }: Props) {
+export function DesignPanel({ doc, update, trialId, onTry, onApplyTrial, onCancelTrial, others, onCopyDesign }: Props) {
   const t = doc.theme;
   const [keepLayout, setKeepLayout] = useState(false);
   const set = <K extends keyof Theme>(key: K, value: Theme[K]) => update((d) => void (d.theme[key] = value), `theme.${key}`);
@@ -81,6 +84,21 @@ export function DesignPanel({ doc, update, trialId, onTry, onApplyTrial, onCance
           </div>
         </div>
       </section>
+      {others.length > 0 && (
+        <section className="card">
+          <div className="card-head">
+            <span className="card-title">Match another resume</span>
+            <span className="card-sub">Use its template, fonts, colours and footer; your content stays</span>
+          </div>
+          <div className="card-body copy-design">
+            {others.map((o) => (
+              <button key={o.path} type="button" className="btn btn--ghost btn--sm" onClick={() => onCopyDesign(o.path)}>
+                {o.title}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* The rest edits the resume itself, so it waits while a template is only being previewed. */}
       <fieldset className="design-rest" disabled={!!trialId}>
