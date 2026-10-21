@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, CircleHelp, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderOpen, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
+import { ArrowUpRight, CircleHelp, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderInput, FolderOpen, FolderPlus, FolderX, Library as LibraryIcon, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
 import type { ResumeDocument } from './model/types';
 import { blankDocument } from './model/defaults';
-import { ImportError, clearSharedLink, downloadFile, fetchResume, fileStem, loadFromStorage, parseResumeJson, saveToStorage, serializeDocument, sharedLinkFromUrl } from './model/io';
+import { ImportError, clearSharedLink, downloadFile, fetchResume, fileStem, sharedLinkFromUrl } from './model/io';
+import type { Library } from './library/library';
+import { findById, parseAnyFile, serializeResumeFile } from './library/library';
+import { bootLibrary, useLibrary } from './library/useLibrary';
+import { canUseFolders, pickFolder } from './library/storage';
+import { LibraryPanel } from './editor/LibraryPanel';
 import { normalizeDocument } from './model/normalize';
+import { TEMPLATES, applyTemplate, arrangeLayout } from './model/templates';
 import { fitPages, measurePages } from './model/autofit';
 import { googleFontsUrl } from './model/variants';
 import sample from './data/sample.json';
@@ -14,24 +20,19 @@ import { ContentPanel } from './editor/ContentPanel';
 import { LayoutPanel } from './editor/LayoutPanel';
 import { DesignPanel } from './editor/DesignPanel';
 import { Preview } from './editor/Preview';
-import { Menu, MenuItem } from './editor/Menu';
+import { Menu, MenuItem, MenuSeparator } from './editor/Menu';
 import { Dialog } from './editor/Dialog';
 import { Tour } from './editor/Tour';
 import type { TourStep } from './editor/Tour';
 import './App.css';
 
-type Tab = 'content' | 'layout' | 'design';
+type Tab = 'resumes' | 'content' | 'layout' | 'design';
+
+const TAB_LABELS: Record<Tab, string> = { resumes: 'Resumes', content: 'Content', layout: 'Layout', design: 'Design' };
 
 const sampleDocument = () => normalizeDocument(sample);
 const HOME_LABEL = __HOME_URL__.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
-/** A resume kept in this browser that the visitor would lose if it were replaced. */
-function ownStoredResume(other: ResumeDocument): ResumeDocument | null {
-  const local = loadFromStorage();
-  if (!local) return null;
-  const text = serializeDocument(local);
-  return text === serializeDocument(other) || text === serializeDocument(sampleDocument()) ? null : local;
-}
 const PRINT_TIP_KEY = 'resume-generator:hide-print-tip';
 const TOUR_KEY = 'resume-generator:tour-seen';
 
@@ -44,11 +45,9 @@ function tourSeen(): boolean {
   }
 }
 
-interface PendingOpen {
-  doc: ResumeDocument;
-  migrated: boolean;
-  fileName: string;
-}
+type PendingOpen =
+  | { kind: 'resume'; doc: ResumeDocument; migrated: boolean; fileName: string }
+  | { kind: 'library'; lib: Library; skipped: string[]; fileName: string };
 
 export interface ToastAction {
   label: string;
@@ -64,24 +63,34 @@ interface Toast {
 }
 
 export default function App() {
-  const { doc, update, replace, undo, redo, canUndo, canRedo } = useHistory(() => loadFromStorage() ?? sampleDocument());
-  const [tab, setTab] = useState<Tab>('content');
+  const [boot] = useState(() => bootLibrary(sampleDocument));
+  const { doc, update, replace, reset, undo, redo, canUndo, canRedo } = useHistory(() => boot.lib.files[boot.active]);
+  const [tab, setTabState] = useState<Tab>('content');
+  /** A template being tried out: shown in the preview only, until applied. */
+  const [trialState, setTrial] = useState<{ templateId: string; base: ResumeDocument; doc: ResumeDocument } | null>(null);
+  const setTab = useCallback((next: Tab) => {
+    if (next !== 'design') setTrial(null);
+    setTabState(next);
+  }, []);
+  // A trial only applies to the exact resume it was made from: opening another
+  // resume, or a reload from the folder, quietly drops it.
+  const trial = trialState && trialState.base === doc ? trialState : null;
+  /** What the preview and print copy show: the trial if there is one, else the resume. */
+  const shown = trial?.doc ?? doc;
   const [openId, setOpenId] = useState<string | null>(null);
-  const [stored, setStored] = useState<{ doc: ResumeDocument | null; ok: boolean }>({ doc: null, ok: true });
   const [pending, setPending] = useState<PendingOpen | null>(null);
   const [printTip, setPrintTip] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const [dragging, setDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const printRoot = useRef<HTMLDivElement>(null);
-  const overflow = usePageOverflow(printRoot, doc);
+  const overflow = usePageOverflow(printRoot, shown);
   // Rounds of "fix overflow" left to run; each round re-measures the result of the last.
   const [fitRounds, setFitRounds] = useState(0);
   // A resume opened from a link (?resume=...), and whether it is shown without the editor.
   const [shared] = useState(() => sharedLinkFromUrl(window.location.search));
   const [loadingShared, setLoadingShared] = useState(!!shared);
   const [viewOnly, setViewOnly] = useState(!!shared?.view);
-  const [confirmEdit, setConfirmEdit] = useState<ResumeDocument | null>(null);
   // The walkthrough runs on the first visit, and again from the help button.
   const [touring, setTouring] = useState(() => !shared?.view && !tourSeen());
 
@@ -98,13 +107,20 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // Autosave to this browser shortly after each change. A resume opened just to
-  // view isn't saved, so it can't replace the visitor's own.
-  useEffect(() => {
-    if (viewOnly || loadingShared) return;
-    const timer = setTimeout(() => setStored({ doc, ok: saveToStorage(doc) }), 400);
-    return () => clearTimeout(timer);
-  }, [doc, viewOnly, loadingShared]);
+  // The library of resumes, kept in this browser or in a folder. A resume opened
+  // just to view isn't part of it until the visitor chooses to edit it.
+  const library = useLibrary({ boot, doc, resetDoc: reset, enabled: !viewOnly && !loadingShared, notify, showError });
+  const { addAndOpen, open: openResume } = library;
+
+  /** Open a resume that's already in the library unchanged, or add it as a new one. */
+  const openOrAdd = useCallback(
+    (resume: ResumeDocument) => {
+      const existing = findById(library.lib, resume.id);
+      if (existing && serializeResumeFile(library.lib.files[existing]) === serializeResumeFile(resume)) openResume(existing);
+      else addAndOpen(resume);
+    },
+    [library.lib, openResume, addAndOpen],
+  );
 
   useEffect(() => {
     if (!shared) return;
@@ -117,8 +133,7 @@ export default function App() {
           return;
         }
         clearSharedLink();
-        if (ownStoredResume(parsed.doc)) setPending({ ...parsed, fileName: 'the linked resume' });
-        else replace(parsed.doc);
+        openOrAdd(parsed.doc);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -130,7 +145,9 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [shared, replace, showError]);
+    // Runs once for the link the page was opened with.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shared]);
 
   // Name the browser tab after the resume being viewed.
   useEffect(() => {
@@ -142,11 +159,10 @@ export default function App() {
     };
   }, [viewOnly, loadingShared, doc.profile.name, doc.title]);
 
-  const startEditing = (force = false) => {
-    const own = ownStoredResume(doc);
-    if (own && !force) return setConfirmEdit(own);
-    setConfirmEdit(null);
+  /** Edit a resume opened from a link: it joins the library as its own resume. */
+  const startEditing = () => {
     clearSharedLink();
+    openOrAdd(doc);
     setViewOnly(false);
     if (!tourSeen()) setTouring(true);
   };
@@ -159,7 +175,7 @@ export default function App() {
     } catch {
       // Ignore: it just shows again next visit.
     }
-  }, []);
+  }, [setTab]);
 
   const tourSteps: TourStep[] = useMemo(
     () => [
@@ -196,9 +212,21 @@ export default function App() {
         before: () => setTab('design'),
       },
       {
+        target: 'resumes-tab',
+        title: 'Keep versions for each job',
+        body: (
+          <p>
+            The Resumes tab holds all your resumes. Make a copy of your main one for a specific job, and it remembers where it came from. You can also keep them in a
+            folder on your computer, for git or an AI agent.
+          </p>
+        ),
+        before: () => setTab('resumes'),
+      },
+      {
         target: 'file',
         title: 'Keep a copy',
-        body: <p>Your work saves in this browser automatically. Use Save as JSON to back it up or move it to another computer, then open it here again.</p>,
+        body: <p>Everything saves in this browser automatically. Use the File menu to download your resumes as a file, open one, or set up a folder.</p>,
+        before: () => setTab('content'),
       },
       {
         target: 'download',
@@ -211,7 +239,7 @@ export default function App() {
         body: <p>Click here to see this tour again any time.</p>,
       },
     ],
-    [],
+    [setTab],
   );
 
   // Load the fonts the resume uses.
@@ -231,29 +259,48 @@ export default function App() {
     if (!fitRounds) return;
     const frame = requestAnimationFrame(() => {
       const root = printRoot.current;
-      const draft = structuredClone(doc);
+      const draft = structuredClone(shown);
       const changed = !!root && fitPages(draft, measurePages(root));
-      if (changed) update(() => draft, 'autofit');
+      if (changed) {
+        if (trial) setTrial({ ...trial, doc: draft });
+        else update(() => draft, 'autofit');
+      }
       setFitRounds(changed ? fitRounds - 1 : 0);
     });
     return () => cancelAnimationFrame(frame);
-  }, [fitRounds, doc, update]);
+  }, [fitRounds, shown, trial, update]);
 
   const autoFit = useCallback(() => setFitRounds(15), []);
+
+  // ---- Trying templates ------------------------------------------------------
+
+  const tryTemplate = (templateId: string, keepLayout: boolean) => {
+    setTrial({ templateId, base: doc, doc: keepLayout ? applyTemplate(doc, templateId) : arrangeLayout(doc, templateId) });
+    // A new arrangement may not fit the pages yet; fit the trial like a real change.
+    if (!keepLayout) setFitRounds(15);
+  };
+
+  const applyTrial = () => {
+    if (!trial) return;
+    const applied = trial.doc;
+    setTrial(null);
+    update(() => applied);
+    notify(`Applied the ${TEMPLATES.find((t) => t.id === trial.templateId)?.name ?? ''} template.`, true);
+  };
 
   // ---- Files ---------------------------------------------------------------
 
   const saveJson = useCallback(() => {
-    downloadFile(`${fileStem(doc)}.json`, serializeDocument(doc), 'application/json');
-    notify('Saved a JSON copy to your downloads. Open it later with File → Open.');
+    downloadFile(`${fileStem(doc)}.resume.json`, serializeResumeFile(doc), 'application/json');
+    notify('Saved this resume to your downloads. Open it later with File → Open file.');
   }, [doc, notify]);
 
   const readFile = (file: File) => {
     file
       .text()
       .then((text) => {
-        const parsed = parseResumeJson(text);
-        setPending({ ...parsed, fileName: file.name });
+        const opened = parseAnyFile(text);
+        setPending(opened.kind === 'resume' ? { ...opened, fileName: file.name } : { ...opened, fileName: file.name });
       })
       .catch((err: unknown) => {
         showError(err instanceof ImportError ? err.message : "That file couldn't be read.");
@@ -262,17 +309,31 @@ export default function App() {
 
   const confirmOpen = () => {
     if (!pending) return;
-    replace(pending.doc);
-    setOpenId(null);
     setPending(null);
-    notify(`Opened ${pending.fileName}.`, true);
+    setOpenId(null);
+    if (pending.kind === 'resume') {
+      openOrAdd(pending.doc);
+      notify(`Opened ${pending.fileName}.`);
+    } else {
+      const added = library.importLibrary(pending.lib);
+      notify(added ? `Added ${added} ${added === 1 ? 'resume' : 'resumes'} from ${pending.fileName}.` : `You already have every resume in ${pending.fileName}.`);
+    }
   };
 
   const startNew = (kind: 'blank' | 'sample') => {
-    replace(kind === 'blank' ? blankDocument() : sampleDocument());
+    addAndOpen(kind === 'blank' ? blankDocument() : sampleDocument());
     setOpenId(kind === 'blank' ? 'profile' : null);
     setTab('content');
-    notify(kind === 'blank' ? 'Started a blank resume.' : 'Loaded the sample resume.', true);
+    notify(kind === 'blank' ? 'Added a blank resume.' : 'Added the sample resume.');
+  };
+
+  const chooseFolder = async (intent: 'open' | 'setup') => {
+    try {
+      const handle = await pickFolder();
+      if (handle) await library.chooseFolder(handle, intent);
+    } catch (err) {
+      showError(`Couldn't open the folder: ${err instanceof Error ? err.message : 'unknown error'}.`);
+    }
   };
 
   // ---- Output --------------------------------------------------------------
@@ -353,7 +414,8 @@ export default function App() {
         redo();
       } else if (key === 's') {
         e.preventDefault();
-        saveJson();
+        if (library.place.kind === 'folder') library.saveNow();
+        else saveJson();
       } else if (key === 'p') {
         e.preventDefault();
         requestPdf();
@@ -364,15 +426,18 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [undo, redo, saveJson, requestPdf, viewOnly]);
+  }, [undo, redo, saveJson, requestPdf, viewOnly, library]);
 
   const editSection = (id: string) => {
     setTab('content');
     setOpenId(id);
   };
 
-  const saved = !stored.ok ? 'failed' : stored.doc === doc ? 'saved' : 'saving';
-  const overflowPages = doc.pages.map((p, i) => (overflow[p.id] !== undefined ? i + 1 : 0)).filter(Boolean);
+  const saved = library.saveState;
+  const where = library.place.kind === 'folder' ? `“${library.place.name}”` : 'browser';
+  const saveLabel =
+    saved === 'failed' ? `Not saved in ${where}` : saved === 'conflict' ? 'Changed in the folder' : saved === 'saving' ? 'Saving…' : `Saved in ${where}`;
+  const overflowPages = shown.pages.map((p, i) => (overflow[p.id] !== undefined ? i + 1 : 0)).filter(Boolean);
 
   return (
     <>
@@ -422,8 +487,11 @@ export default function App() {
                   <Redo2 size={17} />
                 </button>
               </div>
-              <span className={`save-status save-status--${saved}`} title="Your work is kept in this browser. Use Save JSON to keep a file.">
-                {saved === 'failed' ? 'Not saved in browser' : saved === 'saving' ? 'Saving…' : 'Saved in browser'}
+              <span
+                className={`save-status save-status--${saved === 'conflict' ? 'failed' : saved}`}
+                title={library.place.kind === 'folder' ? 'Edits save straight into the folder.' : 'Your resumes are kept in this browser. Use File → Download library to keep a file.'}
+              >
+                {saveLabel}
               </span>
             </>
           )}
@@ -436,16 +504,28 @@ export default function App() {
             {!viewOnly && (
               <Menu label="File" tour="file">
                 <MenuItem icon={<FilePlus size={16} />} onClick={() => startNew('blank')}>New blank resume</MenuItem>
-                <MenuItem icon={<FileText size={16} />} onClick={() => startNew('sample')}>Load sample resume</MenuItem>
-                <MenuItem icon={<FolderOpen size={16} />} hint="Ctrl+O" onClick={() => fileInput.current?.click()}>Open JSON file…</MenuItem>
-                <MenuItem icon={<FileJson size={16} />} hint="Ctrl+S" onClick={saveJson}>Save as JSON</MenuItem>
+                <MenuItem icon={<FileText size={16} />} onClick={() => startNew('sample')}>Add the sample resume</MenuItem>
+                <MenuItem icon={<FolderOpen size={16} />} hint="Ctrl+O" onClick={() => fileInput.current?.click()}>Open file…</MenuItem>
+                <MenuItem icon={<FileJson size={16} />} hint={library.place.kind === 'folder' ? undefined : 'Ctrl+S'} onClick={saveJson}>Save this resume as a file</MenuItem>
+                <MenuItem icon={<LibraryIcon size={16} />} onClick={library.downloadLibrary}>Download library (all resumes)</MenuItem>
+                <MenuSeparator label="Folder" />
+                {library.place.kind === 'folder' ? (
+                  <MenuItem icon={<FolderX size={16} />} onClick={library.disconnect}>Close folder “{library.place.name}”</MenuItem>
+                ) : canUseFolders() ? (
+                  <>
+                    <MenuItem icon={<FolderPlus size={16} />} onClick={() => chooseFolder('setup')}>Set up a resume folder…</MenuItem>
+                    <MenuItem icon={<FolderInput size={16} />} onClick={() => chooseFolder('open')}>Open resume folder…</MenuItem>
+                  </>
+                ) : (
+                  <MenuItem icon={<FolderPlus size={16} />} disabled onClick={() => undefined}>Folders need Chrome or Edge</MenuItem>
+                )}
               </Menu>
             )}
             <Menu label="Download" primary={!viewOnly} tour="download" icon={<Download size={16} />}>
               <MenuItem icon={<FileDown size={16} />} onClick={savePdf}>PDF</MenuItem>
               <MenuItem icon={<Printer size={16} />} hint="Ctrl+P" onClick={requestPdf}>Print to PDF (sharpest text)</MenuItem>
               <MenuItem icon={<FileCode size={16} />} onClick={saveHtml}>HTML web page</MenuItem>
-              <MenuItem icon={<FileJson size={16} />} onClick={saveJson}>JSON (to edit later)</MenuItem>
+              <MenuItem icon={<FileJson size={16} />} onClick={saveJson}>Resume file (to edit later)</MenuItem>
             </Menu>
             {viewOnly && (
               <button type="button" className="btn btn--primary" onClick={() => startEditing()}>
@@ -455,27 +535,48 @@ export default function App() {
           </div>
         </header>
 
+        {library.reconnect && !viewOnly && (
+          <div className="reconnect-bar" role="status">
+            <FolderOpen size={16} />
+            <span>
+              Your resumes are in the folder <strong>{library.reconnect}</strong>. The browser needs your OK to open it again.
+            </span>
+            <button type="button" className="btn btn--primary btn--sm" onClick={library.reconnectFolder}>Open folder</button>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={library.dismissReconnect}>Use this browser instead</button>
+          </div>
+        )}
+
         <main className={`workspace${viewOnly ? ' workspace--view' : ''}`}>
           {loadingShared && <div className="loading-cover">Opening resume…</div>}
           {!viewOnly && (
             <aside className="editor" data-tour="editor">
               <nav className="tabs" role="tablist">
-                {(['content', 'layout', 'design'] as Tab[]).map((t) => (
-                  <button key={t} type="button" role="tab" aria-selected={tab === t} className={tab === t ? 'is-active' : ''} onClick={() => setTab(t)}>
-                    {t === 'content' ? 'Content' : t === 'layout' ? 'Layout' : 'Design'}
+                {(Object.keys(TAB_LABELS) as Tab[]).map((t) => (
+                  <button key={t} type="button" role="tab" aria-selected={tab === t} className={tab === t ? 'is-active' : ''} onClick={() => setTab(t)} data-tour={t === 'resumes' ? 'resumes-tab' : undefined}>
+                    {TAB_LABELS[t]}
                     {t === 'layout' && overflowPages.length > 0 && <span className="tab-dot" title="A page has content cut off" />}
                   </button>
                 ))}
               </nav>
               <div className="editor-scroll">
+                {tab === 'resumes' && <LibraryPanel library={library} doc={doc} update={update} onNew={() => startNew('blank')} onPickFolder={chooseFolder} />}
                 {tab === 'content' && <ContentPanel doc={doc} update={update} openId={openId} setOpenId={setOpenId} notify={notify} />}
                 {tab === 'layout' && <LayoutPanel doc={doc} update={update} overflow={overflow} onEditSection={editSection} onAutoFit={autoFit} notify={notify} />}
-                {tab === 'design' && <DesignPanel doc={doc} update={update} onAutoFit={autoFit} notify={notify} />}
+                {tab === 'design' && (
+                  <DesignPanel
+                    doc={doc}
+                    update={update}
+                    trialId={trial?.templateId ?? null}
+                    onTry={tryTemplate}
+                    onApplyTrial={applyTrial}
+                    onCancelTrial={() => setTrial(null)}
+                  />
+                )}
               </div>
             </aside>
           )}
           <Preview
-            doc={doc}
+            doc={shown}
             overflow={viewOnly ? {} : overflow}
             selectedId={!viewOnly && tab === 'content' ? openId : null}
             onSelectSection={viewOnly ? undefined : editSection}
@@ -494,51 +595,89 @@ export default function App() {
           }}
         />
 
-        {dragging && <div className="drop-overlay">Drop a resume JSON file to open it</div>}
+        {dragging && <div className="drop-overlay">Drop a resume or library file to add it</div>}
 
         {pending && (
           <Dialog
-            title={`Open “${pending.doc.title}”?`}
+            title={pending.kind === 'resume' ? `Add “${pending.doc.title}”?` : `Add the resumes in ${pending.fileName}?`}
             onClose={() => setPending(null)}
             actions={
               <>
                 <button type="button" className="btn btn--ghost" onClick={() => setPending(null)}>Cancel</button>
-                <button type="button" className="btn btn--ghost" onClick={saveJson}>Save current first</button>
-                <button type="button" className="btn btn--primary" onClick={confirmOpen} autoFocus>Open</button>
+                <button type="button" className="btn btn--primary" onClick={confirmOpen} autoFocus>
+                  {pending.kind === 'resume' ? 'Add and open' : `Add ${Object.keys(pending.lib.files).length}`}
+                </button>
               </>
             }
           >
-            <p>
-              This replaces what’s in the editor with <strong>{pending.fileName}</strong>
-              {pending.doc.profile.name && <> ({pending.doc.profile.name})</>}: {pending.doc.sections.length} sections on {pending.doc.pages.length}{' '}
-              {pending.doc.pages.length === 1 ? 'page' : 'pages'}. You can get your current resume back with Undo.
-            </p>
-            {pending.migrated && (
-              <p className="hint">This file is from an older version of Resume Builder. It’s been converted; check the layout and save a new copy.</p>
+            {pending.kind === 'resume' ? (
+              <p>
+                <strong>{pending.fileName}</strong>
+                {pending.doc.profile.name && <> ({pending.doc.profile.name})</>}: {pending.doc.sections.length} sections on {pending.doc.pages.length}{' '}
+                {pending.doc.pages.length === 1 ? 'page' : 'pages'}. It's added to your resumes as a new one; nothing you have is replaced.
+              </p>
+            ) : (
+              <p>
+                <strong>{pending.lib.name}</strong> has {Object.keys(pending.lib.files).length} resumes. They're added to yours, in the same folders; nothing you have is
+                replaced.
+              </p>
+            )}
+            {pending.kind === 'resume' && pending.migrated && (
+              <p className="hint">This file is from an older version of Resume Builder. It’s been converted; check the layout.</p>
+            )}
+            {pending.kind === 'library' && pending.skipped.length > 0 && (
+              <p className="notice notice--warn">{pending.skipped.length} entries in the file couldn't be read and will be skipped: {pending.skipped.join(', ')}.</p>
             )}
           </Dialog>
         )}
 
         {touring && !viewOnly && !loadingShared && <Tour steps={tourSteps} onClose={endTour} />}
 
-        {confirmEdit && (
+        {library.conflict && (
           <Dialog
-            title="Replace the resume saved in this browser?"
-            onClose={() => setConfirmEdit(null)}
+            title={library.conflict.disk ? 'This resume changed in the folder' : 'This resume’s file was deleted'}
+            onClose={() => undefined}
             actions={
-              <>
-                <button type="button" className="btn btn--ghost" onClick={() => setConfirmEdit(null)}>Cancel</button>
-                <button type="button" className="btn btn--ghost" onClick={() => downloadFile(`${fileStem(confirmEdit)}.json`, serializeDocument(confirmEdit), 'application/json')}>
-                  Download mine first
-                </button>
-                <button type="button" className="btn btn--primary" autoFocus onClick={() => startEditing(true)}>Edit this one</button>
-              </>
+              library.conflict.disk ? (
+                <>
+                  <button type="button" className="btn btn--ghost" onClick={() => library.resolveConflict('both')}>Keep both</button>
+                  <button type="button" className="btn btn--ghost" onClick={() => library.resolveConflict('mine')}>Keep my edits</button>
+                  <button type="button" className="btn btn--primary" autoFocus onClick={() => library.resolveConflict('disk')}>Use the folder’s version</button>
+                </>
+              ) : (
+                <button type="button" className="btn btn--primary" autoFocus onClick={() => library.resolveConflict('mine')}>Save it again</button>
+              )
             }
           >
             <p>
-              You already have a resume{confirmEdit.profile.name && <> for <strong>{confirmEdit.profile.name}</strong></>} saved in this browser. Editing this one replaces it.
-              Download yours first if you want to keep it.
+              <strong>{library.conflict.path}</strong> was changed by another program (an AI agent, an editor, git) while you also had unsaved edits here.
             </p>
+            <p className="hint">“Keep both” saves your edits as a separate copy next to it, and loads the folder’s version.</p>
+          </Dialog>
+        )}
+
+        {library.question && (
+          <Dialog
+            title={library.question.kind === 'other' ? 'Set up a resume library in this folder?' : 'No resume library in this folder yet'}
+            onClose={() => library.answerQuestion(false)}
+            actions={
+              <>
+                <button type="button" className="btn btn--ghost" onClick={() => library.answerQuestion(false)}>Cancel</button>
+                <button type="button" className="btn btn--primary" autoFocus onClick={() => library.answerQuestion(true)}>Set it up</button>
+              </>
+            }
+          >
+            {library.question.kind === 'other' ? (
+              <p>
+                <strong>{library.question.handle.name}</strong> already has other files ({library.question.entries.slice(0, 4).join(', ')}
+                {library.question.entries.length > 4 ? ', …' : ''}). The library adds <code>library.json</code>, <code>resumes/</code> and a few guide files, and doesn't
+                touch anything else.
+              </p>
+            ) : (
+              <p>
+                <strong>{library.question.handle.name}</strong> is empty. Set it up with your current {Object.keys(library.lib.files).length} resumes?
+              </p>
+            )}
           </Dialog>
         )}
 
@@ -633,7 +772,7 @@ export default function App() {
 
       {/* Unscaled copy used for printing and for measuring page overflow. */}
       <div id="print-root" ref={printRoot} aria-hidden="true">
-        <ResumeView doc={doc} />
+        <ResumeView doc={shown} />
       </div>
     </>
   );
