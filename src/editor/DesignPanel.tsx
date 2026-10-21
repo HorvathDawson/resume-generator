@@ -11,29 +11,52 @@ import { Checkbox, ColorField, SelectField, SliderField } from './fields';
 interface Props {
   doc: ResumeDocument;
   update: (fn: Updater, key?: string) => void;
-  onAutoFit: () => void;
-  notify: (message: string, undoable?: boolean) => void;
+  /** The template being tried in the preview, not yet applied. */
+  trialId: string | null;
+  onTry: (templateId: string, keepLayout: boolean) => void;
+  onApplyTrial: () => void;
+  onCancelTrial: () => void;
 }
 
 const ACCENTS = ['#2c5aa0', '#0f766e', '#7c3aed', '#be123c', '#c2410c', '#1f2937', '#0e7490', '#15803d'];
 const FONT_OPTIONS = FONTS.map((f) => ({ id: f.id, label: f.label }));
 
-export function DesignPanel({ doc, update, onAutoFit, notify }: Props) {
+export function DesignPanel({ doc, update, trialId, onTry, onApplyTrial, onCancelTrial }: Props) {
   const t = doc.theme;
   const [keepLayout, setKeepLayout] = useState(false);
   const set = <K extends keyof Theme>(key: K, value: Theme[K]) => update((d) => void (d.theme[key] = value), `theme.${key}`);
   const fontOptions = FONT_OPTIONS.some((f) => f.id === t.font) ? FONT_OPTIONS : [...FONT_OPTIONS, { id: t.font, label: t.font }];
   const headingOptions = FONT_OPTIONS.some((f) => f.id === t.headingFont) ? FONT_OPTIONS : [...FONT_OPTIONS, { id: t.headingFont, label: t.headingFont }];
 
+  const trial = TEMPLATES.find((tpl) => tpl.id === trialId);
+
   return (
     <div className="panel-stack">
+      {trial && (
+        <div className="trial-bar" role="status">
+          <p>
+            Previewing <strong>{trial.name}</strong>. Your resume hasn't changed: try others, then apply the one you like.
+          </p>
+          <div className="trial-bar-actions">
+            <button type="button" className="btn btn--ghost btn--sm" onClick={onCancelTrial}>Back to my design</button>
+            <button type="button" className="btn btn--primary btn--sm" onClick={onApplyTrial}>Apply {trial.name}</button>
+          </div>
+        </div>
+      )}
       <section className="card">
         <div className="card-head">
           <span className="card-title">Template</span>
-          <span className="card-sub">Sets the layout, fonts, colors and footer</span>
+          <span className="card-sub">Click one to preview it; nothing changes until you apply it</span>
         </div>
         <div className="card-body">
-          <Checkbox label="Keep my current layout (only change the look)" checked={keepLayout} onChange={setKeepLayout} />
+          <Checkbox
+            label="Keep my current layout (only change the look)"
+            checked={keepLayout}
+            onChange={(v) => {
+              setKeepLayout(v);
+              if (trialId) onTry(trialId, v);
+            }}
+          />
           <div className="template-grid">
             {TEMPLATES.map((tpl) => {
               const preview = keepLayout ? applyTemplate(doc, tpl.id) : arrangeLayout(doc, tpl.id);
@@ -41,16 +64,9 @@ export function DesignPanel({ doc, update, onAutoFit, notify }: Props) {
                 <button
                   key={tpl.id}
                   type="button"
-                  className={`template-card${t.template === tpl.id ? ' is-active' : ''}`}
-                  onClick={() => {
-                    if (keepLayout) {
-                      update((d) => applyTemplate(d, tpl.id));
-                    } else {
-                      update((d) => arrangeLayout(d, tpl.id));
-                      onAutoFit();
-                    }
-                    notify(`Applied the ${tpl.name} template.`, true);
-                  }}
+                  className={`template-card${(trialId ?? t.template) === tpl.id ? ' is-active' : ''}`}
+                  aria-pressed={(trialId ?? t.template) === tpl.id}
+                  onClick={() => (tpl.id === trialId ? undefined : onTry(tpl.id, keepLayout))}
                 >
                   <div className="template-thumb" aria-hidden="true">
                     <div className={`rg-doc rg-hs-${preview.theme.headingStyle}`} style={{ ...themeVars(preview.theme), zoom: 0.15 } as CSSProperties}>
@@ -66,6 +82,8 @@ export function DesignPanel({ doc, update, onAutoFit, notify }: Props) {
         </div>
       </section>
 
+      {/* The rest edits the resume itself, so it waits while a template is only being previewed. */}
+      <fieldset className="design-rest" disabled={!!trialId}>
       <section className="card">
         <div className="card-head">
           <span className="card-title">Text</span>
@@ -108,6 +126,7 @@ export function DesignPanel({ doc, update, onAutoFit, notify }: Props) {
           <SliderField label="Column gap" value={t.columnGap} min={0.2} max={1.5} step={0.05} onChange={(v) => set('columnGap', v)} format={(v) => `${v.toFixed(2)} cm`} />
         </div>
       </section>
+      </fieldset>
     </div>
   );
 }

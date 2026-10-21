@@ -7,6 +7,7 @@ import type {
   Profile,
   Reference,
   ResumeDocument,
+  ResumeMeta,
   Row,
   Section,
   SectionType,
@@ -169,6 +170,11 @@ export function normalizeTheme(v: unknown): Theme {
 }
 
 /** Turn any object that claims to be a v2 document into a valid one. */
+function normalizeMeta(v: unknown): ResumeMeta {
+  const o = isObj(v) ? v : {};
+  return { basedOn: str(o.basedOn), target: str(o.target), notes: str(o.notes) };
+}
+
 export function normalizeDocument(v: unknown): ResumeDocument {
   const o = isObj(v) ? v : {};
   const seen = new Set<string>();
@@ -188,6 +194,7 @@ export function normalizeDocument(v: unknown): ResumeDocument {
     id: id(o.id, 'resume'),
     title: str(o.title).trim() || 'My resume',
     updatedAt: str(o.updatedAt) || new Date().toISOString(),
+    meta: normalizeMeta(o.meta),
     profile: normalizeProfile(o.profile),
     sections,
     pages: pages.length ? pages : [normalizePage({}, seen)],

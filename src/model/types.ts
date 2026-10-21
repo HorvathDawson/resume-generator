@@ -141,6 +141,16 @@ export interface Theme {
   columnGap: number;
 }
 
+/** Where a resume came from and what it's for, so tailored copies stay traceable. */
+export interface ResumeMeta {
+  /** `id` of the resume this one was copied from, or "" for an original. */
+  basedOn: string;
+  /** The job or kind of job this version is tailored for, e.g. "Robotics roles". */
+  target: string;
+  /** Free notes: the posting it was made for, what changed, when it was sent. */
+  notes: string;
+}
+
 export interface ResumeDocument {
   schema: typeof SCHEMA_ID;
   version: typeof SCHEMA_VERSION;
@@ -148,6 +158,7 @@ export interface ResumeDocument {
   /** What the user calls this resume, also used for file names. */
   title: string;
   updatedAt: string;
+  meta: ResumeMeta;
   profile: Profile;
   sections: Section[];
   pages: Page[];

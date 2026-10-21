@@ -320,6 +320,166 @@ button:disabled {
   text-underline-offset: 2px;
 }
 
+.btn--danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+/* ---- Resumes (library) panel --------------------------------------------------- */
+
+.library-head {
+  padding-top: 12px;
+}
+
+.library-place {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-2);
+}
+
+.library-place > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.library-place .hint {
+  flex: 1;
+  min-width: 180px;
+}
+
+.library-place-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  padding-left: 24px;
+}
+
+.library-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.library-current-head,
+.library-current-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.library-current-head {
+  padding-top: 8px;
+}
+
+.library-current-foot {
+  justify-content: flex-end;
+}
+
+.library-delete:hover:not(:disabled) {
+  color: var(--danger);
+  border-color: #f3b4b4;
+}
+
+.library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.library-folder {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.library-folder-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.library-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.library-item.is-active {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.library-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+.library-item-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.library-star {
+  flex: none;
+  color: #d97706;
+  fill: #d97706;
+}
+
+.library-item-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reconnect-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: var(--brand-soft);
+  border-bottom: 1px solid #c7cbf5;
+  font-size: 13px;
+}
+
+.reconnect-bar span {
+  flex: 1;
+  min-width: 200px;
+}
+
 /* ---- Menus, dialogs, toasts ------------------------------------------------- */
 
 .menu {
@@ -349,6 +509,23 @@ button:disabled {
   border-radius: 6px;
   background: none;
   text-align: left;
+}
+
+.menu-sep {
+  margin: 6px 4px 2px;
+  padding: 6px 6px 2px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.menu-item:disabled {
+  color: var(--text-3);
+  cursor: default;
+  background: none;
 }
 
 .menu-item:hover {
@@ -1202,6 +1379,47 @@ button:disabled {
 }
 
 /* ---- Design panel ---------------------------------------------------------------- */
+
+.trial-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #c7cbf5;
+  border-radius: var(--radius);
+  background: var(--brand-soft);
+  box-shadow: var(--shadow);
+}
+
+.trial-bar p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.trial-bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.design-rest {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.design-rest:disabled {
+  opacity: 0.5;
+}
 
 .template-grid {
   display: grid;

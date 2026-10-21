@@ -41,6 +41,12 @@ export function useHistory(initial: () => ResumeDocument) {
     setState((s) => ({ past: [...s.past, s.present].slice(-LIMIT), present: doc, future: [] }));
   }, []);
 
+  /** Show a different document with a fresh history (switching resumes). */
+  const reset = useCallback((doc: ResumeDocument) => {
+    last.current = { time: 0 };
+    setState({ past: [], present: doc, future: [] });
+  }, []);
+
   const undo = useCallback(() => {
     last.current = { time: 0 };
     setState((s) =>
@@ -59,6 +65,7 @@ export function useHistory(initial: () => ResumeDocument) {
     doc: state.present,
     update,
     replace,
+    reset,
     undo,
     redo,
     canUndo: state.past.length > 0,

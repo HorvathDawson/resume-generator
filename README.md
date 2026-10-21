@@ -7,9 +7,25 @@ A browser app for building clean, printable A4 resumes. Live at
 
 - **Content**: your details plus sections (experience, education, skills, lists, references, free text). Click any section in the preview to jump to it.
 - **Layout**: each page is drawn as a small sheet. Drag sections between columns, rows and pages; pick a row shape (one column, narrow left, even, narrow right); drag the line between two columns to set their widths. Click a section for its options: edit its text, move it, or split a long one across pages by clicking between two of its items (and put it back together later). The row and page ⋯ menus hold sidebar color, reordering and delete. **Move it to the next page** fixes any page that overflows.
-- **Design**: pick one of ten templates (some put the name beside the summary, some use a banner, some add a footer), then tune fonts, size, spacing, heading style and colors. Templates rearrange sections too, unless you tick "Keep my current layout".
+- **Design**: click a template to preview it on your resume; nothing changes until you click **Apply**, and **Back to my design** returns to how it was. Then tune fonts, size, spacing, heading style and colors. Templates rearrange sections too, unless you tick "Keep my current layout".
+- **Resumes**: keep several resumes in one library: a main one plus copies tailored to particular jobs. **Make a copy for a job** records which resume it came from and what it's for, and folders group them.
 
-A short guided tour runs on the first visit; the ? button in the top bar replays it. Everything autosaves in your browser. Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
+A short guided tour runs on the first visit; the ? button in the top bar replays it. Everything autosaves in your browser (or in your folder, below). Undo/redo with Ctrl+Z / Ctrl+Shift+Z.
+
+### Keeping resumes in a folder (git, AI agents)
+
+In Chrome or Edge, **File → Set up a resume folder…** writes your library into a folder on your computer and keeps saving there:
+
+```
+library.json                     library name, default resume, short guide
+resumes/main.resume.json         one resume per file
+resumes/applications/acme.resume.json
+AGENTS.md                        how an AI agent should read and edit the files
+README.md                        how to open the folder, and a git workflow
+resume.schema.json               JSON Schema for a .resume.json file
+```
+
+Edits made in the folder by other programs (an AI agent, an editor, `git pull`) show up in the builder within a few seconds; if the open resume was also edited in the builder, it asks which to keep. The builder never connects to GitHub or any server, so a private repo stays private. Next visit, the browser asks once to reopen the folder. Other browsers use **File → Download library** / **Open file** with a single `.library.json` file instead.
 
 ### Getting your resume out
 
@@ -18,7 +34,8 @@ A short guided tour runs on the first visit; the ? button in the top bar replays
 | **PDF** | Download → PDF saves a PDF straight away. Text stays selectable and links work. |
 | **Print to PDF** | The backup, with the sharpest text: opens the print dialog. Choose *Save as PDF*, margins *None*, and turn on *Background graphics*. |
 | **HTML** | A single self-contained web page you can host anywhere. |
-| **JSON** | The editable source. Open it again with File → Open (or drag it onto the window). |
+| **Resume file** | One resume as `.resume.json`, the editable source. Open it again with File → Open file (or drag it onto the window); it's added to your library. |
+| **Library file** | File → Download library: every resume in one `.library.json` file. |
 
 ### Linking to a resume
 
@@ -33,7 +50,7 @@ Add `?resume=` to the app's address to open a resume straight away, for example 
 
 To publish a resume, save it as JSON (File → Save as JSON) into `public/resumes/<name>.json` and rebuild. Opening a link never silently replaces a visitor's own work: if they have a different resume saved in their browser, they're asked first.
 
-Files saved by the previous version of the app still open; they're converted to the current format on import.
+Files saved by earlier versions of the app (single `.json` resumes, and the older format) still open; they're added to your library. A resume saved in the browser by an earlier version becomes the first resume in the library.
 
 ## Development
 
@@ -69,6 +86,7 @@ src/
 │   └── edit.ts       layout editing helpers
 ├── resume/         renders a document (preview, print and HTML export share it)
 ├── editor/         the Content / Layout / Design panels and preview
+├── library/        libraries: several resumes, folders on disk, the agent guide and schema
 ├── export/         standalone HTML export
 └── data/sample.json
 ```

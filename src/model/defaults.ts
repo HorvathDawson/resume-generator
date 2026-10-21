@@ -149,6 +149,7 @@ export function blankDocument(): ResumeDocument {
     id: uid('resume'),
     title: 'My resume',
     updatedAt: new Date().toISOString(),
+    meta: { basedOn: '', target: '', notes: '' },
     profile: emptyProfile(),
     sections: sections.map((s) => (s.type === 'contact' ? { ...s, variant: 'inline' } : s)),
     pages: [{ id: uid('page'), rows: [top, body], footer: 'none' }],

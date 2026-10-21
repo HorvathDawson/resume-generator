@@ -316,6 +316,7 @@ export function migrateLegacy(data: unknown): ResumeDocument {
     id: uid('resume'),
     title: first(r.name, profile.name && `${profile.name} resume`, 'Imported resume'),
     updatedAt: new Date().toISOString(),
+    meta: { basedOn: '', target: '', notes: '' },
     profile,
     sections,
     pages,

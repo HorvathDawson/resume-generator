@@ -773,6 +773,18 @@
   width: 1.4cm;
 }
 
+.footer-fish {
+  top: 0.3cm;
+  right: 3cm;
+  width: 2.3cm;
+}
+
+/* Light details (eye, gill, spots) drawn in the page colour over the figure. */
+.footer-figure .figure-detail {
+  color: #fff;
+  fill: #fff;
+}
+
 .footer-diver {
   top: 0.15cm;
   right: 3cm;
@@ -828,7 +840,6 @@
   opacity: 0.9;
 }
 
-.footer-fish,
 .footer-salmon {
   display: flex;
   align-items: center;
@@ -836,7 +847,6 @@
   height: 100%;
 }
 
-.footer-fish svg,
 .footer-salmon svg {
   width: 1.4cm;
   height: 1.4cm;

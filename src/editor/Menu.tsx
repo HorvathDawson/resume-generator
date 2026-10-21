@@ -37,13 +37,21 @@ export function Menu({ label, icon, primary, tour, children }: { label: string; 
   );
 }
 
-export function MenuItem({ icon, hint, onClick, children }: { icon?: ReactNode; hint?: string; onClick: () => void; children: ReactNode }) {
+export function MenuItem({ icon, hint, onClick, children, disabled }: { icon?: ReactNode; hint?: string; onClick: () => void; children: ReactNode; disabled?: boolean }) {
   return (
-    <button type="button" role="menuitem" className="menu-item" onClick={onClick}>
+    <button type="button" role="menuitem" className="menu-item" onClick={onClick} disabled={disabled}>
       {icon}
       <span>{children}</span>
       {hint && <kbd>{hint}</kbd>}
     </button>
+  );
+}
+
+export function MenuSeparator({ label }: { label?: string }) {
+  return (
+    <div className="menu-sep" role="separator">
+      {label}
+    </div>
   );
 }
 
