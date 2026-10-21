@@ -54,6 +54,9 @@
     <style>
       /* One page per frame height, snapping page to page; no scrollbar. */
       .rg-embedded { overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; }
+      /* iOS Safari enlarges text in blocks wider than the frame (each page is
+         laid out at full A4 width, then scaled down); keep it at its set size. */
+      .rg-embedded { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
       .rg-embedded::-webkit-scrollbar { display: none; }
       .rg-embedded body { margin: 0; }
       .rg-embedded #root > main { display: none; }
