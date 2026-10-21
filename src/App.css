@@ -1836,3 +1836,9 @@ button:disabled {
   color: var(--text-3);
   font-weight: 500;
 }
+
+.copy-design {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
