@@ -128,6 +128,7 @@ export const DEFAULT_THEME: Theme = {
   shadeAccent: '#2c5aa0',
   margin: 1.2,
   columnGap: 0.7,
+  customFooter: null,
 };
 
 /** A blank resume with a sensible starting structure. */

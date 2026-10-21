@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Page, ResumeDocument, Row } from '../model/types';
-import { FOOTER_HEIGHT } from '../model/variants';
+import { footerHeight } from '../model/variants';
 import { themeVars } from './themeVars';
 import { SectionView } from './sections';
 import { Footer } from './Footer';
@@ -35,14 +35,14 @@ export function PageView({ page, doc }: { page: Page; doc: ResumeDocument }) {
     <div
       className="rg-page"
       data-page-id={page.id}
-      style={{ '--rg-footer-h': `${FOOTER_HEIGHT[page.footer]}cm` } as CSSProperties}
+      style={{ '--rg-footer-h': `${footerHeight(page.footer, doc.theme.customFooter)}cm` } as CSSProperties}
     >
       <div className="rg-page-body">
         {page.rows.map((row) => (
           <RowView key={row.id} row={row} doc={doc} />
         ))}
       </div>
-      {page.footer !== 'none' && <Footer type={page.footer} />}
+      {page.footer !== 'none' && <Footer type={page.footer} custom={doc.theme.customFooter} />}
     </div>
   );
 }

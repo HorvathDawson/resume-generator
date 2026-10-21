@@ -108,7 +108,19 @@ export interface Row {
   shade: Shade;
 }
 
-export type FooterType = 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern' | 'paraglider' | 'diver';
+export type FooterType = 'none' | 'default' | 'mountains' | 'fish' | 'salmon' | 'minimal' | 'modern' | 'paraglider' | 'diver' | 'custom';
+
+/** The person's own footer, kept inside the resume file: an image or a piece of HTML/SVG. */
+export interface CustomFooter {
+  /** A data: URL (PNG, JPEG, WebP or SVG), or "" when the footer is HTML. */
+  image: string;
+  /** HTML or SVG markup, or "" when the footer is an image. Sanitized before it is drawn. */
+  html: string;
+  /** Height of the footer band in cm. */
+  height: number;
+  /** stretch fills the page width; the others keep the image's shape. */
+  align: 'stretch' | 'left' | 'center' | 'right';
+}
 
 export interface Page {
   id: string;
@@ -139,6 +151,8 @@ export interface Theme {
   margin: number;
   /** Gap between two columns in cm. */
   columnGap: number;
+  /** Image for pages whose footer is "custom". */
+  customFooter: CustomFooter | null;
 }
 
 /** Where a resume came from and what it's for, so tailored copies stay traceable. */

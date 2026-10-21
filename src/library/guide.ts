@@ -129,7 +129,12 @@ Rules:
 \`spacing\` (0.4–2.5), \`headingStyle\` (${list(HEADING_STYLES.map((h) => h.id))}),
 colours \`accent\`, \`text\`, \`muted\`, \`shade\`, \`shadeText\`, \`shadeAccent\` (\`#rrggbb\`),
 \`margin\` and \`columnGap\` (cm, 0–5).
-Page \`footer\`: ${list(FOOTERS.map((f) => f.id))}.
+Page \`footer\`: ${list(FOOTERS.map((f) => f.id))}. \`custom\` shows the image in
+\`theme.customFooter\`: \`{ image, html, height, align }\`, where \`image\` is a base64
+\`data:\` URL or \`html\` is HTML/SVG markup (one of the two, the other \`""\`). Markup can use
+the resume colours as \`var(--rg-accent)\`, \`var(--rg-text)\`, \`var(--rg-muted)\`, \`var(--rg-shade)\`;
+scripts and anything loaded from other sites are stripped. Leave it alone unless asked, it's the
+person's own artwork.
 
 Out-of-range or unknown values are replaced with defaults when the file is opened,
 so a mistake there won't break the file, but it may not look as intended.

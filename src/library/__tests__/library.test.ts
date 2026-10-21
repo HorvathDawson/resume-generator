@@ -1,3 +1,6 @@
+import type { ResumeDocument } from '../../model/types';
+import { TEMPLATES, applyTemplate, arrangeLayout } from '../../model/templates';
+import { FOOTERS, SECTION_VARIANTS } from '../../model/variants';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -206,6 +209,31 @@ describe('library folders', () => {
   });
 });
 
+const PIXEL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+function withCustomFooter(doc: ResumeDocument): ResumeDocument {
+  return { ...doc, theme: { ...doc.theme, customFooter: { image: PIXEL, html: '', height: 2, align: 'center' } }, pages: doc.pages.map((p) => ({ ...p, footer: 'custom' })) };
+}
+
+describe('custom footer', () => {
+  it('survives saving and opening, and keeps through a template change', () => {
+    const doc = withCustomFooter(dawson());
+    const again = parseResumeJson(serializeResumeFile(doc)).doc;
+    expect(again.theme.customFooter).toEqual({ image: PIXEL, html: '', height: 2, align: 'center' });
+    expect(again.pages.every((p) => p.footer === 'custom')).toBe(true);
+    const classic = applyTemplate(again, 'classic');
+    expect(classic.theme.customFooter).toEqual(again.theme.customFooter);
+    expect(classic.pages.every((p) => p.footer === 'custom')).toBe(true);
+  });
+
+  it('drops anything that is not an image data URL', () => {
+    for (const image of ['https://example.com/a.png', 'data:text/html;base64,PHNjcmlwdD4=', 'javascript:alert(1)']) {
+      const doc = normalizeDocument({ ...dawson(), theme: { ...dawson().theme, customFooter: { image, height: 2, align: 'left' } } });
+      expect(doc.theme.customFooter).toBeNull();
+    }
+  });
+});
+
 describe('resume.schema.json', () => {
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   const validate = ajv.compile(RESUME_SCHEMA);
@@ -215,10 +243,24 @@ describe('resume.schema.json', () => {
     ['a blank resume', () => normalizeDocument(blankDocument())],
     ["Dawson's resume", () => dawson()],
     ['an imported old-format file', () => parseResumeJson(read('public/data/dawson-hybrid-new.json')).doc],
+    ['a resume with its own footer image', () => withCustomFooter(dawson())],
   ])('accepts %s as the app writes it', (_, make) => {
     const ok = validate(JSON.parse(serializeResumeFile(make())));
     expect(validate.errors ?? []).toEqual([]);
     expect(ok).toBe(true);
+  });
+
+  it('accepts every template, footer and section style', () => {
+    const check = (doc: ResumeDocument) => {
+      const ok = validate(JSON.parse(serializeResumeFile(doc)));
+      expect(validate.errors ?? []).toEqual([]);
+      expect(ok).toBe(true);
+    };
+    const base = sampleDoc();
+    for (const t of TEMPLATES) check(arrangeLayout(base, t.id));
+    for (const f of FOOTERS) check(withCustomFooter({ ...base, pages: base.pages.map((p) => ({ ...p, footer: f.id })) }));
+    for (const s of base.sections)
+      for (const v of SECTION_VARIANTS[s.type]) check({ ...base, sections: base.sections.map((x) => (x.id === s.id ? { ...x, variant: v.id } : x)) });
   });
 
   it('rejects common agent mistakes', () => {

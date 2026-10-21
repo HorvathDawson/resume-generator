@@ -1,20 +1,4 @@
-import type {
-  Entry,
-  FooterType,
-  HeadingStyle,
-  Page,
-  Placement,
-  Profile,
-  Reference,
-  ResumeDocument,
-  ResumeMeta,
-  Row,
-  Section,
-  SectionType,
-  Shade,
-  SkillGroup,
-  Theme,
-} from './types';
+import type { CustomFooter, Entry, FooterType, HeadingStyle, Page, Placement, Profile, Reference, ResumeDocument, ResumeMeta, Row, Section, SectionType, Shade, SkillGroup, Theme } from './types';
 import { SCHEMA_ID, SCHEMA_VERSION } from './types';
 import { DEFAULT_THEME, emptyProfile, newEntry, newReference, newRow, newSkillGroup, uid } from './defaults';
 import { FOOTERS, HEADING_STYLES, SECTION_VARIANTS, defaultVariant, isValidVariant } from './variants';
@@ -166,7 +150,24 @@ export function normalizeTheme(v: unknown): Theme {
     shadeAccent: color(o.shadeAccent, color(o.accent, d.shadeAccent)),
     margin: num(o.margin, d.margin, 0, 5),
     columnGap: num(o.columnGap, d.columnGap, 0, 5),
+    customFooter: normalizeCustomFooter(o.customFooter),
   };
+}
+
+/** Largest footer image kept, as a data: URL (about 1.5 MB of image), and largest footer HTML. */
+export const CUSTOM_FOOTER_MAX = 2_000_000;
+export const CUSTOM_FOOTER_HTML_MAX = 200_000;
+const FOOTER_IMAGE = /^data:image\/(png|jpeg|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/;
+const FOOTER_ALIGN = ['stretch', 'left', 'center', 'right'] as const;
+
+function normalizeCustomFooter(v: unknown): CustomFooter | null {
+  if (!isObj(v)) return null;
+  const image = typeof v.image === 'string' && v.image.length <= CUSTOM_FOOTER_MAX && FOOTER_IMAGE.test(v.image) ? v.image : '';
+  // HTML is kept as text here and sanitized when drawn (see resume/sanitize.ts).
+  const html = !image && typeof v.html === 'string' && v.html.length <= CUSTOM_FOOTER_HTML_MAX ? v.html.trim() : '';
+  if (!image && !html) return null;
+  const align = FOOTER_ALIGN.find((a) => a === v.align) ?? 'stretch';
+  return { image, html, height: num(v.height, 1.6, 0.4, 6), align };
 }
 
 /** Turn any object that claims to be a v2 document into a valid one. */
