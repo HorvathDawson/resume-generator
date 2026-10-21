@@ -62,6 +62,16 @@
       .rg-embedded #root > main { display: none; }
       .rg-embedded .rg-embed { cursor: pointer; }
       .rg-embedded .rg-embed-page { scroll-snap-align: start; }
+      /* With a mouse the wheel scrolls the host page (a frame that can't scroll
+         passes it on) and the pages move with a scrollbar you drag instead
+         (Embed.tsx), which settles on the nearest page when let go. */
+      .rg-embed-scrollbar { display: none; }
+      @media (hover: hover) and (pointer: fine) {
+        .rg-embedded { overflow: hidden; scroll-snap-type: none; }
+        .rg-embed-scrollbar { display: block; position: fixed; top: 4px; right: 0; bottom: 4px; width: 14px; cursor: default; touch-action: none; }
+        .rg-embed-thumb { position: absolute; right: 3px; width: 7px; border-radius: 4px; background: rgba(28, 34, 48, 0.4); transition: background-color 0.15s, width 0.15s; }
+        .rg-embed-scrollbar:hover .rg-embed-thumb, .rg-embed-thumb.is-dragging { width: 9px; background: rgba(28, 34, 48, 0.65); }
+      }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
