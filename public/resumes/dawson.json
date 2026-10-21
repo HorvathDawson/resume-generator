@@ -337,7 +337,7 @@
           "shade": "left"
         }
       ],
-      "footer": "none"
+      "footer": "paraglider"
     },
     {
       "id": "page-2",
@@ -362,7 +362,7 @@
           "shade": "left"
         }
       ],
-      "footer": "none"
+      "footer": "paraglider"
     }
   ],
   "theme": {

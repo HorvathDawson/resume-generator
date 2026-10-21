@@ -121,6 +121,49 @@ const FishFooter = () => (
   </div>
 );
 
+// Low layered ridgelines (mountains or seabed) that stretch to the page width,
+// with a small figure above them that keeps its proportions.
+const Ridges = ({ back, front }: { back: string; front: string }) => (
+  <svg className="footer-ridges" viewBox="0 0 1000 60" preserveAspectRatio="none">
+    <path className="ridge-back" d={back} />
+    <path className="ridge-front" d={front} />
+  </svg>
+);
+
+const ParagliderFooter = () => (
+  <div className="footer-scene">
+    <Ridges
+      back="M0 60 V48 L60 43.8 105 46.2 170 38.4 225 42.6 270 40.2 335 46.8 400 41.4 470 34.8 520 39.6 565 37.8 640 45 700 40.8 760 43.2 820 36.6 880 42 935 39.6 1000 43.8 V60Z"
+      front="M0 60 V54 L75 50.4 130 52.8 205 47.4 260 51 330 48.6 390 53.4 455 49.8 530 52.2 600 46.8 665 51 740 49.2 810 53.4 875 48.6 940 51.6 1000 49.8 V60Z"
+    />
+    <svg className="footer-figure footer-paraglider" viewBox="0 0 48 34">
+      <path d="M3 11C12 2 36 2 45 11 36 6.6 12 6.6 3 11Z" />
+      <path className="figure-lines" d="M5 10.4 24 26M14 6.6 24 26M24 5.4V26M34 6.6 24 26M43 10.4 24 26" />
+      <circle cx="24" cy="25.6" r="1.7" />
+      <path d="M22.3 27.4h3.4l1.5 4.6h-6.4Z" />
+    </svg>
+  </div>
+);
+
+const DiverFooter = () => (
+  <div className="footer-scene">
+    <Ridges
+      back="M0 60 V49.2 C70 44.4 120 50.4 190 46.8 S320 42 390 46.2 520 51 600 45.6 740 42.6 820 46.8 940 50.4 1000 47.4 V60Z"
+      front="M0 60 V54.6 C80 51 150 55.2 240 52.2 S380 49.8 460 53.4 600 55.8 690 51.6 830 50.4 900 54 970 52.8 1000 52.2 V60Z"
+    />
+    <svg className="footer-figure footer-diver" viewBox="0 0 64 26">
+      <circle cx="6" cy="13" r="3.2" />
+      <path d="M8.5 10.6C14 9.4 26 9.6 34 11.4 36.5 12 36.5 14.4 34 15 26 16.6 14 16.4 8.5 15.2Z" />
+      <rect x="14" y="6.6" width="15" height="3.6" rx="1.8" />
+      <path d="M33 11.6 47 10.2 48 11.6 34.5 13.4ZM33 14.2 47 15.2 47.6 16.8 33.6 16.2Z" />
+      <path d="M46.4 9.4 58 6.4 56.6 11.6ZM46.8 14.6 59.2 15 56 19.6Z" />
+      <circle className="figure-bubble" cx="3.6" cy="7" r="1.1" />
+      <circle className="figure-bubble" cx="5.2" cy="3.4" r="0.8" />
+      <circle className="figure-bubble" cx="3" cy="0.9" r="0.6" />
+    </svg>
+  </div>
+);
+
 const MinimalFooter = () => (
   <div className="footer-minimal">
     <div className="footer-simple">
@@ -161,6 +204,8 @@ export function Footer({ type }: { type: FooterType }) {
       {type === 'salmon' && <SalmonFooter />}
       {type === 'minimal' && <MinimalFooter />}
       {type === 'modern' && <ModernFooter />}
+      {type === 'paraglider' && <ParagliderFooter />}
+      {type === 'diver' && <DiverFooter />}
     </div>
   );
 }

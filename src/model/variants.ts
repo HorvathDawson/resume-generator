@@ -99,6 +99,8 @@ export const FOOTERS: Option<FooterType>[] = [
   { id: 'modern', label: 'Fading line' },
   { id: 'default', label: 'Angled shapes' },
   { id: 'mountains', label: 'Mountains' },
+  { id: 'paraglider', label: 'Ridgeline and paraglider' },
+  { id: 'diver', label: 'Seabed and diver' },
   { id: 'fish', label: 'Fish' },
   { id: 'salmon', label: 'Salmon' },
 ];
@@ -110,6 +112,8 @@ export const FOOTER_HEIGHT: Record<FooterType, number> = {
   modern: 0.8,
   default: 1.6,
   mountains: 1.6,
+  paraglider: 1.6,
+  diver: 1.6,
   fish: 1.6,
   salmon: 1.6,
 };
