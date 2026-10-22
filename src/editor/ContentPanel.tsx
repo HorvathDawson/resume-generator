@@ -99,7 +99,7 @@ export function ContentPanel({ doc, update, openId, setOpenId, notify }: Props) 
             </div>
           </div>
         ) : (
-          <button type="button" className="btn btn--dashed" onClick={() => setAdding(true)}>
+          <button type="button" className="btn btn--dashed" onClick={() => setAdding(true)} data-tour="add-section">
             <Plus size={16} /> Add section
           </button>
         )}

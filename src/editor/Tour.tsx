@@ -1,26 +1,73 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
+export interface TourChoice {
+  label: string;
+  primary?: boolean;
+  run: () => void;
+}
+
 export interface TourStep {
-  /** `data-tour` value of the element to point at. Leave out for a centered card. */
-  target?: string;
+  /**
+   * What to highlight: `data-tour` values, or CSS selectors (starting with
+   * `.`, `[` or `#`). The card sits next to the first one. Leave out for a
+   * centered card.
+   */
+  target?: string | string[];
   title: string;
   body: ReactNode;
-  /** Runs before the step shows, for example to switch tabs. */
+  /** Runs before the step shows: switch tabs, or make the change the step is about. */
   before?: () => void;
+  /** Buttons that end the tour, in place of Done (last step only). */
+  choices?: TourChoice[];
 }
 
 const GAP = 12;
 const PAD = 6;
+const EDGE = 16;
 
-/** A step-by-step walkthrough that dims the page and highlights one part of it at a time. */
+interface Box {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
+
+function find(target: string): HTMLElement | null {
+  const selector = /^[.[#]/.test(target) ? target : `[data-tour="${target}"]`;
+  return document.querySelector<HTMLElement>(selector);
+}
+
+/** The part of an element that's visible: inside the viewport and every scrolling panel around it. */
+function visibleBox(el: HTMLElement): Box | null {
+  const r = el.getBoundingClientRect();
+  const box = { top: r.top, left: r.left, right: r.right, bottom: r.bottom };
+  for (let p = el.parentElement; p; p = p.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(p);
+    if (overflowX === 'visible' && overflowY === 'visible') continue;
+    const c = p.getBoundingClientRect();
+    box.top = Math.max(box.top, c.top);
+    box.left = Math.max(box.left, c.left);
+    box.right = Math.min(box.right, c.right);
+    box.bottom = Math.min(box.bottom, c.bottom);
+  }
+  return box.bottom - box.top > 1 && box.right - box.left > 1 ? box : null;
+}
+
+const overlaps = (a: Box, b: Box) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+
+/**
+ * A step-by-step walkthrough. It dims the page except for the parts a step is
+ * about, scrolls them into view, and keeps its card clear of them.
+ */
 export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => void }) {
   const [index, setIndex] = useState(0);
-  const spotlight = useRef<HTMLDivElement>(null);
+  const [holes, setHoles] = useState<Box[]>([]);
   const card = useRef<HTMLDivElement>(null);
   const next = useRef<HTMLButtonElement>(null);
   const step = steps[index];
   const last = index === steps.length - 1;
+  const targets = step.target === undefined ? [] : Array.isArray(step.target) ? step.target : [step.target];
 
   const go = useCallback(
     (to: number) => {
@@ -32,82 +79,104 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
     [steps, onClose],
   );
 
-  // Position the highlight and the card. Done directly on the elements so it
-  // can follow layout changes (a tab switch, a resize) without re-rendering.
+  // Highlight the targets and place the card. Runs again as things scroll,
+  // resize, or finish rendering after a step's change.
   const place = useCallback(() => {
     const box = card.current;
-    const light = spotlight.current;
-    if (!box || !light) return;
+    if (!box) return;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const el = step.target ? document.querySelector<HTMLElement>(`[data-tour="${step.target}"]`) : null;
-    const r = el?.getBoundingClientRect();
+    const found = targets.map(find).filter((el): el is HTMLElement => !!el);
+    const rects: Box[] = found
+      .map(visibleBox)
+      .filter((r): r is Box => !!r)
+      .map((r) => ({
+        top: Math.max(4, r.top - PAD),
+        left: Math.max(4, r.left - PAD),
+        right: Math.min(vw - 4, r.right + PAD),
+        bottom: Math.min(vh - 4, r.bottom + PAD),
+      }))
+      .filter((r) => r.bottom > r.top && r.right > r.left);
+    setHoles((prev) => (JSON.stringify(prev) === JSON.stringify(rects) ? prev : rects));
+
     const w = box.offsetWidth;
     const h = box.offsetHeight;
-    if (!r || !r.width) {
-      light.style.display = 'none';
+    const r = rects[0];
+    if (!r) {
       box.style.left = `${(vw - w) / 2}px`;
-      box.style.top = `${Math.max(16, (vh - h) / 2)}px`;
+      box.style.top = `${Math.max(EDGE, (vh - h) / 2)}px`;
       return;
     }
-    light.style.display = 'block';
-    const top = Math.max(4, r.top - PAD);
-    const left = Math.max(4, r.left - PAD);
-    light.style.top = `${top}px`;
-    light.style.left = `${left}px`;
-    light.style.width = `${Math.min(vw - 4, r.right + PAD) - left}px`;
-    light.style.height = `${Math.min(vh - 4, r.bottom + PAD) - top}px`;
-
-    // Below, above, to the right, to the left; else overlapping the bottom.
-    const clampX = (x: number) => Math.max(16, Math.min(x, vw - w - 16));
-    const clampY = (y: number) => Math.max(16, Math.min(y, vh - h - 16));
-    let x: number;
-    let y: number;
-    if (r.bottom + PAD + GAP + h < vh - 16) {
-      x = clampX(r.left + r.width / 2 - w / 2);
-      y = r.bottom + PAD + GAP;
-    } else if (r.top - PAD - GAP - h > 16) {
-      x = clampX(r.left + r.width / 2 - w / 2);
-      y = r.top - PAD - GAP - h;
-    } else if (r.right + PAD + GAP + w < vw - 16) {
-      x = r.right + PAD + GAP;
-      y = clampY(r.top + r.height / 2 - h / 2);
-    } else if (r.left - PAD - GAP - w > 16) {
-      x = r.left - PAD - GAP - w;
-      y = clampY(r.top + r.height / 2 - h / 2);
-    } else {
-      x = clampX(r.left + r.width / 2 - w / 2);
-      y = vh - h - 16;
-    }
-    box.style.left = `${x}px`;
-    box.style.top = `${y}px`;
+    // Below, above, to the right or left of the first target: the first that
+    // fits on screen and covers none of the others. Else one that fits; else
+    // bottom-right.
+    const clampX = (x: number) => Math.max(EDGE, Math.min(x, vw - w - EDGE));
+    const clampY = (y: number) => Math.max(EDGE, Math.min(y, vh - h - EDGE));
+    const cx = r.left + (r.right - r.left) / 2 - w / 2;
+    const cy = r.top + (r.bottom - r.top) / 2 - h / 2;
+    const options = [
+      { x: clampX(cx), y: r.bottom + GAP, fits: r.bottom + GAP + h < vh - EDGE },
+      { x: clampX(cx), y: r.top - GAP - h, fits: r.top - GAP - h > EDGE },
+      { x: r.right + GAP, y: clampY(cy), fits: r.right + GAP + w < vw - EDGE },
+      { x: r.left - GAP - w, y: clampY(cy), fits: r.left - GAP - w > EDGE },
+    ];
+    const clear = (o: { x: number; y: number }) => rects.every((other) => !overlaps({ left: o.x, top: o.y, right: o.x + w, bottom: o.y + h }, other));
+    const pick = options.find((o) => o.fits && clear(o)) ?? options.find((o) => o.fits) ?? { x: vw - w - EDGE, y: vh - h - EDGE };
+    box.style.left = `${pick.x}px`;
+    box.style.top = `${pick.y}px`;
+    // targets is rebuilt each render from step.target.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
   useLayoutEffect(() => {
+    // Bring each target into view (the editor and the preview scroll separately).
+    const reveal = () => targets.forEach((t) => find(t)?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }));
     place();
-    // Again once a tab switched by `before` has rendered and laid out.
-    const frame = requestAnimationFrame(place);
+    // Again once a tab switched by `before` has rendered, and once scrolling settles.
+    const frame = requestAnimationFrame(() => {
+      reveal();
+      place();
+    });
+    const timers = [200, 500, 900].map((ms) => window.setTimeout(place, ms));
     window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
     return () => {
       cancelAnimationFrame(frame);
+      timers.forEach(clearTimeout);
       window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place]);
 
   useEffect(() => {
     next.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
-      else if (e.key === 'ArrowRight') go(index + 1);
+      else if (e.key === 'ArrowRight' && !step.choices) go(index + 1);
       else if (e.key === 'ArrowLeft') go(index - 1);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [index, go, onClose]);
+  }, [index, go, onClose, step.choices]);
 
   return (
-    <div className={`tour${step.target ? '' : ' tour--center'}`}>
-      <div ref={spotlight} className="tour-spotlight" />
+    <div className="tour">
+      {/* The dimmed page, with a hole cut out for each highlighted part */}
+      <svg className="tour-dim" aria-hidden="true">
+        <defs>
+          <mask id="tour-holes">
+            <rect width="100%" height="100%" fill="#fff" />
+            {holes.map((h, i) => (
+              <rect key={i} x={h.left} y={h.top} width={h.right - h.left} height={h.bottom - h.top} rx="10" fill="#000" />
+            ))}
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" mask="url(#tour-holes)" />
+      </svg>
+      {holes.map((h, i) => (
+        <div key={i} className="tour-spotlight" style={{ top: h.top, left: h.left, width: h.right - h.left, height: h.bottom - h.top }} />
+      ))}
       <div ref={card} className="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
         <div className="tour-count">
           Step {index + 1} of {steps.length}
@@ -131,9 +200,17 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
               Back
             </button>
           )}
-          <button ref={next} type="button" className="btn btn--primary btn--sm" onClick={() => go(index + 1)}>
-            {last ? 'Done' : index === 0 ? 'Show me around' : 'Next'}
-          </button>
+          {step.choices ? (
+            step.choices.map((c, i) => (
+              <button key={c.label} ref={i === 0 ? next : undefined} type="button" className={`btn btn--sm ${c.primary ? 'btn--primary' : 'btn--ghost'}`} onClick={c.run}>
+                {c.label}
+              </button>
+            ))
+          ) : (
+            <button ref={next} type="button" className="btn btn--primary btn--sm" onClick={() => go(index + 1)}>
+              {last ? 'Done' : index === 0 ? 'Show me' : 'Next'}
+            </button>
+          )}
         </div>
       </div>
     </div>
