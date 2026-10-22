@@ -1,23 +1,46 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
+/**
+ * Something on the page: a `data-tour` value, a CSS selector (starting with
+ * `.`, `[` or `#`), or a function that finds the element.
+ */
+export type TourTarget = string | (() => Element | null | undefined);
+
 export interface TourChoice {
   label: string;
   primary?: boolean;
   run: () => void;
 }
 
+/** What a step's demo can do: a pretend cursor that moves, clicks, drags and types. */
+export interface TourDemo {
+  /** Glide the cursor to an element, scrolling it into view and lighting it up. */
+  point(target: TourTarget): Promise<void>;
+  /** Show a click where the cursor is; with `press`, click that element for real. */
+  click(press?: boolean): Promise<void>;
+  /** Drag from where the cursor is by (dx, dy) pixels, calling onMove with progress 0–1. */
+  drag(dx: number, dy: number, onMove: (progress: number) => void): Promise<void>;
+  /** Type text, calling onText with each longer prefix. */
+  type(text: string, onText: (partial: string) => void): Promise<void>;
+  /** Type into a text field (it must be on screen). */
+  typeInto(target: TourTarget, text: string): Promise<void>;
+  /** Make an element glow briefly, to show what just changed. */
+  flash(target: TourTarget): Promise<void>;
+  /** Close any open menu or popover, as a click elsewhere would. */
+  dismiss(): Promise<void>;
+  wait(ms: number): Promise<void>;
+}
+
 export interface TourStep {
-  /**
-   * What to highlight: `data-tour` values, or CSS selectors (starting with
-   * `.`, `[` or `#`). The card sits next to the first one. Leave out for a
-   * centered card.
-   */
-  target?: string | string[];
+  /** What to highlight. The card sits next to the first. Leave out for a centered card. */
+  target?: TourTarget | TourTarget[];
   title: string;
   body: ReactNode;
-  /** Runs before the step shows: switch tabs, or make the change the step is about. */
+  /** Runs before the step shows: switch tabs, or set the resume up as the step starts from. */
   before?: () => void;
+  /** Acts the step out with the pretend cursor, after `before`. Replayable. */
+  demo?: (demo: TourDemo) => Promise<void>;
   /** Buttons that end the tour, in place of Done (last step only). */
   choices?: TourChoice[];
 }
@@ -33,7 +56,8 @@ interface Box {
   bottom: number;
 }
 
-function find(target: string): HTMLElement | null {
+function find(target: TourTarget): HTMLElement | null {
+  if (typeof target === 'function') return (target() as HTMLElement | null | undefined) ?? null;
   const selector = /^[.[#]/.test(target) ? target : `[data-tour="${target}"]`;
   return document.querySelector<HTMLElement>(selector);
 }
@@ -54,62 +78,93 @@ function visibleBox(el: HTMLElement): Box | null {
   return box.bottom - box.top > 1 && box.right - box.left > 1 ? box : null;
 }
 
+/**
+ * Scroll an element into view if it isn't already fully visible. Not inside
+ * menus, popovers and dialogs: those float above the page, and scrolling the
+ * panel under a popover closes it.
+ */
+function reveal(el: HTMLElement, smooth: boolean) {
+  if (el.closest('.popover, .menu-list, .dialog')) return;
+  const r = el.getBoundingClientRect();
+  const v = visibleBox(el);
+  if (v && v.top <= r.top + 1 && v.bottom >= r.bottom - 1 && v.left <= r.left + 1 && v.right >= r.right - 1) return;
+  el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: smooth ? 'smooth' : 'auto' });
+}
+
 const overlaps = (a: Box, b: Box) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+
+/** Thrown inside a demo when the visitor has moved on, to stop it. */
+const STOPPED = Symbol('stopped');
+
+/** Set a React-controlled input's value as if typed. */
+function setInputValue(el: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  const proto = el instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+  Object.getOwnPropertyDescriptor(proto, 'value')?.set?.call(el, value);
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+}
 
 /**
  * A step-by-step walkthrough. It dims the page except for the parts a step is
- * about, scrolls them into view, and keeps its card clear of them.
+ * about, keeps its card clear of them, and can act each step out with a
+ * pretend cursor so the change is seen happening.
  */
 export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => void }) {
   const [index, setIndex] = useState(0);
   const [holes, setHoles] = useState<Box[]>([]);
+  const [focus, setFocus] = useState<TourTarget | null>(null);
+  const [demoDone, setDemoDone] = useState(false);
   const card = useRef<HTMLDivElement>(null);
   const next = useRef<HTMLButtonElement>(null);
+  const cursor = useRef<HTMLDivElement>(null);
+  const ripple = useRef<HTMLSpanElement>(null);
+  const run = useRef(0);
   const step = steps[index];
   const last = index === steps.length - 1;
-  const targets = step.target === undefined ? [] : Array.isArray(step.target) ? step.target : [step.target];
 
   const go = useCallback(
     (to: number) => {
       if (to < 0) return;
       if (to >= steps.length) return onClose();
+      run.current++;
       steps[to].before?.();
+      setFocus(null);
+      setDemoDone(false);
       setIndex(to);
     },
     [steps, onClose],
   );
 
-  // Highlight the targets and place the card. Runs again as things scroll,
-  // resize, or finish rendering after a step's change.
+  // Highlight the step's targets (and whatever the cursor is on), and place
+  // the card next to the first target, clear of the others.
   const place = useCallback(() => {
     const box = card.current;
     if (!box) return;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const found = targets.map(find).filter((el): el is HTMLElement => !!el);
-    const rects: Box[] = found
-      .map(visibleBox)
-      .filter((r): r is Box => !!r)
-      .map((r) => ({
-        top: Math.max(4, r.top - PAD),
-        left: Math.max(4, r.left - PAD),
-        right: Math.min(vw - 4, r.right + PAD),
-        bottom: Math.min(vh - 4, r.bottom + PAD),
-      }))
-      .filter((r) => r.bottom > r.top && r.right > r.left);
+    const own = step.target === undefined ? [] : Array.isArray(step.target) ? step.target : [step.target];
+    const toBox = (t: TourTarget) => {
+      const el = find(t);
+      const r = el && visibleBox(el);
+      return r && { top: Math.max(4, r.top - PAD), left: Math.max(4, r.left - PAD), right: Math.min(vw - 4, r.right + PAD), bottom: Math.min(vh - 4, r.bottom + PAD) };
+    };
+    const ownBoxes = own.map(toBox).filter((r): r is Box => !!r);
+    // Inside a menu, popover or dialog, light up all of it, not just the item.
+    const focused = focus ? find(focus) : null;
+    const floating = focused?.closest<HTMLElement>('.popover, .menu-list, .dialog');
+    const focusBox = focused ? toBox(floating ? () => floating : focus!) : null;
+    const rects = focusBox ? [...ownBoxes, focusBox] : ownBoxes;
     setHoles((prev) => (JSON.stringify(prev) === JSON.stringify(rects) ? prev : rects));
 
     const w = box.offsetWidth;
     const h = box.offsetHeight;
-    const r = rects[0];
+    const r = ownBoxes[0] ?? focusBox;
     if (!r) {
       box.style.left = `${(vw - w) / 2}px`;
       box.style.top = `${Math.max(EDGE, (vh - h) / 2)}px`;
       return;
     }
-    // Below, above, to the right or left of the first target: the first that
-    // fits on screen and covers none of the others. Else one that fits; else
-    // bottom-right.
+    // Below, above, right or left of it: the first that fits and covers none
+    // of the highlights. Else one that fits; else bottom-right.
     const clampX = (x: number) => Math.max(EDGE, Math.min(x, vw - w - EDGE));
     const clampY = (y: number) => Math.max(EDGE, Math.min(y, vh - h - EDGE));
     const cx = r.left + (r.right - r.left) / 2 - w / 2;
@@ -124,30 +179,167 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
     const pick = options.find((o) => o.fits && clear(o)) ?? options.find((o) => o.fits) ?? { x: vw - w - EDGE, y: vh - h - EDGE };
     box.style.left = `${pick.x}px`;
     box.style.top = `${pick.y}px`;
-    // targets is rebuilt each render from step.target.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
+  }, [step, focus]);
 
+  // Keep everything placed as the app changes underneath: tabs switching,
+  // panels scrolling, popovers opening.
   useLayoutEffect(() => {
-    // Bring each target into view (the editor and the preview scroll separately).
-    const reveal = () => targets.forEach((t) => find(t)?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }));
     place();
-    // Again once a tab switched by `before` has rendered, and once scrolling settles.
-    const frame = requestAnimationFrame(() => {
-      reveal();
-      place();
-    });
-    const timers = [200, 500, 900].map((ms) => window.setTimeout(place, ms));
+    const timer = window.setInterval(place, 200);
     window.addEventListener('resize', place);
     window.addEventListener('scroll', place, true);
     return () => {
-      cancelAnimationFrame(frame);
-      timers.forEach(clearTimeout);
+      clearInterval(timer);
       window.removeEventListener('resize', place);
       window.removeEventListener('scroll', place, true);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place]);
+
+  // Bring the step's targets into view when it starts.
+  useEffect(() => {
+    const own = step.target === undefined ? [] : Array.isArray(step.target) ? step.target : [step.target];
+    const frame = requestAnimationFrame(() => own.forEach((t) => find(t)?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })));
+    return () => cancelAnimationFrame(frame);
+  }, [step]);
+
+  /** Act out the current step with the pretend cursor. */
+  const playDemo = useCallback(async () => {
+    const demo = step.demo;
+    const pointer = cursor.current;
+    if (!demo || !pointer) return;
+    const id = ++run.current;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const live = () => {
+      if (run.current !== id) throw STOPPED;
+    };
+    const wait = async (ms: number) => {
+      await new Promise((resolve) => setTimeout(resolve, still ? Math.min(ms, 30) : ms));
+      live();
+    };
+    let at: HTMLElement | null = null;
+    let x = 0;
+    let y = 0;
+    const moveTo = (nx: number, ny: number, ms: number) => {
+      x = nx;
+      y = ny;
+      pointer.style.transition = still || !ms ? 'none' : `transform ${ms}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+      pointer.style.transform = `translate(${nx}px, ${ny}px)`;
+    };
+    // Start from the card.
+    const c = card.current?.getBoundingClientRect();
+    moveTo(c ? c.left + c.width / 2 : window.innerWidth / 2, c ? c.top + 20 : window.innerHeight / 2, 0);
+    pointer.classList.add('is-visible');
+
+    const api: TourDemo = {
+      async point(target) {
+        const el = find(target);
+        if (!el) return;
+        reveal(el, !still);
+        await wait(350);
+        setFocus(() => target);
+        const r = el.getBoundingClientRect();
+        moveTo(r.left + Math.min(r.width / 2, 40), r.top + Math.min(r.height / 2, 18), 700);
+        await wait(800);
+        at = el;
+      },
+      async click(press = false) {
+        pointer.classList.add('is-pressing');
+        const dot = ripple.current;
+        if (dot) {
+          dot.style.left = `${x}px`;
+          dot.style.top = `${y}px`;
+          dot.classList.remove('is-on');
+          void dot.offsetWidth; // restart the animation
+          dot.classList.add('is-on');
+        }
+        await wait(160);
+        pointer.classList.remove('is-pressing');
+        if (press) at?.click();
+        await wait(500);
+      },
+      async drag(dx, dy, onMove) {
+        pointer.classList.add('is-pressing');
+        const x0 = x;
+        const y0 = y;
+        const steps = still ? 1 : 24;
+        for (let i = 1; i <= steps; i++) {
+          const t = i / steps;
+          moveTo(x0 + dx * t, y0 + dy * t, 0);
+          onMove(t);
+          await wait(35);
+        }
+        pointer.classList.remove('is-pressing');
+        await wait(400);
+      },
+      async type(text, onText) {
+        const chunk = still ? text.length : Math.max(1, Math.round(text.length / 40));
+        for (let i = chunk; i < text.length + chunk; i += chunk) {
+          onText(text.slice(0, Math.min(i, text.length)));
+          await wait(35);
+        }
+        await wait(250);
+      },
+      async typeInto(target, text) {
+        const el = find(target);
+        if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return;
+        el.focus();
+        await api.type(text, (partial) => setInputValue(el, partial));
+      },
+      async flash(target) {
+        const el = find(target);
+        if (!el) return;
+        reveal(el, !still);
+        el.classList.remove('tour-flash');
+        void el.offsetWidth;
+        el.classList.add('tour-flash');
+        window.setTimeout(() => el.classList.remove('tour-flash'), 1600);
+        await wait(900);
+      },
+      async dismiss() {
+        document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        setFocus(null);
+        await wait(300);
+      },
+      wait,
+    };
+
+    try {
+      await demo(api);
+      await wait(300);
+    } catch (err) {
+      if (err !== STOPPED) console.error(err);
+      return;
+    } finally {
+      if (run.current === id || !step.demo) pointer.classList.remove('is-visible');
+    }
+    setFocus(null);
+    setDemoDone(true);
+  }, [step]);
+
+  /** Stop a running demo: it checks this counter between moves. */
+  const stopDemo = useCallback(() => {
+    run.current++;
+  }, []);
+
+  // Play each step's demo once its tab has rendered and scrolled.
+  useEffect(() => {
+    const pointer = cursor.current;
+    if (!step.demo) return;
+    const timer = window.setTimeout(() => void playDemo(), 650);
+    return () => {
+      clearTimeout(timer);
+      stopDemo();
+      pointer?.classList.remove('is-visible');
+    };
+  }, [step, playDemo, stopDemo]);
+
+  const replay = () => {
+    run.current++;
+    step.before?.();
+    setFocus(null);
+    setDemoDone(false);
+    window.setTimeout(() => void playDemo(), 400);
+  };
 
   useEffect(() => {
     next.current?.focus();
@@ -159,6 +351,9 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [index, go, onClose, step.choices]);
+
+  // Stop any demo when the tour closes.
+  useEffect(() => stopDemo, [stopDemo]);
 
   return (
     <div className="tour">
@@ -180,6 +375,11 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
       <div ref={card} className="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
         <div className="tour-count">
           Step {index + 1} of {steps.length}
+          {step.demo && demoDone && (
+            <button type="button" className="link-btn tour-replay" onClick={replay}>
+              Watch again
+            </button>
+          )}
         </div>
         <h2 id="tour-title">{step.title}</h2>
         <div className="tour-body">{step.body}</div>
@@ -212,6 +412,13 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
             </button>
           )}
         </div>
+      </div>
+      {/* The pretend cursor, and the ring a click leaves */}
+      <span ref={ripple} className="tour-ripple" aria-hidden="true" />
+      <div ref={cursor} className="tour-cursor" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26">
+          <path d="M5 3l14 8-6 1.6L10 19z" fill="#fff" stroke="#1e1b4b" strokeWidth="1.6" strokeLinejoin="round" />
+        </svg>
       </div>
     </div>
   );

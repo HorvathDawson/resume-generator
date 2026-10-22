@@ -28,17 +28,18 @@ function experience(d: ResumeDocument): EntriesSection | undefined {
   return d.sections.find((s): s is EntriesSection => s.type === 'experience' && s.id !== TOUR_PROJECTS_ID);
 }
 
+/** The job the tour adds. */
+export const TOUR_JOB = {
+  title: 'Senior Controls Engineer',
+  subtitle: 'Northwind Robotics',
+  location: 'Vancouver, BC',
+  dates: '2025 – Present',
+  bullets: ['Lead the motion-control team for a fleet of warehouse robots.', 'Cut commissioning time per robot from two days to four hours.'],
+};
+
 /** Content: a new job at the top of Experience. */
 export function addJob(d: ResumeDocument): void {
-  experience(d)?.items.unshift(
-    newEntry({
-      title: 'Senior Controls Engineer',
-      subtitle: 'Northwind Robotics',
-      location: 'Vancouver, BC',
-      dates: '2025 – Present',
-      bullets: ['Lead the motion-control team for a fleet of warehouse robots.', 'Cut commissioning time per robot from two days to four hours.'],
-    }),
-  );
+  experience(d)?.items.unshift(newEntry({ ...TOUR_JOB, bullets: [...TOUR_JOB.bullets] }));
 }
 
 /** Content: a whole new section, placed at the end of the last page. */
@@ -86,12 +87,13 @@ export function splitExperience(d: ResumeDocument): void {
   if (placement) splitPlacement(d, placement.id, 2);
 }
 
-/** A copy made for one job: a sharper headline and summary. */
+/** What the copy made for one job changes: a sharper headline and summary. */
+export const TOUR_HEADLINE = 'Controls Engineer, warehouse robotics';
+export const TOUR_SUMMARY =
+  'Controls engineer who gets robot fleets running fast: motion control, commissioning and the tools that make both repeatable. Looking to do the same for Acme’s new sorting line.';
+
 export function tailorForJob(d: ResumeDocument): void {
-  d.profile.headline = 'Controls Engineer, warehouse robotics';
+  d.profile.headline = TOUR_HEADLINE;
   const summary = d.sections.find((s) => s.type === 'text');
-  if (summary && summary.type === 'text') {
-    summary.body =
-      'Controls engineer who gets robot fleets running fast: motion control, commissioning and the tools that make both repeatable. Looking to do the same for Acme’s new sorting line.';
-  }
+  if (summary && summary.type === 'text') summary.body = TOUR_SUMMARY;
 }
