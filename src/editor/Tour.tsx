@@ -17,6 +17,8 @@ export interface TourChoice {
 export interface TourDemo {
   /** Glide the cursor to an element, scrolling it into view and lighting it up. */
   point(target: TourTarget): Promise<void>;
+  /** Glide the cursor to an element's top edge (or middle) and hover there, as a mouse would. */
+  hover(target: TourTarget, at?: 'top' | 'middle'): Promise<void>;
   /** Show a click where the cursor is; with `press`, click that element for real. */
   click(press?: boolean): Promise<void>;
   /** Drag from where the cursor is by (dx, dy) pixels, calling onMove with progress 0–1. */
@@ -240,6 +242,22 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
         const r = el.getBoundingClientRect();
         moveTo(r.left + Math.min(r.width / 2, 40), r.top + Math.min(r.height / 2, 18), 700);
         await wait(800);
+        at = el;
+      },
+      async hover(target, where = 'middle') {
+        const el = find(target);
+        if (!el) return;
+        reveal(el, !still);
+        await wait(350);
+        const r = el.getBoundingClientRect();
+        const hx = r.left + r.width / 2;
+        const hy = where === 'top' ? r.top - 3 : r.top + r.height / 2;
+        moveTo(hx, hy, 700);
+        // Mouse moves along the way, so hover effects follow the cursor.
+        for (let i = 0; i < 6; i++) {
+          await wait(120);
+          el.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: hx, clientY: hy }));
+        }
         at = el;
       },
       async click(press = false) {

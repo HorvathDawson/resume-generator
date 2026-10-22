@@ -1493,6 +1493,7 @@ button:disabled {
 }
 
 .preview-scroll {
+  position: relative;
   flex: 1;
   overflow: auto;
   padding: 16px 24px 40px;
@@ -1500,6 +1501,52 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   gap: 8px;
+}
+
+/* Split a section by hovering between two of its items in the preview, or
+   join a continued part by hovering its heading. */
+.split-tool {
+  position: absolute;
+  z-index: 5;
+  height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.split-tool--join {
+  justify-content: flex-end;
+}
+
+.split-tool-line {
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  border-top: 2px dashed var(--brand);
+}
+
+.split-tool button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.split-tool button:hover {
+  filter: brightness(1.1);
 }
 
 .preview-page {

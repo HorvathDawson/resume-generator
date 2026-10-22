@@ -117,7 +117,7 @@ export function LayoutPanel({ doc, update, overflow, onEditSection, onAutoFit, n
     <DragContext.Provider value={drag}>
       <div className="panel-stack layout-panel">
         <p className="hint">
-          Drag sections to arrange them, or click one for its options, including splitting it across pages. Pick a shape for each row, and drag the line between two columns to change their widths.
+          Drag sections to arrange them, or click one for its options. To split a long section across pages, hover between two of its items in the preview and click Continue on next page. Pick a shape for each row, and drag the line between two columns to change their widths.
         </p>
 
         <Tray doc={doc} update={update} />
@@ -266,7 +266,7 @@ function PageCard({ doc, page, index, update, overflow, onEditSection, onAutoFit
               <button type="button" className="link-btn" onClick={onAutoFit}>
                 Move it to the next page
               </button>{' '}
-              or make the font or spacing smaller on the Design tab.
+              split a section yourself (hover between two of its items in the preview), or make the font or spacing smaller on the Design tab.
             </span>
           </div>
         )}
@@ -608,7 +608,7 @@ function SplitControl({ doc, section, placement, from, to, total, update }: {
       )}
       {to - from > 1 ? (
         <>
-          <p className="split-hint">Click between two items to move the rest to the next page.</p>
+          <p className="split-hint">Click between two items to move the rest to the next page (or hover between them in the preview).</p>
           <ol className="split-items" start={from + 1}>
             {labels.slice(from, to).map((label, i) => (
               <li key={from + i}>

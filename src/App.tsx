@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrowUpRight, CircleHelp, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderInput, FolderOpen, FolderPlus, FolderX, Library as LibraryIcon, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
 import type { ResumeDocument } from './model/types';
-import { blankDocument } from './model/defaults';
+import { blankDocument, itemCount } from './model/defaults';
+import { findSection, joinParts, locatePlacement, sectionParts, splitPlacement } from './model/edit';
 import { ImportError, clearSharedLink, downloadFile, fetchResume, fileStem, sharedLinkFromUrl } from './model/io';
 import type { Library } from './library/library';
 import { findById, parseAnyFile, serializeResumeFile, sortedPaths, fileNameOf } from './library/library';
@@ -425,34 +426,36 @@ export default function App() {
         },
       },
       {
-        target: ['layout-page-1', '.preview-page + .preview-page .rg-page'],
+        target: ['.preview-scroll .preview-page:first-child [data-section-id="experience"]', '.preview-page + .preview-page .rg-page'],
         title: 'Split a section across pages',
         body: (
           <>
             <p>
-              Page 1 is too full now, so it’s outlined in red. Click the section on the Layout tab and, under <strong>Split across pages</strong>, click between two
-              items: the rest carries on at the top of the next page, headed “(continued)”.
+              Page 1 is too full now, so it’s outlined in red. Hover between two items of a section in the preview and click <strong>Continue on next page</strong>:
+              the rest carries on at the top of the next page, headed “(continued)”.
             </p>
-            <p>“Put it back together” undoes it. On a full page, “Move it to the next page” splits things for you.</p>
+            <p>
+              Hover that heading for <strong>Join back</strong> to undo it. On a full page, “Move it to the next page” on the Layout tab splits things for you.
+            </p>
           </>
         ),
         before: () => {
           showPractice(5);
-          setTab('layout');
+          setTab('content');
+          setOpenId(null);
         },
         demo: async (t) => {
-          const chip = '[data-tour="layout-page-1"] [data-chip-section="experience"] .chip-title';
-          await t.point(chip);
-          await t.click(true);
+          const items = () => document.querySelectorAll('.preview-scroll .preview-page:first-child [data-section-id="experience"] [data-item]');
+          // Between the second and third jobs.
+          await t.hover(() => items()[2], 'top');
           await t.wait(500);
-          await t.point(() => document.querySelectorAll('.popover .split-gap')[1]);
-          await t.wait(700);
+          await t.point('.split-tool--split button');
           await t.click(true);
-          await t.point('.popover .split-parts');
-          await t.wait(1200);
+          await t.wait(400);
           await t.flash('.preview-page + .preview-page [data-section-id="experience"]');
-          await t.wait(600);
-          await t.dismiss();
+          await t.hover('.preview-page + .preview-page [data-section-id="experience"] .rg-heading');
+          await t.point('.split-tool--join button');
+          await t.wait(1400);
         },
       },
       {
@@ -816,6 +819,29 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [undo, redo, saveJson, requestPdf, viewOnly, library]);
 
+  // ---- Splitting sections across pages, from the preview --------------------
+
+  /** Items from `at` on continue at the top of the next page. */
+  const splitAt = (placementId: string, at: number) => {
+    const loc = locatePlacement(doc, placementId);
+    if (!loc) return;
+    const section = findSection(doc, doc.pages[loc.page].rows[loc.row].columns[loc.col][loc.index].sectionId);
+    update((d) => splitPlacement(d, placementId, at));
+    notify(`${section?.title || 'The section'} now continues at the top of page ${loc.page + 2}.`, true);
+  };
+
+  /** Put a split section back together where its first part is. */
+  const joinBack = (placementId: string) => {
+    const loc = locatePlacement(doc, placementId);
+    if (!loc) return;
+    const section = findSection(doc, doc.pages[loc.page].rows[loc.row].columns[loc.col][loc.index].sectionId);
+    if (!section) return;
+    const first = sectionParts(doc, section.id, itemCount(section))[0];
+    if (!first) return;
+    update((d) => joinParts(d, first.placementId));
+    notify(`${section.title || 'The section'} is back together on page ${first.page + 1}.`, true);
+  };
+
   const editSection = (id: string) => {
     setTab('content');
     setOpenId(id);
@@ -970,6 +996,8 @@ export default function App() {
             overflow={viewOnly ? {} : overflow}
             selectedId={!viewOnly && tab === 'content' ? openId : null}
             onSelectSection={viewOnly ? undefined : editSection}
+            onSplit={viewOnly || trial ? undefined : splitAt}
+            onJoin={viewOnly || trial ? undefined : joinBack}
           />
         </main>
 
