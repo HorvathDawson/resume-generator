@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrowUpRight, CircleHelp, Download, FileDown, FileCode, FileJson, FilePlus, FileText, FolderInput, FolderOpen, FolderPlus, FolderX, Library as LibraryIcon, Pencil, Printer, Redo2, Undo2 } from 'lucide-react';
 import type { ResumeDocument } from './model/types';
 import { blankDocument } from './model/defaults';
@@ -11,6 +11,7 @@ import { LibraryPanel } from './editor/LibraryPanel';
 import { normalizeDocument } from './model/normalize';
 import { TEMPLATES, applyTemplate, arrangeLayout } from './model/templates';
 import { fitPages, measurePages } from './model/autofit';
+import { TOUR_MOVED_ID, TOUR_PROJECTS_ID, addFooter, addJob, addProjects, moveToOtherColumn, practiceResume, splitExperience, tailorForJob, widenLeftColumn } from './model/tourDemo';
 import { googleFontsUrl } from './model/variants';
 import sample from './data/sample.json';
 import { useHistory } from './hooks/useHistory';
@@ -33,6 +34,19 @@ const TAB_LABELS: Record<Tab, string> = { resumes: 'Resumes', content: 'Content'
 
 const sampleDocument = () => normalizeDocument(sample);
 const HOME_LABEL = __HOME_URL__.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+/** The tour's edits to its practice resume, in order (see model/tourDemo.ts). */
+const TOUR_EDITS = [addJob, addProjects, moveToOtherColumn, widenLeftColumn, addFooter, splitExperience];
+
+/** The resumes a tour run made, so it can switch between them and remove them at the end. */
+interface TourRun {
+  /** The resume open before the tour started. */
+  original: string;
+  practice: string | null;
+  start: ResumeDocument | null;
+  copy: string | null;
+  tailored: boolean;
+}
 
 const PRINT_TIP_KEY = 'resume-generator:hide-print-tip';
 const TOUR_KEY = 'resume-generator:tour-seen';
@@ -168,85 +182,269 @@ export default function App() {
     if (!tourSeen()) setTouring(true);
   };
 
-  const endTour = useCallback(() => {
-    setTouring(false);
-    setTab('content');
-    try {
-      localStorage.setItem(TOUR_KEY, '1');
-    } catch {
-      // Ignore: it just shows again next visit.
-    }
-  }, [setTab]);
+  // ---- The tour ----------------------------------------------------------------
+  // It builds up a practice copy of the sample resume step by step, so it can
+  // show each feature doing something real without touching the visitor's own
+  // resumes. The steps read the latest library through a ref, so the list of
+  // steps itself never changes while the tour is open.
+
+  const libraryRef = useRef(library);
+  useLayoutEffect(() => {
+    libraryRef.current = library;
+  });
+  const tourRun = useRef<TourRun>({ original: '', practice: null, start: null, copy: null, tailored: false });
+
+  /** Open the practice resume (making it the first time) with the first `edits` tour edits applied. */
+  const showPractice = useCallback(
+    (edits: number) => {
+      const lib = libraryRef.current;
+      const run = tourRun.current;
+      if (!run.practice || !run.start) {
+        run.original = lib.activePath;
+        run.start = practiceResume(sampleDocument());
+        run.practice = lib.addAndOpen(run.start);
+      } else {
+        lib.open(run.practice);
+      }
+      const d = structuredClone(run.start);
+      TOUR_EDITS.slice(0, edits).forEach((edit) => edit(d));
+      replace(d);
+      return d;
+    },
+    [replace],
+  );
+
+  /** Close the tour; unless asked to keep them, remove the practice resumes and reopen the visitor's own. */
+  const endTour = useCallback(
+    (keep = false) => {
+      setTouring(false);
+      setTab('content');
+      setOpenId(null);
+      const run = tourRun.current;
+      const lib = libraryRef.current;
+      if (run.practice && !keep) {
+        if (run.copy) lib.remove(run.copy);
+        lib.remove(run.practice);
+        if (run.original && run.original !== run.practice) lib.open(run.original);
+        notify('Removed the practice resumes.');
+      } else if (run.practice) {
+        notify('Kept the practice resumes. Find them on the Resumes tab.');
+      }
+      tourRun.current = { original: '', practice: null, start: null, copy: null, tailored: false };
+      try {
+        localStorage.setItem(TOUR_KEY, '1');
+      } catch {
+        // Ignore: it just shows again next visit.
+      }
+    },
+    [setTab, notify],
+  );
 
   const tourSteps: TourStep[] = useMemo(
     () => [
       {
         title: 'Welcome to Resume Builder',
-        body: <p>Make a polished A4 resume, then download it as a PDF. This short tour shows you where everything is.</p>,
+        body: (
+          <>
+            <p>Make a polished A4 resume, then download it as a PDF.</p>
+            <p>
+              This tour does the work in front of you: it makes a <strong>practice copy of the sample resume</strong> and changes it one step at a time, so you see how
+              each thing is done. Your own resumes aren’t touched, and the practice copy is removed at the end unless you keep it.
+            </p>
+          </>
+        ),
       },
       {
-        target: 'editor',
-        title: 'Write your content',
-        body: <p>Fill in your details and add sections like experience, education and skills. Click any section in the preview to jump straight to it.</p>,
-        before: () => setTab('content'),
-      },
-      {
-        target: 'preview',
-        title: 'See it as you go',
-        body: <p>The preview shows exactly what you’ll download. A red outline means a page is too full.</p>,
-      },
-      {
-        target: 'editor',
-        title: 'Arrange the layout',
+        target: ['[data-section-card="experience"] .card-head', '.preview-scroll [data-section-id="experience"]'],
+        title: 'Add to a section',
         body: (
           <p>
-            Drag sections between rows, columns and pages. Click a section to move it, or to split a long one across two pages. Drag the line between columns to resize
-            them.
+            We added a new job at the top of <strong>Experience</strong>. To add yours, open a section here and click <strong>Add entry</strong>, then type into the
+            fields; the preview updates as you go. Click any part of the preview to jump to its fields.
           </p>
         ),
-        before: () => setTab('layout'),
+        before: () => {
+          showPractice(1);
+          setTab('content');
+          setOpenId('experience');
+        },
       },
       {
-        target: 'editor',
-        title: 'Try a template',
-        body: <p>Click through the templates to preview your resume in each. Nothing changes until you apply one.</p>,
-        before: () => setTab('templates'),
-      },
-      {
-        target: 'editor',
-        title: 'Fine-tune the design',
-        body: <p>Adjust fonts, colors, spacing and the page footer.</p>,
-        before: () => setTab('design'),
-      },
-      {
-        target: 'resumes-tab',
-        title: 'Keep versions for each job',
+        target: ['add-section', `.preview-scroll [data-section-id="${TOUR_PROJECTS_ID}"]`],
+        title: 'Add a whole section',
         body: (
           <p>
-            The Resumes tab holds all your resumes. Make a copy of your main one for a specific job, and it remembers where it came from. You can also keep them in a
-            folder on your computer, for git or an AI agent.
+            <strong>Add section</strong> offers jobs, education, skills, a list, a block of text and more. We added <strong>Projects</strong>; a new section goes at the
+            end of the last page, and you can move it from there.
+          </p>
+        ),
+        before: () => {
+          showPractice(2);
+          setTab('content');
+          setOpenId(null);
+        },
+      },
+      {
+        target: [`[data-chip-section="${TOUR_MOVED_ID}"]`, `.preview-scroll [data-section-id="${TOUR_MOVED_ID}"]`],
+        title: 'Move a section',
+        body: (
+          <p>
+            The <strong>Layout</strong> tab shows each page as rows and columns. Drag a section anywhere, or click it for <strong>Up</strong>, <strong>Down</strong>,{' '}
+            <strong>Other side</strong> and <strong>Move to</strong> another page. We moved Languages from the sidebar to the main column.
+          </p>
+        ),
+        before: () => {
+          showPractice(3);
+          setTab('layout');
+        },
+      },
+      {
+        target: ['[data-tour="layout-page-1"] .sheet-divider', '.preview-scroll .rg-page'],
+        title: 'Change the columns',
+        body: (
+          <p>
+            Drag the line between two columns to resize them: we made the left one wider. Each row can have its own shape (one column, two equal, or a narrow one on
+            either side); add rows with the buttons under each page.
+          </p>
+        ),
+        before: () => {
+          showPractice(4);
+          setTab('layout');
+        },
+      },
+      {
+        target: ['editor', '.preview-scroll .rg-page'],
+        title: 'Rearrange it all at once',
+        body: (
+          <p>
+            A <strong>template</strong> lays out the whole resume in one go, with its own fonts and colors. This is only a preview: nothing changes until you click{' '}
+            <strong>Apply</strong>. <strong>Match another resume</strong> copies the design of one you’ve already made.
+          </p>
+        ),
+        before: () => {
+          const d = showPractice(4);
+          setTab('templates');
+          setTrial({ templateId: 'stone', base: d, doc: arrangeLayout(d, 'stone') });
+          setFitRounds(15);
+        },
+      },
+      {
+        target: ['footer-card', '.preview-scroll .rg-footer'],
+        title: 'Add a footer',
+        body: (
+          <p>
+            Pick a footer for every page here, or a different one per page on the Layout tab. You can also upload your own image, or write one in HTML or SVG. We
+            added mountains.
+          </p>
+        ),
+        before: () => {
+          showPractice(5);
+          setTab('design');
+        },
+      },
+      {
+        target: ['layout-page-2', '.preview-page + .preview-page .rg-page'],
+        title: 'Split content between pages',
+        body: (
+          <>
+            <p>
+              A page that’s too full is outlined in red. To split a long section, click it on the Layout tab and, under <strong>Split across pages</strong>, click
+              between two items: the rest moves to the top of the next page.
+            </p>
+            <p>Here Experience keeps two jobs on page 1 and carries on at the top of page 2. On a full page, “Move it to the next page” does this for you.</p>
+          </>
+        ),
+        before: () => {
+          showPractice(6);
+          setTab('layout');
+        },
+      },
+      {
+        target: ['.library-actions .btn--primary', '.library-list'],
+        title: 'Keep a version for each job',
+        body: (
+          <p>
+            The <strong>Resumes</strong> tab is your library: every resume you make, together. <strong>Make a copy for a job</strong> copies the open resume, notes what
+            it’s for, and remembers which one it came from. We made a copy for a job at Acme; both are in the list.
+          </p>
+        ),
+        before: () => {
+          const run = tourRun.current;
+          const lib = libraryRef.current;
+          setTab('resumes');
+          if (run.copy) lib.open(run.copy);
+          else if (run.practice) run.copy = lib.duplicate(run.practice, { title: 'Practice – Acme Controls Engineer', target: 'Controls Engineer at Acme', folder: '', notes: '' });
+        },
+      },
+      {
+        // The header last, so scrolling it into view keeps the summary below it in view too.
+        target: ['[data-section-card="summary"] .card-head', '.preview-scroll [data-section-id="summary"]', '.preview-scroll [data-section-id="header"]'],
+        title: 'Change the copy',
+        body: (
+          <p>
+            Now tailor the copy to the job: we sharpened the headline and summary. The practice resume it came from stays as it was; switch between them on the Resumes
+            tab.
+          </p>
+        ),
+        before: () => {
+          const run = tourRun.current;
+          if (run.copy) libraryRef.current.open(run.copy);
+          if (run.copy && !run.tailored) {
+            update(tailorForJob);
+            run.tailored = true;
+          }
+          setTab('content');
+          setOpenId('summary');
+        },
+      },
+      {
+        target: 'file',
+        title: 'Save it on your computer',
+        body: (
+          <ul>
+            <li>Everything saves in this browser as you type.</li>
+            <li>
+              <strong>File → Save this resume as a file</strong> downloads it as a <code>.resume.json</code> file to keep, back up or send. <strong>Download library</strong>{' '}
+              saves every resume in one file.
+            </li>
+            <li>
+              Later, on any computer: <strong>File → Open file</strong>, or drop the file onto this page, and carry on editing.
+            </li>
+          </ul>
+        ),
+        before: () => {
+          setTab('content');
+          setOpenId(null);
+        },
+      },
+      {
+        target: '.library-place',
+        title: 'Or work from a folder',
+        body: (
+          <p>
+            In Chrome or Edge, <strong>Set up a folder</strong> keeps every resume as a file in a folder on your computer, and edits save straight into it. Handy for
+            backups, git, or letting an AI agent edit your resume: its changes show up here.
           </p>
         ),
         before: () => setTab('resumes'),
       },
       {
-        target: 'file',
-        title: 'Keep a copy',
-        body: <p>Everything saves in this browser automatically. Use the File menu to download your resumes as a file, open one, or set up a folder.</p>,
+        target: 'download',
+        title: 'Download your resume',
+        body: <p>A PDF in one click. Print to PDF gives the sharpest text, and you can also export a web page for your site.</p>,
         before: () => setTab('content'),
       },
       {
-        target: 'download',
-        title: 'Download your resume',
-        body: <p>Get a PDF in one click. Print to PDF gives the sharpest text, and you can also export a web page.</p>,
-      },
-      {
         target: 'help',
-        title: 'Need a refresher?',
-        body: <p>Click here to see this tour again any time.</p>,
+        title: 'That’s the tour',
+        body: <p>See it again any time from this button. Keep the two practice resumes to play with, or remove them and go back to your own.</p>,
+        choices: [
+          { label: 'Remove them', primary: true, run: () => endTour(false) },
+          { label: 'Keep them', run: () => endTour(true) },
+        ],
       },
     ],
-    [setTab],
+    [setTab, showPractice, update, endTour],
   );
 
   // Load the fonts the resume uses.

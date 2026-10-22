@@ -226,7 +226,7 @@ function PageCard({ doc, page, index, update, overflow, onEditSection, onAutoFit
   const emptyTarget = drag.target?.pageId === page.id && drag.target.rowId === null;
 
   return (
-    <section className="card page-card">
+    <section className="card page-card" data-tour={`layout-page-${index + 1}`}>
       <div className="card-head">
         <span className="card-title">Page {index + 1}</span>
         <label className="inline-select">
@@ -487,6 +487,7 @@ function PlacementChip({ doc, placement, pageIndex, index, count, two, update, o
     <div
       className={`chip${dragging ? ' is-dragging' : ''}`}
       data-chip
+      data-chip-section={section.id}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData('text/plain', placement.id);

@@ -130,7 +130,7 @@ function FooterCard({ doc, update }: Props) {
   const showHtml = writing || !!custom?.html;
 
   return (
-    <section className="card">
+    <section className="card" data-tour="footer-card">
       <div className="card-head">
         <span className="card-title">Footer</span>
         <span className="card-sub">Pages can differ: see each page on the Layout tab</span>

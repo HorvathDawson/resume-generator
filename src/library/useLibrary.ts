@@ -356,6 +356,7 @@ export function useLibrary({ boot, doc, resetDoc, enabled, notify, showError }: 
       setActive(path);
       resetDoc(next.files[path]);
       notify(`Made “${next.files[path].title}”, a copy of “${libRef.current.files[from]?.title ?? next.files[from].title}”.`);
+      return path;
     },
     [apply, notify, resetDoc, setActive],
   );
