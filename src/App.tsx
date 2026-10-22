@@ -11,7 +11,7 @@ import { LibraryPanel } from './editor/LibraryPanel';
 import { normalizeDocument } from './model/normalize';
 import { TEMPLATES, applyTemplate, arrangeLayout } from './model/templates';
 import { fitPages, measurePages } from './model/autofit';
-import { TOUR_MOVED_ID, TOUR_PROJECTS_ID, addFooter, addJob, addProjects, moveToOtherColumn, practiceResume, splitExperience, tailorForJob, widenLeftColumn } from './model/tourDemo';
+import { TOUR_HEADLINE, TOUR_JOB, TOUR_MOVED_ID, TOUR_PROJECTS_ID, TOUR_SUMMARY, addFooter, addJob, addProjects, moveToOtherColumn, practiceResume, splitExperience, widenLeftColumn } from './model/tourDemo';
 import { googleFontsUrl } from './model/variants';
 import sample from './data/sample.json';
 import { useHistory } from './hooks/useHistory';
@@ -47,6 +47,9 @@ interface TourRun {
   copy: string | null;
   tailored: boolean;
 }
+
+/** Finds the first element matching `selector` whose text includes `text`. */
+const byText = (selector: string, text: string) => () => [...document.querySelectorAll<HTMLElement>(selector)].find((el) => el.textContent?.includes(text));
 
 const PRINT_TIP_KEY = 'resume-generator:hide-print-tip';
 const TOUR_KEY = 'resume-generator:tour-seen';
@@ -248,25 +251,53 @@ export default function App() {
           <>
             <p>Make a polished A4 resume, then download it as a PDF.</p>
             <p>
-              This tour does the work in front of you: it makes a <strong>practice copy of the sample resume</strong> and changes it one step at a time, so you see how
-              each thing is done. Your own resumes aren’t touched, and the practice copy is removed at the end unless you keep it.
+              This tour shows you how, by doing it: on a <strong>practice copy of the sample resume</strong>, a pointer clicks and types its way through each feature
+              while you watch. Your own resumes aren’t touched, and the practice copy is removed at the end unless you keep it.
             </p>
           </>
         ),
       },
       {
-        target: ['[data-section-card="experience"] .card-head', '.preview-scroll [data-section-id="experience"]'],
+        target: ['[data-section-card="experience"]', '.preview-scroll [data-section-id="experience"]'],
         title: 'Add to a section',
         body: (
           <p>
-            We added a new job at the top of <strong>Experience</strong>. To add yours, open a section here and click <strong>Add entry</strong>, then type into the
-            fields; the preview updates as you go. Click any part of the preview to jump to its fields.
+            Open a section and click <strong>Add entry</strong>, then type into its fields: the preview updates as you go. The arrows move an entry up or down. Click
+            any part of the preview to jump to its fields.
           </p>
         ),
         before: () => {
-          showPractice(1);
+          showPractice(0);
           setTab('content');
           setOpenId('experience');
+        },
+        demo: async (t) => {
+          await t.point(byText('[data-section-card="experience"] .item-list > .btn', 'Add entry'));
+          await t.click(true);
+          const type = (field: 'title' | 'subtitle' | 'location' | 'dates') => (text: string) =>
+            update((d) => {
+              const s = d.sections.find((x) => x.id === 'experience');
+              if (s?.type === 'experience') s.items[s.items.length - 1][field] = text;
+            }, 'tour-type');
+          await t.type(TOUR_JOB.title, type('title'));
+          await t.type(TOUR_JOB.subtitle, type('subtitle'));
+          await t.type(TOUR_JOB.dates, type('dates'));
+          await t.type(TOUR_JOB.location, type('location'));
+          update((d) => {
+            const s = d.sections.find((x) => x.id === 'experience');
+            if (s?.type === 'experience') s.items[s.items.length - 1].bullets = [...TOUR_JOB.bullets];
+          });
+          await t.wait(400);
+          // It's the newest job, so it goes to the top.
+          const moveUp = () =>
+            [...document.querySelectorAll('[data-section-card="experience"] .item')]
+              .find((el) => el.textContent?.includes(TOUR_JOB.title))
+              ?.querySelector<HTMLElement>('[title="Move up"]:not(:disabled)');
+          for (let i = 0; i < 3 && moveUp(); i++) {
+            await t.point(moveUp);
+            await t.click(true);
+          }
+          await t.flash('.preview-scroll [data-section-id="experience"]');
         },
       },
       {
@@ -274,14 +305,35 @@ export default function App() {
         title: 'Add a whole section',
         body: (
           <p>
-            <strong>Add section</strong> offers jobs, education, skills, a list, a block of text and more. We added <strong>Projects</strong>; a new section goes at the
-            end of the last page, and you can move it from there.
+            <strong>Add section</strong> offers jobs, education, skills, a list, a block of text and more. We picked <strong>Experience &amp; projects</strong> and named
+            it Projects. A new section goes at the end of the last page; you can move it from there.
           </p>
         ),
         before: () => {
-          showPractice(2);
+          showPractice(1);
           setTab('content');
           setOpenId(null);
+        },
+        demo: async (t) => {
+          await t.point('add-section');
+          await t.click(true);
+          await t.point(byText('.type-option', 'Experience & projects'));
+          await t.click();
+          byText('.add-section .btn', 'Cancel')()?.click();
+          update((d) => {
+            addProjects(d);
+            const s = d.sections.find((x) => x.id === TOUR_PROJECTS_ID);
+            if (s) s.title = '';
+          });
+          setOpenId(TOUR_PROJECTS_ID);
+          await t.wait(300);
+          await t.type('Projects', (text) =>
+            update((d) => {
+              const s = d.sections.find((x) => x.id === TOUR_PROJECTS_ID);
+              if (s) s.title = text;
+            }, 'tour-type'),
+          );
+          await t.flash(`.preview-scroll [data-section-id="${TOUR_PROJECTS_ID}"]`);
         },
       },
       {
@@ -290,12 +342,19 @@ export default function App() {
         body: (
           <p>
             The <strong>Layout</strong> tab shows each page as rows and columns. Drag a section anywhere, or click it for <strong>Up</strong>, <strong>Down</strong>,{' '}
-            <strong>Other side</strong> and <strong>Move to</strong> another page. We moved Languages from the sidebar to the main column.
+            <strong>Other side</strong> and <strong>Move to</strong> another page. Here Languages moves from the sidebar to the main column.
           </p>
         ),
         before: () => {
-          showPractice(3);
+          showPractice(2);
           setTab('layout');
+        },
+        demo: async (t) => {
+          await t.point(`[data-chip-section="${TOUR_MOVED_ID}"] .chip-title`);
+          await t.click(true);
+          await t.point(byText('.popover .btn', 'Other side'));
+          await t.click(true);
+          await t.flash(`.preview-scroll [data-section-id="${TOUR_MOVED_ID}"]`);
         },
       },
       {
@@ -303,29 +362,45 @@ export default function App() {
         title: 'Change the columns',
         body: (
           <p>
-            Drag the line between two columns to resize them: we made the left one wider. Each row can have its own shape (one column, two equal, or a narrow one on
+            Drag the line between two columns to resize them: here the left one gets wider. Each row can have its own shape (one column, two equal, or a narrow one on
             either side); add rows with the buttons under each page.
           </p>
         ),
         before: () => {
-          showPractice(4);
+          showPractice(3);
           setTab('layout');
+        },
+        demo: async (t) => {
+          const divider = '[data-tour="layout-page-1"] .sheet-divider';
+          await t.point(divider);
+          const width = document.querySelector(divider)?.parentElement?.getBoundingClientRect().width ?? 300;
+          await t.drag(width * 0.06, 0, (p) =>
+            update((d) => {
+              for (const row of d.pages[0]?.rows ?? []) if (row.columns.length === 2) row.split = Math.round(32 + 6 * p);
+            }, 'tour-split'),
+          );
+          await t.flash('.preview-scroll .rg-page');
         },
       },
       {
-        target: ['editor', '.preview-scroll .rg-page'],
+        target: [byText('.template-card', 'Stone'), '.preview-scroll .rg-page'],
         title: 'Rearrange it all at once',
         body: (
           <p>
-            A <strong>template</strong> lays out the whole resume in one go, with its own fonts and colors. This is only a preview: nothing changes until you click{' '}
-            <strong>Apply</strong>. <strong>Match another resume</strong> copies the design of one you’ve already made.
+            A <strong>template</strong> lays out the whole resume in one go, with its own fonts and colors. Clicking one only previews it: nothing changes until you
+            click <strong>Apply</strong>. <strong>Match another resume</strong> copies the design of one you’ve already made.
           </p>
         ),
         before: () => {
-          const d = showPractice(4);
+          showPractice(4);
           setTab('templates');
-          setTrial({ templateId: 'stone', base: d, doc: arrangeLayout(d, 'stone') });
-          setFitRounds(15);
+        },
+        demo: async (t) => {
+          await t.point(byText('.template-card', 'Stone'));
+          await t.click(true);
+          await t.flash('.preview-scroll .rg-page');
+          await t.point(byText('.trial-bar .btn', 'Apply'));
+          await t.wait(900);
         },
       },
       {
@@ -333,30 +408,51 @@ export default function App() {
         title: 'Add a footer',
         body: (
           <p>
-            Pick a footer for every page here, or a different one per page on the Layout tab. You can also upload your own image, or write one in HTML or SVG. We
-            added mountains.
+            Pick a footer for every page here, or a different one per page on the Layout tab. You can also upload your own image, or write one in HTML or SVG. Here:
+            mountains.
           </p>
         ),
         before: () => {
-          showPractice(5);
+          showPractice(4);
           setTab('design');
+        },
+        demo: async (t) => {
+          await t.point('[data-tour="footer-card"] select');
+          await t.click();
+          update(addFooter);
+          await t.wait(300);
+          await t.flash('.preview-scroll .rg-footer');
         },
       },
       {
-        target: ['layout-page-2', '.preview-page + .preview-page .rg-page'],
-        title: 'Split content between pages',
+        target: ['layout-page-1', '.preview-page + .preview-page .rg-page'],
+        title: 'Split a section across pages',
         body: (
           <>
             <p>
-              A page that’s too full is outlined in red. To split a long section, click it on the Layout tab and, under <strong>Split across pages</strong>, click
-              between two items: the rest moves to the top of the next page.
+              Page 1 is too full now, so it’s outlined in red. Click the section on the Layout tab and, under <strong>Split across pages</strong>, click between two
+              items: the rest carries on at the top of the next page, headed “(continued)”.
             </p>
-            <p>Here Experience keeps two jobs on page 1 and carries on at the top of page 2. On a full page, “Move it to the next page” does this for you.</p>
+            <p>“Put it back together” undoes it. On a full page, “Move it to the next page” splits things for you.</p>
           </>
         ),
         before: () => {
-          showPractice(6);
+          showPractice(5);
           setTab('layout');
+        },
+        demo: async (t) => {
+          const chip = '[data-tour="layout-page-1"] [data-chip-section="experience"] .chip-title';
+          await t.point(chip);
+          await t.click(true);
+          await t.wait(500);
+          await t.point(() => document.querySelectorAll('.popover .split-gap')[1]);
+          await t.wait(700);
+          await t.click(true);
+          await t.point('.popover .split-parts');
+          await t.wait(1200);
+          await t.flash('.preview-page + .preview-page [data-section-id="experience"]');
+          await t.wait(600);
+          await t.dismiss();
         },
       },
       {
@@ -365,36 +461,70 @@ export default function App() {
         body: (
           <p>
             The <strong>Resumes</strong> tab is your library: every resume you make, together. <strong>Make a copy for a job</strong> copies the open resume, notes what
-            it’s for, and remembers which one it came from. We made a copy for a job at Acme; both are in the list.
+            it’s for, and remembers which one it came from.
           </p>
         ),
         before: () => {
           const run = tourRun.current;
-          const lib = libraryRef.current;
+          if (run.copy) libraryRef.current.remove(run.copy);
+          run.copy = null;
+          showPractice(6);
           setTab('resumes');
-          if (run.copy) lib.open(run.copy);
-          else if (run.practice) run.copy = lib.duplicate(run.practice, { title: 'Practice – Acme Controls Engineer', target: 'Controls Engineer at Acme', folder: '', notes: '' });
+        },
+        demo: async (t) => {
+          await t.point('.library-actions .btn--primary');
+          await t.click(true);
+          await t.wait(300);
+          await t.point('.dialog input[type="text"]');
+          await t.typeInto('.dialog input[type="text"]', 'Practice – Acme Controls Engineer');
+          const madeFor = () => document.querySelectorAll('.dialog input[type="text"]')[1];
+          await t.point(madeFor);
+          await t.typeInto(madeFor, 'Controls Engineer at Acme');
+          await t.point(byText('.dialog .btn--primary', 'Make copy'));
+          await t.click(true);
+          await t.wait(400);
+          const run = tourRun.current;
+          const active = libraryRef.current.activePath;
+          if (active !== run.practice) run.copy = active;
+          await t.flash('.library-list');
         },
       },
       {
-        // The header last, so scrolling it into view keeps the summary below it in view too.
-        target: ['[data-section-card="summary"] .card-head', '.preview-scroll [data-section-id="summary"]', '.preview-scroll [data-section-id="header"]'],
+        target: ['[data-section-card="summary"]', '.preview-scroll [data-section-id="summary"]', '.preview-scroll [data-section-id="header"]'],
         title: 'Change the copy',
         body: (
           <p>
-            Now tailor the copy to the job: we sharpened the headline and summary. The practice resume it came from stays as it was; switch between them on the Resumes
+            Now tailor the copy to the job: here a sharper headline and summary. The practice resume it came from stays as it was; switch between them on the Resumes
             tab.
           </p>
         ),
         before: () => {
           const run = tourRun.current;
-          if (run.copy) libraryRef.current.open(run.copy);
-          if (run.copy && !run.tailored) {
-            update(tailorForJob);
-            run.tailored = true;
-          }
+          const lib = libraryRef.current;
+          if (!run.copy && run.practice) run.copy = lib.duplicate(run.practice, { title: 'Practice – Acme Controls Engineer', target: 'Controls Engineer at Acme', folder: '', notes: '' });
+          else if (run.copy) lib.open(run.copy);
+          // Start from the practice resume's wording, so the step can be watched again.
+          const start = run.start;
+          update((d) => {
+            const summary = d.sections.find((s) => s.type === 'text');
+            const original = start?.sections.find((s) => s.type === 'text');
+            if (summary?.type === 'text' && original?.type === 'text') summary.body = original.body;
+            if (start) d.profile.headline = start.profile.headline;
+          });
           setTab('content');
           setOpenId('summary');
+        },
+        demo: async (t) => {
+          await t.point('[data-section-card="summary"] textarea');
+          await t.type(TOUR_SUMMARY, (text) =>
+            update((d) => {
+              const s = d.sections.find((x) => x.type === 'text');
+              if (s?.type === 'text') s.body = text;
+            }, 'tour-type'),
+          );
+          await t.point('.preview-scroll [data-section-id="header"]');
+          await t.type(TOUR_HEADLINE, (text) => update((d) => void (d.profile.headline = text), 'tour-type'));
+          await t.flash('.preview-scroll [data-section-id="header"]');
         },
       },
       {
@@ -416,6 +546,18 @@ export default function App() {
           setTab('content');
           setOpenId(null);
         },
+        demo: async (t) => {
+          await t.point('[data-tour="file"] > button');
+          await t.click(true);
+          await t.point(byText('.menu-item', 'Save this resume as a file'));
+          await t.wait(900);
+          await t.point(byText('.menu-item', 'Download library'));
+          await t.wait(900);
+          await t.point(byText('.menu-item', 'Open file'));
+          await t.wait(900);
+          await t.point('[data-tour="file"] > button');
+          await t.click(true);
+        },
       },
       {
         target: '.library-place',
@@ -427,12 +569,26 @@ export default function App() {
           </p>
         ),
         before: () => setTab('resumes'),
+        demo: async (t) => {
+          await t.point(byText('.library-place .btn', 'Set up a folder'));
+          await t.wait(900);
+        },
       },
       {
         target: 'download',
         title: 'Download your resume',
         body: <p>A PDF in one click. Print to PDF gives the sharpest text, and you can also export a web page for your site.</p>,
         before: () => setTab('content'),
+        demo: async (t) => {
+          await t.point('[data-tour="download"] > button');
+          await t.click(true);
+          await t.point(byText('.menu-item', 'PDF'));
+          await t.wait(800);
+          await t.point(byText('.menu-item', 'Print to PDF'));
+          await t.wait(800);
+          await t.point('[data-tour="download"] > button');
+          await t.click(true);
+        },
       },
       {
         target: 'help',

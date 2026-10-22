@@ -14,7 +14,7 @@ apply to. Free, no sign-up, and nothing is uploaded: your resumes stay on your o
 
 ## Getting started
 
-1. Open the app. It starts with a sample resume and a hands-on tour that builds up a practice copy step by step: adding content, rearranging the layout, adding a footer, splitting a section across pages, copying a resume for a job and saving your work (the **?** button replays it).
+1. Open the app. It starts with a sample resume and a hands-on tour: a pointer clicks and types its way through a practice copy, so you watch each feature being used (adding content, rearranging the layout, adding a footer, splitting a section across pages, copying a resume for a job, saving your work). The **?** button replays it.
 2. On **Content**, replace the sample with your details and experience.
 3. On **Templates**, click through the designs: each one previews your own resume, and nothing
    changes until you click **Apply**.

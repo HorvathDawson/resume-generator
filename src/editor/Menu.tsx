@@ -80,8 +80,12 @@ export function Popover({ title, icon, children, width = 260, className = 'icon-
       if (!panel.current?.contains(t) && !button.current?.contains(t)) close();
     };
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
+    // Close when the button it hangs from scrolls away, but not when some
+    // other part of the page scrolls (the preview, as a page is added).
     const onScroll = (e: Event) => {
-      if (!panel.current?.contains(e.target as Node)) close();
+      const scrolled = e.target as Node;
+      if (panel.current?.contains(scrolled)) return;
+      if (button.current && scrolled.contains?.(button.current)) close();
     };
     document.addEventListener('mousedown', onDown);
     document.addEventListener('keydown', onKey);
